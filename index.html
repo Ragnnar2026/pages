@@ -1,0 +1,1373 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>IMDb Top 250 — Checklist</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#101216;color:#f4f5f7;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+header{padding:18px 16px 14px;background:#101216;position:sticky;top:0;z-index:10;border-bottom:1px solid #2a2e35}
+h1{font-size:21px;margin:0 0 4px}
+.sub{font-size:12px;color:#9ba2ad}
+.stats{display:flex;gap:8px;margin-top:12px}
+.stat{flex:1;background:#191c22;border:1px solid #2a2e35;border-radius:10px;padding:9px;text-align:center}
+.stat b{display:block;font-size:19px} .stat span{font-size:10px;color:#9ba2ad}
+.progress{height:6px;background:#292e36;border-radius:8px;margin-top:10px;overflow:hidden}
+#bar{height:100%;width:0;background:#e4b94e}
+.controls{display:flex;gap:7px;padding:10px 12px;background:#101216;position:sticky;top:126px;z-index:9}
+#search{flex:1;min-width:0;padding:10px;border-radius:9px;border:1px solid #30353d;background:#191c22;color:#fff;font-size:14px}
+#filter{padding:10px;border-radius:9px;border:1px solid #30353d;background:#191c22;color:#fff}
+main{max-width:760px;margin:auto;padding:0 12px 35px}
+.movie{display:grid;grid-template-columns:42px 1fr 34px;gap:8px;align-items:center;padding:11px 5px;border-bottom:1px solid #252930}
+.rank{color:#858d99;text-align:center;font-size:13px}
+.title{font-size:14px;line-height:1.35}
+.check{width:30px;height:30px;border-radius:50%;border:1px solid #555d68;background:#191c22;color:#fff;font-size:17px;padding:0}
+.movie.watched .check{background:#e4b94e;color:#111;border-color:#e4b94e}
+.movie.watched .title{color:#818895;text-decoration:line-through}
+footer{text-align:center;color:#737b87;font-size:10px;padding:20px}
+.empty{text-align:center;color:#89919c;padding:40px}
+</style>
+</head>
+<body>
+<header>
+<h1>IMDb Top 250 — minha checklist</h1>
+<div class="sub">250 filmes • posições preservadas</div>
+<div class="stats">
+<div class="stat"><b id="count">0</b><span>assistidos</span></div>
+<div class="stat"><b id="left">250</b><span>faltam</span></div>
+<div class="stat"><b id="pct">0%</b><span>progresso</span></div>
+</div>
+<div class="progress"><div id="bar"></div></div>
+</header>
+
+<div class="controls">
+<input id="search" type="search" placeholder="Buscar filme...">
+<select id="filter">
+<option value="all">Todos</option>
+<option value="unwatched">Não assistidos</option>
+<option value="watched">Assistidos</option>
+</select>
+</div>
+
+<main id="list">
+
+      <div class="movie" data-title="The Shawshank Redemption">
+        <div class="rank">1</div>
+        <div class="title">The Shawshank Redemption</div>
+        <button class="check" type="button" onclick="toggleMovie(this)" aria-label="Marcar como assistido">○</button>
+      </div>
+      <div class="movie" data-title="The Godfather">
+        <div class="rank">2</div>
+        <div class="title">The Godfather</div>
+        <button class="check" type="button" onclick="toggleMovie(this)" aria-label="Marcar como assistido">○</button>
+      </div>
+      <div class="movie" data-title="The Dark Knight">
+        <div class="rank">3</div>
+        <div class="title">The Dark Knight</div>
+        <button class="check" type="button" onclick="toggleMovie(this)" aria-label="Marcar como assistido">○</button>
+      </div>
+      <div class="movie" data-title="The Godfather Part II">
+        <div class="rank">4</div>
+        <div class="title">The Godfather Part II</div>
+        <button class="check" type="button" onclick="toggleMovie(this)" aria-label="Marcar como assistido">○</button>
+      </div>
+      <div class="movie" data-title="The Lord of the Rings: The Return of the King">
+        <div class="rank">5</div>
+        <div class="title">The Lord of the Rings: The Return of the King</div>
+        <button class="check" type="button" onclick="toggleMovie(this)" aria-label="Marcar como assistido">○</button>
+      </div>
+      <div class="movie" data-title="12 Angry Men">
+        <div class="rank">6</div>
+        <div class="title">12 Angry Men</div>
+        <button class="check" type="button" onclick="toggleMovie(this)" aria-label="Marcar como assistido">○</button>
+      </div>
+      <div class="movie" data-title="Schindler&#x27;s List">
+        <div class="rank">7</div>
+        <div class="title">Schindler&#x27;s List</div>
+        <button class="check" type="button" onclick="toggleMovie(this)" aria-label="Marcar como assistido">○</button>
+      </div>
+      <div class="movie" data-title="The Lord of the Rings: The Fellowship of the Ring">
+        <div class="rank">8</div>
+        <div class="title">The Lord of the Rings: The Fellowship of the Ring</div>
+        <button class="check" type="button" onclick="toggleMovie(this)" aria-label="Marcar como assistido">○</button>
+      </div>
+      <div class="movie" data-title="Pulp Fiction">
+        <div class="rank">9</div>
+        <div class="title">Pulp Fiction</div>
+        <button class="check" type="button" onclick="toggleMovie(this)" aria-label="Marcar como assistido">○</button>
+      </div>
+      <div class="movie" data-title="The Good, the Bad and the Ugly">
+        <div class="rank">10</div>
+        <div class="title">The Good, the Bad and the Ugly</div>
+        <button class="check" type="button" onclick="toggleMovie(this)" aria-label="Marcar como assistido">○</button>
+      </div>
+      <div class="movie" data-title="The Lord of the Rings: The Two Towers">
+        <div class="rank">11</div>
+        <div class="title">The Lord of the Rings: The Two Towers</div>
+        <button class="check" type="button" onclick="toggleMovie(this)" aria-label="Marcar como assistido">○</button>
+      </div>
+      <div class="movie" data-title="Forrest Gump">
+        <div class="rank">12</div>
+        <div class="title">Forrest Gump</div>
+        <button class="check" type="button" onclick="toggleMovie(this)" aria-label="Marcar como assistido">○</button>
+      </div>
+      <div class="movie" data-title="Fight Club">
+        <div class="rank">13</div>
+        <div class="title">Fight Club</div>
+        <button class="check" type="button" onclick="toggleMovie(this)" aria-label="Marcar como assistido">○</button>
+      </div>
+      <div class="movie" data-title="Inception">
+        <div class="rank">14</div>
+        <div class="title">Inception</div>
+        <button class="check" type="button" onclick="toggleMovie(this)" aria-label="Marcar como assistido">○</button>
+      </div>
+      <div class="movie" data-title="The Empire Strikes Back">
+        <div class="rank">15</div>
+        <div class="title">The Empire Strikes Back</div>
+        <button class="check" type="button" onclick="toggleMovie(this)" aria-label="Marcar como assistido">○</button>
+      </div>
+      <div class="movie" data-title="The Matrix">
+        <div class="rank">16</div>
+        <div class="title">The Matrix</div>
+        <button class="check" type="button" onclick="toggleMovie(this)" aria-label="Marcar como assistido">○</button>
+      </div>
+      <div class="movie" data-title="Interstellar">
+        <div class="rank">17</div>
+        <div class="title">Interstellar</div>
+        <button class="check" type="button" onclick="toggleMovie(this)" aria-label="Marcar como assistido">○</button>
+      </div>
+      <div class="movie" data-title="GoodFellas">
+        <div class="rank">18</div>
+        <div class="title">GoodFellas</div>
+        <button class="check" type="button" onclick="toggleMovie(this)" aria-label="Marcar como assistido">○</button>
+      </div>
+      <div class="movie" data-title="One Flew Over the Cuckoo&#x27;s Nest">
+        <div class="rank">19</div>
+        <div class="title">One Flew Over the Cuckoo&#x27;s Nest</div>
+        <button class="check" type="button" onclick="toggleMovie(this)" aria-label="Marcar como assistido">○</button>
+      </div>
+      <div class="movie" data-title="Se7en">
+        <div class="rank">20</div>
+        <div class="title">Se7en</div>
+        <button class="check" type="button" onclick="toggleMovie(this)" aria-label="Marcar como assistido">○</button>
+      </div>
+      <div class="movie" data-title="It&#x27;s a Wonderful Life">
+        <div class="rank">21</div>
+        <div class="title">It&#x27;s a Wonderful Life</div>
+        <button class="check" type="button" onclick="toggleMovie(this)" aria-label="Marcar como assistido">○</button>
+      </div>
+      <div class="movie" data-title="The Silence of the Lambs">
+        <div class="rank">22</div>
+        <div class="title">The Silence of the Lambs</div>
+        <button class="check" type="button" onclick="toggleMovie(this)" aria-label="Marcar como assistido">○</button>
+      </div>
+      <div class="movie" data-title="Saving Private Ryan">
+        <div class="rank">23</div>
+        <div class="title">Saving Private Ryan</div>
+        <button class="check" type="button" onclick="toggleMovie(this)" aria-label="Marcar como assistido">○</button>
+      </div>
+      <div class="movie" data-title="Seven Samurai">
+        <div class="rank">24</div>
+        <div class="title">Seven Samurai</div>
+        <button class="check" type="button" onclick="toggleMovie(this)" aria-label="Marcar como assistido">○</button>
+      </div>
+      <div class="movie" data-title="The Green Mile">
+        <div class="rank">25</div>
+        <div class="title">The Green Mile</div>
+        <button class="check" type="button" onclick="toggleMovie(this)" aria-label="Marcar como assistido">○</button>
+      </div>
+      <div class="movie" data-title="City of God">
+        <div class="rank">26</div>
+        <div class="title">City of God</div>
+        <button class="check" type="button" onclick="toggleMovie(this)" aria-label="Marcar como assistido">○</button>
+      </div>
+      <div class="movie" data-title="Life Is Beautiful">
+        <div class="rank">27</div>
+        <div class="title">Life Is Beautiful</div>
+        <button class="check" type="button" onclick="toggleMovie(this)" aria-label="Marcar como assistido">○</button>
+      </div>
+      <div class="movie" data-title="Terminator 2: Judgment Day">
+        <div class="rank">28</div>
+        <div class="title">Terminator 2: Judgment Day</div>
+        <button class="check" type="button" onclick="toggleMovie(this)" aria-label="Marcar como assistido">○</button>
+      </div>
+      <div class="movie" data-title="Back to the Future">
+        <div class="rank">29</div>
+        <div class="title">Back to the Future</div>
+        <button class="check" type="button" onclick="toggleMovie(this)" aria-label="Marcar como assistido">○</button>
+      </div>
+      <div class="movie" data-title="Star Wars">
+        <div class="rank">30</div>
+        <div class="title">Star Wars</div>
+        <button class="check" type="button" onclick="toggleMovie(this)" aria-label="Marcar como assistido">○</button>
+      </div>
+      <div class="movie" data-title="Kill Bill: The Whole Bloody Affair">
+        <div class="rank">31</div>
+        <div class="title">Kill Bill: The Whole Bloody Affair</div>
+        <button class="check" type="button" onclick="toggleMovie(this)" aria-label="Marcar como assistido">○</button>
+      </div>
+      <div class="movie" data-title="Spirited Away">
+        <div class="rank">32</div>
+        <div class="title">Spirited Away</div>
+        <button class="check" type="button" onclick="toggleMovie(this)" aria-label="Marcar como assistido">○</button>
+      </div>
+      <div class="movie" data-title="Gladiator">
+        <div class="rank">33</div>
+        <div class="title">Gladiator</div>
+        <button class="check" type="button" onclick="toggleMovie(this)" aria-label="Marcar como assistido">○</button>
+      </div>
+      <div class="movie" data-title="The Pianist">
+        <div class="rank">34</div>
+        <div class="title">The Pianist</div>
+        <button class="check" type="button" onclick="toggleMovie(this)" aria-label="Marcar como assistido">○</button>
+      </div>
+      <div class="movie" data-title="Parasite">
+        <div class="rank">35</div>
+        <div class="title">Parasite</div>
+        <button class="check" type="button" onclick="toggleMovie(this)" aria-label="Marcar como assistido">○</button>
+      </div>
+      <div class="movie" data-title="Grave of the Fireflies">
+        <div class="rank">36</div>
+        <div class="title">Grave of the Fireflies</div>
+        <button class="check" type="button" onclick="toggleMovie(this)" aria-label="Marcar como assistido">○</button>
+      </div>
+      <div class="movie" data-title="Harakiri">
+        <div class="rank">37</div>
+        <div class="title">Harakiri</div>
+        <button class="check" type="button" onclick="toggleMovie(this)" aria-label="Marcar como assistido">○</button>
+      </div>
+      <div class="movie" data-title="Psycho">
+        <div class="rank">38</div>
+        <div class="title">Psycho</div>
+        <button class="check" type="button" onclick="toggleMovie(this)" aria-label="Marcar como assistido">○</button>
+      </div>
+      <div class="movie" data-title="The Lion King">
+        <div class="rank">39</div>
+        <div class="title">The Lion King</div>
+        <button class="check" type="button" onclick="toggleMovie(this)" aria-label="Marcar como assistido">○</button>
+      </div>
+      <div class="movie" data-title="The Departed">
+        <div class="rank">40</div>
+        <div class="title">The Departed</div>
+        <button class="check" type="button" onclick="toggleMovie(this)" aria-label="Marcar como assistido">○</button>
+      </div>
+      <div class="movie" data-title="Whiplash">
+        <div class="rank">41</div>
+        <div class="title">Whiplash</div>
+        <button class="check" type="button" onclick="toggleMovie(this)" aria-label="Marcar como assistido">○</button>
+      </div>
+      <div class="movie" data-title="The Prestige">
+        <div class="rank">42</div>
+        <div class="title">The Prestige</div>
+        <button class="check" type="button" onclick="toggleMovie(this)" aria-label="Marcar como assistido">○</button>
+      </div>
+      <div class="movie" data-title="American History X">
+        <div class="rank">43</div>
+        <div class="title">American History X</div>
+        <button class="check" type="button" onclick="toggleMovie(this)" aria-label="Marcar como assistido">○</button>
+      </div>
+      <div class="movie" data-title="Spider-Man: Across the Spider-Verse">
+        <div class="rank">44</div>
+        <div class="title">Spider-Man: Across the Spider-Verse</div>
+        <button class="check" type="button" onclick="toggleMovie(this)" aria-label="Marcar como assistido">○</button>
+      </div>
+      <div class="movie" data-title="Léon: The Professional">
+        <div class="rank">45</div>
+        <div class="title">Léon: The Professional</div>
+        <button class="check" type="button" onclick="toggleMovie(this)" aria-label="Marcar como assistido">○</button>
+      </div>
+      <div class="movie" data-title="Cinema Paradiso">
+        <div class="rank">46</div>
+        <div class="title">Cinema Paradiso</div>
+        <button class="check" type="button" onclick="toggleMovie(this)" aria-label="Marcar como assistido">○</button>
+      </div>
+      <div class="movie" data-title="Casablanca">
+        <div class="rank">47</div>
+        <div class="title">Casablanca</div>
+        <button class="check" type="button" onclick="toggleMovie(this)" aria-label="Marcar como assistido">○</button>
+      </div>
+      <div class="movie" data-title="The Intouchables">
+        <div class="rank">48</div>
+        <div class="title">The Intouchables</div>
+        <button class="check" type="button" onclick="toggleMovie(this)" aria-label="Marcar como assistido">○</button>
+      </div>
+      <div class="movie" data-title="The Usual Suspects">
+        <div class="rank">49</div>
+        <div class="title">The Usual Suspects</div>
+        <button class="check" type="button" onclick="toggleMovie(this)" aria-label="Marcar como assistido">○</button>
+      </div>
+      <div class="movie" data-title="Django Unchained">
+        <div class="rank">50</div>
+        <div class="title">Django Unchained</div>
+        <button class="check" type="button" onclick="toggleMovie(this)" aria-label="Marcar como assistido">○</button>
+      </div>
+      <div class="movie" data-title="Alien">
+        <div class="rank">51</div>
+        <div class="title">Alien</div>
+        <button class="check" type="button" onclick="toggleMovie(this)" aria-label="Marcar como assistido">○</button>
+      </div>
+      <div class="movie" data-title="Rear Window">
+        <div class="rank">52</div>
+        <div class="title">Rear Window</div>
+        <button class="check" type="button" onclick="toggleMovie(this)" aria-label="Marcar como assistido">○</button>
+      </div>
+      <div class="movie" data-title="Modern Times">
+        <div class="rank">53</div>
+        <div class="title">Modern Times</div>
+        <button class="check" type="button" onclick="toggleMovie(this)" aria-label="Marcar como assistido">○</button>
+      </div>
+      <div class="movie" data-title="Once Upon a Time in the West">
+        <div class="rank">54</div>
+        <div class="title">Once Upon a Time in the West</div>
+        <button class="check" type="button" onclick="toggleMovie(this)" aria-label="Marcar como assistido">○</button>
+      </div>
+      <div class="movie" data-title="The Odyssey">
+        <div class="rank">55</div>
+        <div class="title">The Odyssey</div>
+        <button class="check" type="button" onclick="toggleMovie(this)" aria-label="Marcar como assistido">○</button>
+      </div>
+      <div class="movie" data-title="City Lights">
+        <div class="rank">56</div>
+        <div class="title">City Lights</div>
+        <button class="check" type="button" onclick="toggleMovie(this)" aria-label="Marcar como assistido">○</button>
+      </div>
+      <div class="movie" data-title="WALL·E">
+        <div class="rank">57</div>
+        <div class="title">WALL·E</div>
+        <button class="check" type="button" onclick="toggleMovie(this)" aria-label="Marcar como assistido">○</button>
+      </div>
+      <div class="movie" data-title="Apocalypse Now">
+        <div class="rank">58</div>
+        <div class="title">Apocalypse Now</div>
+        <button class="check" type="button" onclick="toggleMovie(this)" aria-label="Marcar como assistido">○</button>
+      </div>
+      <div class="movie" data-title="Memento">
+        <div class="rank">59</div>
+        <div class="title">Memento</div>
+        <button class="check" type="button" onclick="toggleMovie(this)" aria-label="Marcar como assistido">○</button>
+      </div>
+      <div class="movie" data-title="Avengers: Infinity War">
+        <div class="rank">60</div>
+        <div class="title">Avengers: Infinity War</div>
+        <button class="check" type="button" onclick="toggleMovie(this)" aria-label="Marcar como assistido">○</button>
+      </div>
+      <div class="movie" data-title="Dune: Part Two">
+        <div class="rank">61</div>
+        <div class="title">Dune: Part Two</div>
+        <button class="check" type="button" onclick="toggleMovie(this)" aria-label="Marcar como assistido">○</button>
+      </div>
+      <div class="movie" data-title="Raiders of the Lost Ark">
+        <div class="rank">62</div>
+        <div class="title">Raiders of the Lost Ark</div>
+        <button class="check" type="button" onclick="toggleMovie(this)" aria-label="Marcar como assistido">○</button>
+      </div>
+      <div class="movie" data-title="Spider-Man: Into the Spider-Verse">
+        <div class="rank">63</div>
+        <div class="title">Spider-Man: Into the Spider-Verse</div>
+        <button class="check" type="button" onclick="toggleMovie(this)" aria-label="Marcar como assistido">○</button>
+      </div>
+      <div class="movie" data-title="The Lives of Others">
+        <div class="rank">64</div>
+        <div class="title">The Lives of Others</div>
+        <button class="check" type="button" onclick="toggleMovie(this)" aria-label="Marcar como assistido">○</button>
+      </div>
+      <div class="movie" data-title="Sunset Boulevard">
+        <div class="rank">65</div>
+        <div class="title">Sunset Boulevard</div>
+        <button class="check" type="button" onclick="toggleMovie(this)" aria-label="Marcar como assistido">○</button>
+      </div>
+      <div class="movie" data-title="Witness for the Prosecution">
+        <div class="rank">66</div>
+        <div class="title">Witness for the Prosecution</div>
+        <button class="check" type="button" onclick="toggleMovie(this)" aria-label="Marcar como assistido">○</button>
+      </div>
+      <div class="movie" data-title="Paths of Glory">
+        <div class="rank">67</div>
+        <div class="title">Paths of Glory</div>
+        <button class="check" type="button" onclick="toggleMovie(this)" aria-label="Marcar como assistido">○</button>
+      </div>
+      <div class="movie" data-title="The Shining">
+        <div class="rank">68</div>
+        <div class="title">The Shining</div>
+        <button class="check" type="button" onclick="toggleMovie(this)" aria-label="Marcar como assistido">○</button>
+      </div>
+      <div class="movie" data-title="Inglourious Basterds">
+        <div class="rank">69</div>
+        <div class="title">Inglourious Basterds</div>
+        <button class="check" type="button" onclick="toggleMovie(this)" aria-label="Marcar como assistido">○</button>
+      </div>
+      <div class="movie" data-title="The Great Dictator">
+        <div class="rank">70</div>
+        <div class="title">The Great Dictator</div>
+        <button class="check" type="button" onclick="toggleMovie(this)" aria-label="Marcar como assistido">○</button>
+      </div>
+      <div class="movie" data-title="Aliens">
+        <div class="rank">71</div>
+        <div class="title">Aliens</div>
+        <button class="check" type="button" onclick="toggleMovie(this)" aria-label="Marcar como assistido">○</button>
+      </div>
+      <div class="movie" data-title="12th Fail">
+        <div class="rank">72</div>
+        <div class="title">12th Fail</div>
+        <button class="check" type="button" onclick="toggleMovie(this)" aria-label="Marcar como assistido">○</button>
+      </div>
+      <div class="movie" data-title="High and Low">
+        <div class="rank">73</div>
+        <div class="title">High and Low</div>
+        <button class="check" type="button" onclick="toggleMovie(this)" aria-label="Marcar como assistido">○</button>
+      </div>
+      <div class="movie" data-title="Avengers: Endgame">
+        <div class="rank">74</div>
+        <div class="title">Avengers: Endgame</div>
+        <button class="check" type="button" onclick="toggleMovie(this)" aria-label="Marcar como assistido">○</button>
+      </div>
+      <div class="movie" data-title="Good Will Hunting">
+        <div class="rank">75</div>
+        <div class="title">Good Will Hunting</div>
+        <button class="check" type="button" onclick="toggleMovie(this)" aria-label="Marcar como assistido">○</button>
+      </div>
+      <div class="movie" data-title="Coco">
+        <div class="rank">76</div>
+        <div class="title">Coco</div>
+        <button class="check" type="button" onclick="toggleMovie(this)" aria-label="Marcar como assistido">○</button>
+      </div>
+      <div class="movie" data-title="The Dark Knight Rises">
+        <div class="rank">77</div>
+        <div class="title">The Dark Knight Rises</div>
+        <button class="check" type="button" onclick="toggleMovie(this)" aria-label="Marcar como assistido">○</button>
+      </div>
+      <div class="movie" data-title="Toy Story">
+        <div class="rank">78</div>
+        <div class="title">Toy Story</div>
+        <button class="check" type="button" onclick="toggleMovie(this)" aria-label="Marcar como assistido">○</button>
+      </div>
+      <div class="movie" data-title="Amadeus">
+        <div class="rank">79</div>
+        <div class="title">Amadeus</div>
+        <button class="check" type="button" onclick="toggleMovie(this)" aria-label="Marcar como assistido">○</button>
+      </div>
+      <div class="movie" data-title="Your Name.">
+        <div class="rank">80</div>
+        <div class="title">Your Name.</div>
+        <button class="check" type="button" onclick="toggleMovie(this)" aria-label="Marcar como assistido">○</button>
+      </div>
+      <div class="movie" data-title="Das Boot">
+        <div class="rank">81</div>
+        <div class="title">Das Boot</div>
+        <button class="check" type="button" onclick="toggleMovie(this)" aria-label="Marcar como assistido">○</button>
+      </div>
+      <div class="movie" data-title="Braveheart">
+        <div class="rank">82</div>
+        <div class="title">Braveheart</div>
+        <button class="check" type="button" onclick="toggleMovie(this)" aria-label="Marcar como assistido">○</button>
+      </div>
+      <div class="movie" data-title="Princess Mononoke">
+        <div class="rank">83</div>
+        <div class="title">Princess Mononoke</div>
+        <button class="check" type="button" onclick="toggleMovie(this)" aria-label="Marcar como assistido">○</button>
+      </div>
+      <div class="movie" data-title="3 Idiots">
+        <div class="rank">84</div>
+        <div class="title">3 Idiots</div>
+        <button class="check" type="button" onclick="toggleMovie(this)" aria-label="Marcar como assistido">○</button>
+      </div>
+      <div class="movie" data-title="Oldboy">
+        <div class="rank">85</div>
+        <div class="title">Oldboy</div>
+        <button class="check" type="button" onclick="toggleMovie(this)" aria-label="Marcar como assistido">○</button>
+      </div>
+      <div class="movie" data-title="Dr. Strangelove or: How I Learned to Stop Worrying and Love the Bomb">
+        <div class="rank">86</div>
+        <div class="title">Dr. Strangelove or: How I Learned to Stop Worrying and Love the Bomb</div>
+        <button class="check" type="button" onclick="toggleMovie(this)" aria-label="Marcar como assistido">○</button>
+      </div>
+      <div class="movie" data-title="American Beauty">
+        <div class="rank">87</div>
+        <div class="title">American Beauty</div>
+        <button class="check" type="button" onclick="toggleMovie(this)" aria-label="Marcar como assistido">○</button>
+      </div>
+      <div class="movie" data-title="Capernaum">
+        <div class="rank">88</div>
+        <div class="title">Capernaum</div>
+        <button class="check" type="button" onclick="toggleMovie(this)" aria-label="Marcar como assistido">○</button>
+      </div>
+      <div class="movie" data-title="Singin&#x27; in the Rain">
+        <div class="rank">89</div>
+        <div class="title">Singin&#x27; in the Rain</div>
+        <button class="check" type="button" onclick="toggleMovie(this)" aria-label="Marcar como assistido">○</button>
+      </div>
+      <div class="movie" data-title="Once Upon a Time in America">
+        <div class="rank">90</div>
+        <div class="title">Once Upon a Time in America</div>
+        <button class="check" type="button" onclick="toggleMovie(this)" aria-label="Marcar como assistido">○</button>
+      </div>
+      <div class="movie" data-title="Joker">
+        <div class="rank">91</div>
+        <div class="title">Joker</div>
+        <button class="check" type="button" onclick="toggleMovie(this)" aria-label="Marcar como assistido">○</button>
+      </div>
+      <div class="movie" data-title="Toy Story 3">
+        <div class="rank">92</div>
+        <div class="title">Toy Story 3</div>
+        <button class="check" type="button" onclick="toggleMovie(this)" aria-label="Marcar como assistido">○</button>
+      </div>
+      <div class="movie" data-title="Return of the Jedi">
+        <div class="rank">93</div>
+        <div class="title">Return of the Jedi</div>
+        <button class="check" type="button" onclick="toggleMovie(this)" aria-label="Marcar como assistido">○</button>
+      </div>
+      <div class="movie" data-title="Come and See">
+        <div class="rank">94</div>
+        <div class="title">Come and See</div>
+        <button class="check" type="button" onclick="toggleMovie(this)" aria-label="Marcar como assistido">○</button>
+      </div>
+      <div class="movie" data-title="Requiem for a Dream">
+        <div class="rank">95</div>
+        <div class="title">Requiem for a Dream</div>
+        <button class="check" type="button" onclick="toggleMovie(this)" aria-label="Marcar como assistido">○</button>
+      </div>
+      <div class="movie" data-title="Ikiru">
+        <div class="rank">96</div>
+        <div class="title">Ikiru</div>
+        <button class="check" type="button" onclick="toggleMovie(this)" aria-label="Marcar como assistido">○</button>
+      </div>
+      <div class="movie" data-title="Incendies">
+        <div class="rank">97</div>
+        <div class="title">Incendies</div>
+        <button class="check" type="button" onclick="toggleMovie(this)" aria-label="Marcar como assistido">○</button>
+      </div>
+      <div class="movie" data-title="The Hunt">
+        <div class="rank">98</div>
+        <div class="title">The Hunt</div>
+        <button class="check" type="button" onclick="toggleMovie(this)" aria-label="Marcar como assistido">○</button>
+      </div>
+      <div class="movie" data-title="Eternal Sunshine of the Spotless Mind">
+        <div class="rank">99</div>
+        <div class="title">Eternal Sunshine of the Spotless Mind</div>
+        <button class="check" type="button" onclick="toggleMovie(this)" aria-label="Marcar como assistido">○</button>
+      </div>
+      <div class="movie" data-title="The Apartment">
+        <div class="rank">100</div>
+        <div class="title">The Apartment</div>
+        <button class="check" type="button" onclick="toggleMovie(this)" aria-label="Marcar como assistido">○</button>
+      </div>
+      <div class="movie" data-title="Lawrence of Arabia">
+        <div class="rank">101</div>
+        <div class="title">Lawrence of Arabia</div>
+        <button class="check" type="button" onclick="toggleMovie(this)" aria-label="Marcar como assistido">○</button>
+      </div>
+      <div class="movie" data-title="Heat">
+        <div class="rank">102</div>
+        <div class="title">Heat</div>
+        <button class="check" type="button" onclick="toggleMovie(this)" aria-label="Marcar como assistido">○</button>
+      </div>
+      <div class="movie" data-title="Scarface">
+        <div class="rank">103</div>
+        <div class="title">Scarface</div>
+        <button class="check" type="button" onclick="toggleMovie(this)" aria-label="Marcar como assistido">○</button>
+      </div>
+      <div class="movie" data-title="Attack on Titan: THE LAST ATTACK">
+        <div class="rank">104</div>
+        <div class="title">Attack on Titan: THE LAST ATTACK</div>
+        <button class="check" type="button" onclick="toggleMovie(this)" aria-label="Marcar como assistido">○</button>
+      </div>
+      <div class="movie" data-title="Reservoir Dogs">
+        <div class="rank">105</div>
+        <div class="title">Reservoir Dogs</div>
+        <button class="check" type="button" onclick="toggleMovie(this)" aria-label="Marcar como assistido">○</button>
+      </div>
+      <div class="movie" data-title="2001: A Space Odyssey">
+        <div class="rank">106</div>
+        <div class="title">2001: A Space Odyssey</div>
+        <button class="check" type="button" onclick="toggleMovie(this)" aria-label="Marcar como assistido">○</button>
+      </div>
+      <div class="movie" data-title="Up">
+        <div class="rank">107</div>
+        <div class="title">Up</div>
+        <button class="check" type="button" onclick="toggleMovie(this)" aria-label="Marcar como assistido">○</button>
+      </div>
+      <div class="movie" data-title="Double Indemnity">
+        <div class="rank">108</div>
+        <div class="title">Double Indemnity</div>
+        <button class="check" type="button" onclick="toggleMovie(this)" aria-label="Marcar como assistido">○</button>
+      </div>
+      <div class="movie" data-title="Like Stars on Earth">
+        <div class="rank">109</div>
+        <div class="title">Like Stars on Earth</div>
+        <button class="check" type="button" onclick="toggleMovie(this)" aria-label="Marcar como assistido">○</button>
+      </div>
+      <div class="movie" data-title="North by Northwest">
+        <div class="rank">110</div>
+        <div class="title">North by Northwest</div>
+        <button class="check" type="button" onclick="toggleMovie(this)" aria-label="Marcar como assistido">○</button>
+      </div>
+      <div class="movie" data-title="Full Metal Jacket">
+        <div class="rank">111</div>
+        <div class="title">Full Metal Jacket</div>
+        <button class="check" type="button" onclick="toggleMovie(this)" aria-label="Marcar como assistido">○</button>
+      </div>
+      <div class="movie" data-title="I Swear">
+        <div class="rank">112</div>
+        <div class="title">I Swear</div>
+        <button class="check" type="button" onclick="toggleMovie(this)" aria-label="Marcar como assistido">○</button>
+      </div>
+      <div class="movie" data-title="A Separation">
+        <div class="rank">113</div>
+        <div class="title">A Separation</div>
+        <button class="check" type="button" onclick="toggleMovie(this)" aria-label="Marcar como assistido">○</button>
+      </div>
+      <div class="movie" data-title="M">
+        <div class="rank">114</div>
+        <div class="title">M</div>
+        <button class="check" type="button" onclick="toggleMovie(this)" aria-label="Marcar como assistido">○</button>
+      </div>
+      <div class="movie" data-title="Amélie">
+        <div class="rank">115</div>
+        <div class="title">Amélie</div>
+        <button class="check" type="button" onclick="toggleMovie(this)" aria-label="Marcar como assistido">○</button>
+      </div>
+      <div class="movie" data-title="Die Hard">
+        <div class="rank">116</div>
+        <div class="title">Die Hard</div>
+        <button class="check" type="button" onclick="toggleMovie(this)" aria-label="Marcar como assistido">○</button>
+      </div>
+      <div class="movie" data-title="Vertigo">
+        <div class="rank">117</div>
+        <div class="title">Vertigo</div>
+        <button class="check" type="button" onclick="toggleMovie(this)" aria-label="Marcar como assistido">○</button>
+      </div>
+      <div class="movie" data-title="Citizen Kane">
+        <div class="rank">118</div>
+        <div class="title">Citizen Kane</div>
+        <button class="check" type="button" onclick="toggleMovie(this)" aria-label="Marcar como assistido">○</button>
+      </div>
+      <div class="movie" data-title="To Kill a Mockingbird">
+        <div class="rank">119</div>
+        <div class="title">To Kill a Mockingbird</div>
+        <button class="check" type="button" onclick="toggleMovie(this)" aria-label="Marcar como assistido">○</button>
+      </div>
+      <div class="movie" data-title="Indiana Jones and the Last Crusade">
+        <div class="rank">120</div>
+        <div class="title">Indiana Jones and the Last Crusade</div>
+        <button class="check" type="button" onclick="toggleMovie(this)" aria-label="Marcar como assistido">○</button>
+      </div>
+      <div class="movie" data-title="The Sting">
+        <div class="rank">121</div>
+        <div class="title">The Sting</div>
+        <button class="check" type="button" onclick="toggleMovie(this)" aria-label="Marcar como assistido">○</button>
+      </div>
+      <div class="movie" data-title="A Clockwork Orange">
+        <div class="rank">122</div>
+        <div class="title">A Clockwork Orange</div>
+        <button class="check" type="button" onclick="toggleMovie(this)" aria-label="Marcar como assistido">○</button>
+      </div>
+      <div class="movie" data-title="Woman in the Dunes">
+        <div class="rank">123</div>
+        <div class="title">Woman in the Dunes</div>
+        <button class="check" type="button" onclick="toggleMovie(this)" aria-label="Marcar como assistido">○</button>
+      </div>
+      <div class="movie" data-title="Metropolis">
+        <div class="rank">124</div>
+        <div class="title">Metropolis</div>
+        <button class="check" type="button" onclick="toggleMovie(this)" aria-label="Marcar como assistido">○</button>
+      </div>
+      <div class="movie" data-title="1917">
+        <div class="rank">125</div>
+        <div class="title">1917</div>
+        <button class="check" type="button" onclick="toggleMovie(this)" aria-label="Marcar como assistido">○</button>
+      </div>
+      <div class="movie" data-title="Snatch">
+        <div class="rank">126</div>
+        <div class="title">Snatch</div>
+        <button class="check" type="button" onclick="toggleMovie(this)" aria-label="Marcar como assistido">○</button>
+      </div>
+      <div class="movie" data-title="The Wolf of Wall Street">
+        <div class="rank">127</div>
+        <div class="title">The Wolf of Wall Street</div>
+        <button class="check" type="button" onclick="toggleMovie(this)" aria-label="Marcar como assistido">○</button>
+      </div>
+      <div class="movie" data-title="The Truman Show">
+        <div class="rank">128</div>
+        <div class="title">The Truman Show</div>
+        <button class="check" type="button" onclick="toggleMovie(this)" aria-label="Marcar como assistido">○</button>
+      </div>
+      <div class="movie" data-title="Downfall">
+        <div class="rank">129</div>
+        <div class="title">Downfall</div>
+        <button class="check" type="button" onclick="toggleMovie(this)" aria-label="Marcar como assistido">○</button>
+      </div>
+      <div class="movie" data-title="L.A. Confidential">
+        <div class="rank">130</div>
+        <div class="title">L.A. Confidential</div>
+        <button class="check" type="button" onclick="toggleMovie(this)" aria-label="Marcar como assistido">○</button>
+      </div>
+      <div class="movie" data-title="Shutter Island">
+        <div class="rank">131</div>
+        <div class="title">Shutter Island</div>
+        <button class="check" type="button" onclick="toggleMovie(this)" aria-label="Marcar como assistido">○</button>
+      </div>
+      <div class="movie" data-title="Dangal">
+        <div class="rank">132</div>
+        <div class="title">Dangal</div>
+        <button class="check" type="button" onclick="toggleMovie(this)" aria-label="Marcar como assistido">○</button>
+      </div>
+      <div class="movie" data-title="Green Book">
+        <div class="rank">133</div>
+        <div class="title">Green Book</div>
+        <button class="check" type="button" onclick="toggleMovie(this)" aria-label="Marcar como assistido">○</button>
+      </div>
+      <div class="movie" data-title="Bicycle Thieves">
+        <div class="rank">134</div>
+        <div class="title">Bicycle Thieves</div>
+        <button class="check" type="button" onclick="toggleMovie(this)" aria-label="Marcar como assistido">○</button>
+      </div>
+      <div class="movie" data-title="Judgment at Nuremberg">
+        <div class="rank">135</div>
+        <div class="title">Judgment at Nuremberg</div>
+        <button class="check" type="button" onclick="toggleMovie(this)" aria-label="Marcar como assistido">○</button>
+      </div>
+      <div class="movie" data-title="Jurassic Park">
+        <div class="rank">136</div>
+        <div class="title">Jurassic Park</div>
+        <button class="check" type="button" onclick="toggleMovie(this)" aria-label="Marcar como assistido">○</button>
+      </div>
+      <div class="movie" data-title="Oppenheimer">
+        <div class="rank">137</div>
+        <div class="title">Oppenheimer</div>
+        <button class="check" type="button" onclick="toggleMovie(this)" aria-label="Marcar como assistido">○</button>
+      </div>
+      <div class="movie" data-title="Batman Begins">
+        <div class="rank">138</div>
+        <div class="title">Batman Begins</div>
+        <button class="check" type="button" onclick="toggleMovie(this)" aria-label="Marcar como assistido">○</button>
+      </div>
+      <div class="movie" data-title="For a Few Dollars More">
+        <div class="rank">139</div>
+        <div class="title">For a Few Dollars More</div>
+        <button class="check" type="button" onclick="toggleMovie(this)" aria-label="Marcar como assistido">○</button>
+      </div>
+      <div class="movie" data-title="Hamilton">
+        <div class="rank">140</div>
+        <div class="title">Hamilton</div>
+        <button class="check" type="button" onclick="toggleMovie(this)" aria-label="Marcar como assistido">○</button>
+      </div>
+      <div class="movie" data-title="Some Like It Hot">
+        <div class="rank">141</div>
+        <div class="title">Some Like It Hot</div>
+        <button class="check" type="button" onclick="toggleMovie(this)" aria-label="Marcar como assistido">○</button>
+      </div>
+      <div class="movie" data-title="There Will Be Blood">
+        <div class="rank">142</div>
+        <div class="title">There Will Be Blood</div>
+        <button class="check" type="button" onclick="toggleMovie(this)" aria-label="Marcar como assistido">○</button>
+      </div>
+      <div class="movie" data-title="Taxi Driver">
+        <div class="rank">143</div>
+        <div class="title">Taxi Driver</div>
+        <button class="check" type="button" onclick="toggleMovie(this)" aria-label="Marcar como assistido">○</button>
+      </div>
+      <div class="movie" data-title="The Father">
+        <div class="rank">144</div>
+        <div class="title">The Father</div>
+        <button class="check" type="button" onclick="toggleMovie(this)" aria-label="Marcar como assistido">○</button>
+      </div>
+      <div class="movie" data-title="The Kid">
+        <div class="rank">145</div>
+        <div class="title">The Kid</div>
+        <button class="check" type="button" onclick="toggleMovie(this)" aria-label="Marcar como assistido">○</button>
+      </div>
+      <div class="movie" data-title="All About Eve">
+        <div class="rank">146</div>
+        <div class="title">All About Eve</div>
+        <button class="check" type="button" onclick="toggleMovie(this)" aria-label="Marcar como assistido">○</button>
+      </div>
+      <div class="movie" data-title="The Sixth Sense">
+        <div class="rank">147</div>
+        <div class="title">The Sixth Sense</div>
+        <button class="check" type="button" onclick="toggleMovie(this)" aria-label="Marcar como assistido">○</button>
+      </div>
+      <div class="movie" data-title="Ran">
+        <div class="rank">148</div>
+        <div class="title">Ran</div>
+        <button class="check" type="button" onclick="toggleMovie(this)" aria-label="Marcar como assistido">○</button>
+      </div>
+      <div class="movie" data-title="Casino">
+        <div class="rank">149</div>
+        <div class="title">Casino</div>
+        <button class="check" type="button" onclick="toggleMovie(this)" aria-label="Marcar como assistido">○</button>
+      </div>
+      <div class="movie" data-title="The Thing">
+        <div class="rank">150</div>
+        <div class="title">The Thing</div>
+        <button class="check" type="button" onclick="toggleMovie(this)" aria-label="Marcar como assistido">○</button>
+      </div>
+      <div class="movie" data-title="No Country for Old Men">
+        <div class="rank">151</div>
+        <div class="title">No Country for Old Men</div>
+        <button class="check" type="button" onclick="toggleMovie(this)" aria-label="Marcar como assistido">○</button>
+      </div>
+      <div class="movie" data-title="Prisoners">
+        <div class="rank">152</div>
+        <div class="title">Prisoners</div>
+        <button class="check" type="button" onclick="toggleMovie(this)" aria-label="Marcar como assistido">○</button>
+      </div>
+      <div class="movie" data-title="Top Gun: Maverick">
+        <div class="rank">153</div>
+        <div class="title">Top Gun: Maverick</div>
+        <button class="check" type="button" onclick="toggleMovie(this)" aria-label="Marcar como assistido">○</button>
+      </div>
+      <div class="movie" data-title="Kill Bill: Vol. 1">
+        <div class="rank">154</div>
+        <div class="title">Kill Bill: Vol. 1</div>
+        <button class="check" type="button" onclick="toggleMovie(this)" aria-label="Marcar como assistido">○</button>
+      </div>
+      <div class="movie" data-title="Project Hail Mary">
+        <div class="rank">155</div>
+        <div class="title">Project Hail Mary</div>
+        <button class="check" type="button" onclick="toggleMovie(this)" aria-label="Marcar como assistido">○</button>
+      </div>
+      <div class="movie" data-title="Pan&#x27;s Labyrinth">
+        <div class="rank">156</div>
+        <div class="title">Pan&#x27;s Labyrinth</div>
+        <button class="check" type="button" onclick="toggleMovie(this)" aria-label="Marcar como assistido">○</button>
+      </div>
+      <div class="movie" data-title="Unforgiven">
+        <div class="rank">157</div>
+        <div class="title">Unforgiven</div>
+        <button class="check" type="button" onclick="toggleMovie(this)" aria-label="Marcar como assistido">○</button>
+      </div>
+      <div class="movie" data-title="A Beautiful Mind">
+        <div class="rank">158</div>
+        <div class="title">A Beautiful Mind</div>
+        <button class="check" type="button" onclick="toggleMovie(this)" aria-label="Marcar como assistido">○</button>
+      </div>
+      <div class="movie" data-title="Howl&#x27;s Moving Castle">
+        <div class="rank">159</div>
+        <div class="title">Howl&#x27;s Moving Castle</div>
+        <button class="check" type="button" onclick="toggleMovie(this)" aria-label="Marcar como assistido">○</button>
+      </div>
+      <div class="movie" data-title="The Treasure of the Sierra Madre">
+        <div class="rank">160</div>
+        <div class="title">The Treasure of the Sierra Madre</div>
+        <button class="check" type="button" onclick="toggleMovie(this)" aria-label="Marcar como assistido">○</button>
+      </div>
+      <div class="movie" data-title="Finding Nemo">
+        <div class="rank">161</div>
+        <div class="title">Finding Nemo</div>
+        <button class="check" type="button" onclick="toggleMovie(this)" aria-label="Marcar como assistido">○</button>
+      </div>
+      <div class="movie" data-title="Demon Slayer: Kimetsu no Yaiba Infinity Castle">
+        <div class="rank">162</div>
+        <div class="title">Demon Slayer: Kimetsu no Yaiba Infinity Castle</div>
+        <button class="check" type="button" onclick="toggleMovie(this)" aria-label="Marcar como assistido">○</button>
+      </div>
+      <div class="movie" data-title="Klaus">
+        <div class="rank">163</div>
+        <div class="title">Klaus</div>
+        <button class="check" type="button" onclick="toggleMovie(this)" aria-label="Marcar como assistido">○</button>
+      </div>
+      <div class="movie" data-title="Yojimbo">
+        <div class="rank">164</div>
+        <div class="title">Yojimbo</div>
+        <button class="check" type="button" onclick="toggleMovie(this)" aria-label="Marcar como assistido">○</button>
+      </div>
+      <div class="movie" data-title="The Elephant Man">
+        <div class="rank">165</div>
+        <div class="title">The Elephant Man</div>
+        <button class="check" type="button" onclick="toggleMovie(this)" aria-label="Marcar como assistido">○</button>
+      </div>
+      <div class="movie" data-title="The Great Escape">
+        <div class="rank">166</div>
+        <div class="title">The Great Escape</div>
+        <button class="check" type="button" onclick="toggleMovie(this)" aria-label="Marcar como assistido">○</button>
+      </div>
+      <div class="movie" data-title="Monty Python and the Holy Grail">
+        <div class="rank">167</div>
+        <div class="title">Monty Python and the Holy Grail</div>
+        <button class="check" type="button" onclick="toggleMovie(this)" aria-label="Marcar como assistido">○</button>
+      </div>
+      <div class="movie" data-title="Dial M for Murder">
+        <div class="rank">168</div>
+        <div class="title">Dial M for Murder</div>
+        <button class="check" type="button" onclick="toggleMovie(this)" aria-label="Marcar como assistido">○</button>
+      </div>
+      <div class="movie" data-title="The Secret in Their Eyes">
+        <div class="rank">169</div>
+        <div class="title">The Secret in Their Eyes</div>
+        <button class="check" type="button" onclick="toggleMovie(this)" aria-label="Marcar como assistido">○</button>
+      </div>
+      <div class="movie" data-title="Gone with the Wind">
+        <div class="rank">170</div>
+        <div class="title">Gone with the Wind</div>
+        <button class="check" type="button" onclick="toggleMovie(this)" aria-label="Marcar como assistido">○</button>
+      </div>
+      <div class="movie" data-title="Lock, Stock and Two Smoking Barrels">
+        <div class="rank">171</div>
+        <div class="title">Lock, Stock and Two Smoking Barrels</div>
+        <button class="check" type="button" onclick="toggleMovie(this)" aria-label="Marcar como assistido">○</button>
+      </div>
+      <div class="movie" data-title="Chinatown">
+        <div class="rank">172</div>
+        <div class="title">Chinatown</div>
+        <button class="check" type="button" onclick="toggleMovie(this)" aria-label="Marcar como assistido">○</button>
+      </div>
+      <div class="movie" data-title="Catch Me If You Can">
+        <div class="rank">173</div>
+        <div class="title">Catch Me If You Can</div>
+        <button class="check" type="button" onclick="toggleMovie(this)" aria-label="Marcar como assistido">○</button>
+      </div>
+      <div class="movie" data-title="V for Vendetta">
+        <div class="rank">174</div>
+        <div class="title">V for Vendetta</div>
+        <button class="check" type="button" onclick="toggleMovie(this)" aria-label="Marcar como assistido">○</button>
+      </div>
+      <div class="movie" data-title="The Best of Youth">
+        <div class="rank">175</div>
+        <div class="title">The Best of Youth</div>
+        <button class="check" type="button" onclick="toggleMovie(this)" aria-label="Marcar como assistido">○</button>
+      </div>
+      <div class="movie" data-title="Inside Out">
+        <div class="rank">176</div>
+        <div class="title">Inside Out</div>
+        <button class="check" type="button" onclick="toggleMovie(this)" aria-label="Marcar como assistido">○</button>
+      </div>
+      <div class="movie" data-title="Dead Poets Society">
+        <div class="rank">177</div>
+        <div class="title">Dead Poets Society</div>
+        <button class="check" type="button" onclick="toggleMovie(this)" aria-label="Marcar como assistido">○</button>
+      </div>
+      <div class="movie" data-title="Trainspotting">
+        <div class="rank">178</div>
+        <div class="title">Trainspotting</div>
+        <button class="check" type="button" onclick="toggleMovie(this)" aria-label="Marcar como assistido">○</button>
+      </div>
+      <div class="movie" data-title="Three Billboards Outside Ebbing, Missouri">
+        <div class="rank">179</div>
+        <div class="title">Three Billboards Outside Ebbing, Missouri</div>
+        <button class="check" type="button" onclick="toggleMovie(this)" aria-label="Marcar como assistido">○</button>
+      </div>
+      <div class="movie" data-title="Harry Potter and the Deathly Hallows: Part 2">
+        <div class="rank">180</div>
+        <div class="title">Harry Potter and the Deathly Hallows: Part 2</div>
+        <button class="check" type="button" onclick="toggleMovie(this)" aria-label="Marcar como assistido">○</button>
+      </div>
+      <div class="movie" data-title="The Bridge on the River Kwai">
+        <div class="rank">181</div>
+        <div class="title">The Bridge on the River Kwai</div>
+        <button class="check" type="button" onclick="toggleMovie(this)" aria-label="Marcar como assistido">○</button>
+      </div>
+      <div class="movie" data-title="Rashomon">
+        <div class="rank">182</div>
+        <div class="title">Rashomon</div>
+        <button class="check" type="button" onclick="toggleMovie(this)" aria-label="Marcar como assistido">○</button>
+      </div>
+      <div class="movie" data-title="Barry Lyndon">
+        <div class="rank">183</div>
+        <div class="title">Barry Lyndon</div>
+        <button class="check" type="button" onclick="toggleMovie(this)" aria-label="Marcar como assistido">○</button>
+      </div>
+      <div class="movie" data-title="The Wild Robot">
+        <div class="rank">184</div>
+        <div class="title">The Wild Robot</div>
+        <button class="check" type="button" onclick="toggleMovie(this)" aria-label="Marcar como assistido">○</button>
+      </div>
+      <div class="movie" data-title="Ben-Hur">
+        <div class="rank">185</div>
+        <div class="title">Ben-Hur</div>
+        <button class="check" type="button" onclick="toggleMovie(this)" aria-label="Marcar como assistido">○</button>
+      </div>
+      <div class="movie" data-title="Warrior">
+        <div class="rank">186</div>
+        <div class="title">Warrior</div>
+        <button class="check" type="button" onclick="toggleMovie(this)" aria-label="Marcar como assistido">○</button>
+      </div>
+      <div class="movie" data-title="Fargo">
+        <div class="rank">187</div>
+        <div class="title">Fargo</div>
+        <button class="check" type="button" onclick="toggleMovie(this)" aria-label="Marcar como assistido">○</button>
+      </div>
+      <div class="movie" data-title="Hacksaw Ridge">
+        <div class="rank">188</div>
+        <div class="title">Hacksaw Ridge</div>
+        <button class="check" type="button" onclick="toggleMovie(this)" aria-label="Marcar como assistido">○</button>
+      </div>
+      <div class="movie" data-title="Mad Max: Fury Road">
+        <div class="rank">189</div>
+        <div class="title">Mad Max: Fury Road</div>
+        <button class="check" type="button" onclick="toggleMovie(this)" aria-label="Marcar como assistido">○</button>
+      </div>
+      <div class="movie" data-title="Million Dollar Baby">
+        <div class="rank">190</div>
+        <div class="title">Million Dollar Baby</div>
+        <button class="check" type="button" onclick="toggleMovie(this)" aria-label="Marcar como assistido">○</button>
+      </div>
+      <div class="movie" data-title="Ratatouille">
+        <div class="rank">191</div>
+        <div class="title">Ratatouille</div>
+        <button class="check" type="button" onclick="toggleMovie(this)" aria-label="Marcar como assistido">○</button>
+      </div>
+      <div class="movie" data-title="Children of Heaven">
+        <div class="rank">192</div>
+        <div class="title">Children of Heaven</div>
+        <button class="check" type="button" onclick="toggleMovie(this)" aria-label="Marcar como assistido">○</button>
+      </div>
+      <div class="movie" data-title="My Neighbor Totoro">
+        <div class="rank">193</div>
+        <div class="title">My Neighbor Totoro</div>
+        <button class="check" type="button" onclick="toggleMovie(this)" aria-label="Marcar como assistido">○</button>
+      </div>
+      <div class="movie" data-title="Gran Torino">
+        <div class="rank">194</div>
+        <div class="title">Gran Torino</div>
+        <button class="check" type="button" onclick="toggleMovie(this)" aria-label="Marcar como assistido">○</button>
+      </div>
+      <div class="movie" data-title="Raging Bull">
+        <div class="rank">195</div>
+        <div class="title">Raging Bull</div>
+        <button class="check" type="button" onclick="toggleMovie(this)" aria-label="Marcar como assistido">○</button>
+      </div>
+      <div class="movie" data-title="12 Years a Slave">
+        <div class="rank">196</div>
+        <div class="title">12 Years a Slave</div>
+        <button class="check" type="button" onclick="toggleMovie(this)" aria-label="Marcar como assistido">○</button>
+      </div>
+      <div class="movie" data-title="How to Train Your Dragon">
+        <div class="rank">197</div>
+        <div class="title">How to Train Your Dragon</div>
+        <button class="check" type="button" onclick="toggleMovie(this)" aria-label="Marcar como assistido">○</button>
+      </div>
+      <div class="movie" data-title="Memories of Murder">
+        <div class="rank">198</div>
+        <div class="title">Memories of Murder</div>
+        <button class="check" type="button" onclick="toggleMovie(this)" aria-label="Marcar como assistido">○</button>
+      </div>
+      <div class="movie" data-title="The Grand Budapest Hotel">
+        <div class="rank">199</div>
+        <div class="title">The Grand Budapest Hotel</div>
+        <button class="check" type="button" onclick="toggleMovie(this)" aria-label="Marcar como assistido">○</button>
+      </div>
+      <div class="movie" data-title="Before Sunrise">
+        <div class="rank">200</div>
+        <div class="title">Before Sunrise</div>
+        <button class="check" type="button" onclick="toggleMovie(this)" aria-label="Marcar como assistido">○</button>
+      </div>
+      <div class="movie" data-title="Blade Runner">
+        <div class="rank">201</div>
+        <div class="title">Blade Runner</div>
+        <button class="check" type="button" onclick="toggleMovie(this)" aria-label="Marcar como assistido">○</button>
+      </div>
+      <div class="movie" data-title="Monsters, Inc.">
+        <div class="rank">202</div>
+        <div class="title">Monsters, Inc.</div>
+        <button class="check" type="button" onclick="toggleMovie(this)" aria-label="Marcar como assistido">○</button>
+      </div>
+      <div class="movie" data-title="Gone Girl">
+        <div class="rank">203</div>
+        <div class="title">Gone Girl</div>
+        <button class="check" type="button" onclick="toggleMovie(this)" aria-label="Marcar como assistido">○</button>
+      </div>
+      <div class="movie" data-title="Jaws">
+        <div class="rank">204</div>
+        <div class="title">Jaws</div>
+        <button class="check" type="button" onclick="toggleMovie(this)" aria-label="Marcar como assistido">○</button>
+      </div>
+      <div class="movie" data-title="Ford v Ferrari">
+        <div class="rank">205</div>
+        <div class="title">Ford v Ferrari</div>
+        <button class="check" type="button" onclick="toggleMovie(this)" aria-label="Marcar como assistido">○</button>
+      </div>
+      <div class="movie" data-title="In the Name of the Father">
+        <div class="rank">206</div>
+        <div class="title">In the Name of the Father</div>
+        <button class="check" type="button" onclick="toggleMovie(this)" aria-label="Marcar como assistido">○</button>
+      </div>
+      <div class="movie" data-title="Spider-Man: No Way Home">
+        <div class="rank">207</div>
+        <div class="title">Spider-Man: No Way Home</div>
+        <button class="check" type="button" onclick="toggleMovie(this)" aria-label="Marcar como assistido">○</button>
+      </div>
+      <div class="movie" data-title="Wild Tales">
+        <div class="rank">208</div>
+        <div class="title">Wild Tales</div>
+        <button class="check" type="button" onclick="toggleMovie(this)" aria-label="Marcar como assistido">○</button>
+      </div>
+      <div class="movie" data-title="The Gold Rush">
+        <div class="rank">209</div>
+        <div class="title">The Gold Rush</div>
+        <button class="check" type="button" onclick="toggleMovie(this)" aria-label="Marcar como assistido">○</button>
+      </div>
+      <div class="movie" data-title="Sherlock Jr.">
+        <div class="rank">210</div>
+        <div class="title">Sherlock Jr.</div>
+        <button class="check" type="button" onclick="toggleMovie(this)" aria-label="Marcar como assistido">○</button>
+      </div>
+      <div class="movie" data-title="Chainsaw Man – The Movie: Reze Arc">
+        <div class="rank">211</div>
+        <div class="title">Chainsaw Man – The Movie: Reze Arc</div>
+        <button class="check" type="button" onclick="toggleMovie(this)" aria-label="Marcar como assistido">○</button>
+      </div>
+      <div class="movie" data-title="Mary and Max">
+        <div class="rank">212</div>
+        <div class="title">Mary and Max</div>
+        <button class="check" type="button" onclick="toggleMovie(this)" aria-label="Marcar como assistido">○</button>
+      </div>
+      <div class="movie" data-title="A Silent Voice: The Movie">
+        <div class="rank">213</div>
+        <div class="title">A Silent Voice: The Movie</div>
+        <button class="check" type="button" onclick="toggleMovie(this)" aria-label="Marcar como assistido">○</button>
+      </div>
+      <div class="movie" data-title="The Wages of Fear">
+        <div class="rank">214</div>
+        <div class="title">The Wages of Fear</div>
+        <button class="check" type="button" onclick="toggleMovie(this)" aria-label="Marcar como assistido">○</button>
+      </div>
+      <div class="movie" data-title="The Deer Hunter">
+        <div class="rank">215</div>
+        <div class="title">The Deer Hunter</div>
+        <button class="check" type="button" onclick="toggleMovie(this)" aria-label="Marcar como assistido">○</button>
+      </div>
+      <div class="movie" data-title="Rocky">
+        <div class="rank">216</div>
+        <div class="title">Rocky</div>
+        <button class="check" type="button" onclick="toggleMovie(this)" aria-label="Marcar como assistido">○</button>
+      </div>
+      <div class="movie" data-title="Logan">
+        <div class="rank">217</div>
+        <div class="title">Logan</div>
+        <button class="check" type="button" onclick="toggleMovie(this)" aria-label="Marcar como assistido">○</button>
+      </div>
+      <div class="movie" data-title="The General">
+        <div class="rank">218</div>
+        <div class="title">The General</div>
+        <button class="check" type="button" onclick="toggleMovie(this)" aria-label="Marcar como assistido">○</button>
+      </div>
+      <div class="movie" data-title="Pirates of the Caribbean: The Curse of the Black Pearl">
+        <div class="rank">219</div>
+        <div class="title">Pirates of the Caribbean: The Curse of the Black Pearl</div>
+        <button class="check" type="button" onclick="toggleMovie(this)" aria-label="Marcar como assistido">○</button>
+      </div>
+      <div class="movie" data-title="Mr. Smith Goes to Washington">
+        <div class="rank">220</div>
+        <div class="title">Mr. Smith Goes to Washington</div>
+        <button class="check" type="button" onclick="toggleMovie(this)" aria-label="Marcar como assistido">○</button>
+      </div>
+      <div class="movie" data-title="Tokyo Story">
+        <div class="rank">221</div>
+        <div class="title">Tokyo Story</div>
+        <button class="check" type="button" onclick="toggleMovie(this)" aria-label="Marcar como assistido">○</button>
+      </div>
+      <div class="movie" data-title="La Haine">
+        <div class="rank">222</div>
+        <div class="title">La Haine</div>
+        <button class="check" type="button" onclick="toggleMovie(this)" aria-label="Marcar como assistido">○</button>
+      </div>
+      <div class="movie" data-title="Spotlight">
+        <div class="rank">223</div>
+        <div class="title">Spotlight</div>
+        <button class="check" type="button" onclick="toggleMovie(this)" aria-label="Marcar como assistido">○</button>
+      </div>
+      <div class="movie" data-title="Jai Bhim">
+        <div class="rank">224</div>
+        <div class="title">Jai Bhim</div>
+        <button class="check" type="button" onclick="toggleMovie(this)" aria-label="Marcar como assistido">○</button>
+      </div>
+      <div class="movie" data-title="The Sound of Music">
+        <div class="rank">225</div>
+        <div class="title">The Sound of Music</div>
+        <button class="check" type="button" onclick="toggleMovie(this)" aria-label="Marcar como assistido">○</button>
+      </div>
+      <div class="movie" data-title="The Chaos Class Failed the Class">
+        <div class="rank">226</div>
+        <div class="title">The Chaos Class Failed the Class</div>
+        <button class="check" type="button" onclick="toggleMovie(this)" aria-label="Marcar como assistido">○</button>
+      </div>
+      <div class="movie" data-title="Maharaja">
+        <div class="rank">227</div>
+        <div class="title">Maharaja</div>
+        <button class="check" type="button" onclick="toggleMovie(this)" aria-label="Marcar como assistido">○</button>
+      </div>
+      <div class="movie" data-title="The Terminator">
+        <div class="rank">228</div>
+        <div class="title">The Terminator</div>
+        <button class="check" type="button" onclick="toggleMovie(this)" aria-label="Marcar como assistido">○</button>
+      </div>
+      <div class="movie" data-title="On the Waterfront">
+        <div class="rank">229</div>
+        <div class="title">On the Waterfront</div>
+        <button class="check" type="button" onclick="toggleMovie(this)" aria-label="Marcar como assistido">○</button>
+      </div>
+      <div class="movie" data-title="Wild Strawberries">
+        <div class="rank">230</div>
+        <div class="title">Wild Strawberries</div>
+        <button class="check" type="button" onclick="toggleMovie(this)" aria-label="Marcar como assistido">○</button>
+      </div>
+      <div class="movie" data-title="The Best Years of Our Lives">
+        <div class="rank">231</div>
+        <div class="title">The Best Years of Our Lives</div>
+        <button class="check" type="button" onclick="toggleMovie(this)" aria-label="Marcar como assistido">○</button>
+      </div>
+      <div class="movie" data-title="The Third Man">
+        <div class="rank">232</div>
+        <div class="title">The Third Man</div>
+        <button class="check" type="button" onclick="toggleMovie(this)" aria-label="Marcar como assistido">○</button>
+      </div>
+      <div class="movie" data-title="The Big Lebowski">
+        <div class="rank">233</div>
+        <div class="title">The Big Lebowski</div>
+        <button class="check" type="button" onclick="toggleMovie(this)" aria-label="Marcar como assistido">○</button>
+      </div>
+      <div class="movie" data-title="The Incredibles">
+        <div class="rank">234</div>
+        <div class="title">The Incredibles</div>
+        <button class="check" type="button" onclick="toggleMovie(this)" aria-label="Marcar como assistido">○</button>
+      </div>
+      <div class="movie" data-title="Before Sunset">
+        <div class="rank">235</div>
+        <div class="title">Before Sunset</div>
+        <button class="check" type="button" onclick="toggleMovie(this)" aria-label="Marcar como assistido">○</button>
+      </div>
+      <div class="movie" data-title="Hachi: A Dog&#x27;s Tale">
+        <div class="rank">236</div>
+        <div class="title">Hachi: A Dog&#x27;s Tale</div>
+        <button class="check" type="button" onclick="toggleMovie(this)" aria-label="Marcar como assistido">○</button>
+      </div>
+      <div class="movie" data-title="Room">
+        <div class="rank">237</div>
+        <div class="title">Room</div>
+        <button class="check" type="button" onclick="toggleMovie(this)" aria-label="Marcar como assistido">○</button>
+      </div>
+      <div class="movie" data-title="The Seventh Seal">
+        <div class="rank">238</div>
+        <div class="title">The Seventh Seal</div>
+        <button class="check" type="button" onclick="toggleMovie(this)" aria-label="Marcar como assistido">○</button>
+      </div>
+      <div class="movie" data-title="Hotel Rwanda">
+        <div class="rank">239</div>
+        <div class="title">Hotel Rwanda</div>
+        <button class="check" type="button" onclick="toggleMovie(this)" aria-label="Marcar como assistido">○</button>
+      </div>
+      <div class="movie" data-title="The Exorcist">
+        <div class="rank">240</div>
+        <div class="title">The Exorcist</div>
+        <button class="check" type="button" onclick="toggleMovie(this)" aria-label="Marcar como assistido">○</button>
+      </div>
+      <div class="movie" data-title="Platoon">
+        <div class="rank">241</div>
+        <div class="title">Platoon</div>
+        <button class="check" type="button" onclick="toggleMovie(this)" aria-label="Marcar como assistido">○</button>
+      </div>
+      <div class="movie" data-title="The Iron Giant">
+        <div class="rank">242</div>
+        <div class="title">The Iron Giant</div>
+        <button class="check" type="button" onclick="toggleMovie(this)" aria-label="Marcar como assistido">○</button>
+      </div>
+      <div class="movie" data-title="Rush">
+        <div class="rank">243</div>
+        <div class="title">Rush</div>
+        <button class="check" type="button" onclick="toggleMovie(this)" aria-label="Marcar como assistido">○</button>
+      </div>
+      <div class="movie" data-title="Stand by Me">
+        <div class="rank">244</div>
+        <div class="title">Stand by Me</div>
+        <button class="check" type="button" onclick="toggleMovie(this)" aria-label="Marcar como assistido">○</button>
+      </div>
+      <div class="movie" data-title="The Wizard of Oz">
+        <div class="rank">245</div>
+        <div class="title">The Wizard of Oz</div>
+        <button class="check" type="button" onclick="toggleMovie(this)" aria-label="Marcar como assistido">○</button>
+      </div>
+      <div class="movie" data-title="The Battle of Algiers">
+        <div class="rank">246</div>
+        <div class="title">The Battle of Algiers</div>
+        <button class="check" type="button" onclick="toggleMovie(this)" aria-label="Marcar como assistido">○</button>
+      </div>
+      <div class="movie" data-title="My Father and My Son">
+        <div class="rank">247</div>
+        <div class="title">My Father and My Son</div>
+        <button class="check" type="button" onclick="toggleMovie(this)" aria-label="Marcar como assistido">○</button>
+      </div>
+      <div class="movie" data-title="The Passion of Joan of Arc">
+        <div class="rank">248</div>
+        <div class="title">The Passion of Joan of Arc</div>
+        <button class="check" type="button" onclick="toggleMovie(this)" aria-label="Marcar como assistido">○</button>
+      </div>
+      <div class="movie" data-title="Spider-Man: Brand New Day">
+        <div class="rank">249</div>
+        <div class="title">Spider-Man: Brand New Day</div>
+        <button class="check" type="button" onclick="toggleMovie(this)" aria-label="Marcar como assistido">○</button>
+      </div>
+      <div class="movie" data-title="The Handmaiden">
+        <div class="rank">250</div>
+        <div class="title">The Handmaiden</div>
+        <button class="check" type="button" onclick="toggleMovie(this)" aria-label="Marcar como assistido">○</button>
+      </div>
+</main>
+
+<footer>Marque um filme tocando no círculo. O progresso tenta ser salvo neste navegador.</footer>
+
+<script>
+function toggleMovie(btn) {
+  const movie = btn.parentElement;
+  movie.classList.toggle('watched');
+  btn.textContent = movie.classList.contains('watched') ? '✓' : '○';
+  updateStats();
+  try {
+    const states = Array.from(document.querySelectorAll('.movie')).map(m => m.classList.contains('watched'));
+    localStorage.setItem('imdb250_states_v2', JSON.stringify(states));
+  } catch(e) {}
+}
+
+function updateStats() {
+  const movies = Array.from(document.querySelectorAll('.movie'));
+  const count = movies.filter(m => m.classList.contains('watched')).length;
+  const pct = count / 250 * 100;
+  document.getElementById('count').textContent = count;
+  document.getElementById('left').textContent = 250-count;
+  document.getElementById('pct').textContent = pct.toFixed(1).replace('.',',') + '%';
+  document.getElementById('bar').style.width = pct + '%';
+}
+
+function filterMovies() {
+  const q = document.getElementById('search').value.toLowerCase();
+  const f = document.getElementById('filter').value;
+  let visible = 0;
+  document.querySelectorAll('.movie').forEach(m => {
+    const matchText = m.dataset.title.toLowerCase().includes(q);
+    const watched = m.classList.contains('watched');
+    const matchFilter = f === 'all' || (f === 'watched' && watched) || (f === 'unwatched' && !watched);
+    m.style.display = (matchText && matchFilter) ? 'grid' : 'none';
+    if (matchText && matchFilter) visible++;
+  });
+  let empty = document.getElementById('empty');
+  if (!visible) {
+    if (!empty) {
+      empty = document.createElement('div');
+      empty.id = 'empty';
+      empty.className = 'empty';
+      empty.textContent = 'Nenhum filme encontrado.';
+      document.getElementById('list').appendChild(empty);
+    }
+  } else if (empty) empty.remove();
+}
+
+document.getElementById('search').addEventListener('input', filterMovies);
+document.getElementById('filter').addEventListener('change', filterMovies);
+
+try {
+  const saved = JSON.parse(localStorage.getItem('imdb250_states_v2') || 'null');
+  if (Array.isArray(saved)) {
+    document.querySelectorAll('.movie').forEach((m,i) => {
+      if (saved[i]) {
+        m.classList.add('watched');
+        m.querySelector('.check').textContent = '✓';
+      }
+    });
+  }
+} catch(e) {}
+
+updateStats();
+</script>
+</body>
+</html>
