@@ -17,6 +17,12 @@ h1{font-size:21px;margin:0 0 4px}
 .progress{height:6px;background:#292e36;border-radius:8px;margin-top:10px;overflow:hidden}
 #bar{height:100%;width:0;background:#e4b94e}
 .controls{display:flex;gap:7px;padding:10px 12px;background:#101216;position:sticky;top:126px;z-index:9}
+.controls2{display:flex;gap:7px;padding:0 12px 10px;background:#101216;position:sticky;top:174px;z-index:8;flex-wrap:wrap}
+.btn{padding:8px 10px;border-radius:9px;border:1px solid #30353d;background:#191c22;color:#f4f5f7;font-size:12px;cursor:pointer;white-space:nowrap}
+.btn:active{transform:scale(.97)}
+.btn.primary{background:#e4b94e;color:#111;border-color:#e4b94e}
+.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#191c22;border:1px solid #2a2e35;padding:10px 16px;border-radius:10px;font-size:13px;z-index:999;box-shadow:0 4px 20px rgba(0,0,0,.5)}
+#fileInput{display:none}
 #search{flex:1;min-width:0;padding:10px;border-radius:9px;border:1px solid #30353d;background:#191c22;color:#fff;font-size:14px}
 #filter{padding:10px;border-radius:9px;border:1px solid #30353d;background:#191c22;color:#fff}
 main{max-width:760px;margin:auto;padding:0 12px 35px}
@@ -51,6 +57,14 @@ footer{text-align:center;color:#737b87;font-size:10px;padding:20px}
 <option value="watched">Assistidos</option>
 </select>
 </div>
+
+<div class="controls2">
+<button class="btn primary" type="button" onclick="copyShareLink()">🔗 Copiar link</button>
+<button class="btn" type="button" onclick="exportJSON()">⬇ Exportar (.json)</button>
+<button class="btn" type="button" onclick="document.getElementById('fileInput').click()">⬆ Importar</button>
+<button class="btn" type="button" onclick="clearAll()" title="Zera tudo">🗑 Limpar</button>
+</div>
+<input type="file" id="fileInput" accept=".json,application/json">
 
 <main id="list">
 
@@ -2083,21 +2097,86 @@ footer{text-align:center;color:#737b87;font-size:10px;padding:20px}
 </script>
 
 <script>
-function toggleMovie(btn) {
-  const movie = btn.parentElement;
-  movie.classList.toggle('watched');
-  btn.textContent = movie.classList.contains('watched') ? '✓' : '○';
-  updateStats();
+function getStates() {
+  return Array.from(document.querySelectorAll('.movie')).map(function(m) {
+    return m.classList.contains('watched');
+  });
+}
+
+function applyStates(arr) {
+  document.querySelectorAll('.movie').forEach(function(m, i) {
+    if (arr && arr[i]) {
+      m.classList.add('watched');
+      m.querySelector('.check').textContent = '✓';
+    } else {
+      m.classList.remove('watched');
+      m.querySelector('.check').textContent = '○';
+    }
+  });
+}
+
+function saveAll() {
+  var states = getStates();
+  try { localStorage.setItem('imdb250_states_v2', JSON.stringify(states)); } catch(e) {}
   try {
-    const states = Array.from(document.querySelectorAll('.movie')).map(m => m.classList.contains('watched'));
-    localStorage.setItem('imdb250_states_v2', JSON.stringify(states));
+    var bin = states.map(function(b){return b?'1':'0'}).join('');
+    while (bin.length % 8 !== 0) bin += '0';
+    var bytes = [];
+    for (var i=0;i<bin.length;i+=8) bytes.push(parseInt(bin.substr(i,8),2));
+    var b64 = btoa(String.fromCharCode.apply(null, bytes));
+    b64 = b64.replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');
+    if (history.replaceState) history.replaceState(null, '', '#' + b64);
+    else location.hash = b64;
   } catch(e) {}
 }
 
+function loadFromHash() {
+  var h = (location.hash || '').replace(/^#/, '');
+  if (!h) return false;
+  try {
+    var b64 = h.replace(/-/g,'+').replace(/_/g,'/');
+    while (b64.length % 4 !== 0) b64 += '=';
+    var binStr = atob(b64);
+    var bits = '';
+    for (var i=0;i<binStr.length;i++) {
+      var c = binStr.charCodeAt(i).toString(2);
+      bits += '00000000'.substring(c.length) + c;
+    }
+    var states = [];
+    for (var j=0;j<250;j++) states.push(bits[j] === '1');
+    applyStates(states);
+    return true;
+  } catch(e) { return false; }
+}
+
+function loadFromLocal() {
+  try {
+    var saved = JSON.parse(localStorage.getItem('imdb250_states_v2') || 'null');
+    if (Array.isArray(saved) && saved.length >= 250) { applyStates(saved); return true; }
+  } catch(e) {}
+  return false;
+}
+
+function showToast(msg) {
+  var el = document.createElement('div');
+  el.className = 'toast';
+  el.textContent = msg;
+  document.body.appendChild(el);
+  setTimeout(function(){ el.remove(); }, 2200);
+}
+
+function toggleMovie(btn) {
+  var movie = btn.parentElement;
+  movie.classList.toggle('watched');
+  btn.textContent = movie.classList.contains('watched') ? '✓' : '○';
+  updateStats();
+  saveAll();
+}
+
 function updateStats() {
-  const movies = Array.from(document.querySelectorAll('.movie'));
-  const count = movies.filter(m => m.classList.contains('watched')).length;
-  const pct = count / 250 * 100;
+  var movies = Array.from(document.querySelectorAll('.movie'));
+  var count = movies.filter(function(m){ return m.classList.contains('watched'); }).length;
+  var pct = count / 250 * 100;
   document.getElementById('count').textContent = count;
   document.getElementById('left').textContent = 250-count;
   document.getElementById('pct').textContent = pct.toFixed(1).replace('.',',') + '%';
@@ -2105,17 +2184,17 @@ function updateStats() {
 }
 
 function filterMovies() {
-  const q = document.getElementById('search').value.toLowerCase();
-  const f = document.getElementById('filter').value;
-  let visible = 0;
-  document.querySelectorAll('.movie').forEach(m => {
-    const matchText = m.dataset.title.toLowerCase().includes(q);
-    const watched = m.classList.contains('watched');
-    const matchFilter = f === 'all' || (f === 'watched' && watched) || (f === 'unwatched' && !watched);
+  var q = document.getElementById('search').value.toLowerCase();
+  var f = document.getElementById('filter').value;
+  var visible = 0;
+  document.querySelectorAll('.movie').forEach(function(m) {
+    var matchText = m.dataset.title.toLowerCase().indexOf(q) !== -1;
+    var watched = m.classList.contains('watched');
+    var matchFilter = f === 'all' || (f === 'watched' && watched) || (f === 'unwatched' && !watched);
     m.style.display = (matchText && matchFilter) ? 'grid' : 'none';
     if (matchText && matchFilter) visible++;
   });
-  let empty = document.getElementById('empty');
+  var empty = document.getElementById('empty');
   if (!visible) {
     if (!empty) {
       empty = document.createElement('div');
@@ -2127,21 +2206,74 @@ function filterMovies() {
   } else if (empty) empty.remove();
 }
 
+function copyShareLink() {
+  saveAll();
+  var url = location.href;
+  if (navigator.clipboard) {
+    navigator.clipboard.writeText(url).then(function(){
+      showToast('Link copiado! Abra em qualquer dispositivo');
+    }, function(){ fallbackCopy(url); });
+  } else fallbackCopy(url);
+}
+function fallbackCopy(txt) {
+  var ta = document.createElement('textarea');
+  ta.value = txt; document.body.appendChild(ta); ta.select();
+  try { document.execCommand('copy'); showToast('Link copiado!'); }
+  catch(e) { prompt('Copie este link:', txt); }
+  ta.remove();
+}
+
+function exportJSON() {
+  saveAll();
+  var data = {
+    version: 2,
+    updatedAt: new Date().toISOString(),
+    states: getStates(),
+    count: getStates().filter(function(b){return b}).length
+  };
+  var blob = new Blob([JSON.stringify(data, null, 2)], {type: 'application/json'});
+  var a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'imdb250-progresso.json';
+  document.body.appendChild(a); a.click(); a.remove();
+  showToast('Arquivo exportado!');
+}
+
+function importJSON(file) {
+  var reader = new FileReader();
+  reader.onload = function() {
+    try {
+      var obj = JSON.parse(reader.result);
+      var arr = obj && Array.isArray(obj.states) ? obj.states : (Array.isArray(obj) ? obj : null);
+      if (arr && arr.length >= 250) {
+        applyStates(arr);
+        updateStats();
+        saveAll();
+        showToast('Progresso importado com sucesso!');
+      } else {
+        showToast('Arquivo inválido.');
+      }
+    } catch(e) { showToast('Erro ao ler arquivo.'); }
+  };
+  reader.readAsText(file);
+}
+
+function clearAll() {
+  if (!confirm('Tem certeza que deseja limpar todo o progresso?')) return;
+  applyStates(new Array(250).fill(false));
+  updateStats();
+  saveAll();
+  showToast('Progresso zerado.');
+}
+
 document.getElementById('search').addEventListener('input', filterMovies);
 document.getElementById('filter').addEventListener('change', filterMovies);
+document.getElementById('fileInput').addEventListener('change', function(e) {
+  if (e.target.files && e.target.files[0]) importJSON(e.target.files[0]);
+  e.target.value = '';
+});
 
-try {
-  const saved = JSON.parse(localStorage.getItem('imdb250_states_v2') || 'null');
-  if (Array.isArray(saved)) {
-    document.querySelectorAll('.movie').forEach((m,i) => {
-      if (saved[i]) {
-        m.classList.add('watched');
-        m.querySelector('.check').textContent = '✓';
-      }
-    });
-  }
-} catch(e) {}
-
+if (!loadFromHash()) loadFromLocal();
 updateStats();
 </script>
 </body>
