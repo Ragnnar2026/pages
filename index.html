@@ -20,7 +20,8 @@ h1{font-size:21px;margin:0 0 4px}
 #search{flex:1;min-width:0;padding:10px;border-radius:9px;border:1px solid #30353d;background:#191c22;color:#fff;font-size:14px}
 #filter{padding:10px;border-radius:9px;border:1px solid #30353d;background:#191c22;color:#fff}
 main{max-width:760px;margin:auto;padding:0 12px 35px}
-.movie{display:grid;grid-template-columns:42px 1fr 34px;gap:8px;align-items:center;padding:11px 5px;border-bottom:1px solid #252930}
+.movie{display:grid;grid-template-columns:42px 1fr 34px;gap:8px;align-items:flex-start;padding:13px 5px;border-bottom:1px solid #252930}
+.rank{padding-top:2px}
 .rank{color:#858d99;text-align:center;font-size:13px}
 .title{font-size:14px;line-height:1.35}
 .check{width:30px;height:30px;border-radius:50%;border:1px solid #555d68;background:#191c22;color:#fff;font-size:17px;padding:0}
@@ -1306,6 +1307,780 @@ footer{text-align:center;color:#737b87;font-size:10px;padding:20px}
 </main>
 
 <footer>Marque um filme tocando no círculo. O progresso tenta ser salvo neste navegador.</footer>
+
+<script>
+(function() {
+  var txt = `1. **The Shawshank Redemption** — Um Sonho de Liberdade
+
+
+2. **The Godfather** — O Padrinho / O Chefão
+
+
+3. **The Dark Knight** — Batman: O Cavaleiro das Trevas
+
+
+4. **The Godfather Part II** — O Padrinho Parte II / O Chefão II
+
+
+5. **The Lord of the Rings: The Return of the King** — O Senhor dos Anéis: O Retorno do Rei
+
+
+6. **12 Angry Men** — 12 Homens e Uma Sentença
+
+
+7. **Schindler's List** — A Lista de Schindler
+
+
+8. **The Lord of the Rings: The Fellowship of the Ring** — O Senhor dos Anéis: A Sociedade do Anel
+
+
+9. **Pulp Fiction** — Pulp Fiction: Tempo de Violência
+
+
+10. **The Good, the Bad and the Ugly** — Três Homens em Conflito
+
+
+11. **The Lord of the Rings: The Two Towers** — O Senhor dos Anéis: As Duas Torres
+
+
+12. **Forrest Gump** — Forrest Gump: O Contador de Histórias
+
+
+13. **Fight Club** — Clube da Luta
+
+
+14. **Inception** — A Origem
+
+
+15. **The Empire Strikes Back** — Star Wars, Episódio V: O Império Contra-Ataca
+
+
+16. **The Matrix** — Matrix
+
+
+17. **Interstellar** — Interestelar
+
+
+18. **GoodFellas** — Os Bons Companheiros
+
+
+19. **One Flew Over the Cuckoo's Nest** — Um Estranho no Ninho
+
+
+20. **Se7en** — Se7en: Os Sete Crimes Capitais
+
+
+21. **It's a Wonderful Life** — A Felicidade Não Se Compra
+
+
+22. **The Silence of the Lambs** — O Silêncio dos Inocentes
+
+
+23. **Saving Private Ryan** — O Resgate do Soldado Ryan
+
+
+24. **Seven Samurai** — Os Sete Samurais
+
+
+25. **The Green Mile** — À Espera de um Milagre
+
+
+26. **City of God** — Cidade de Deus
+
+
+27. **Life Is Beautiful** — A Vida É Bela
+
+
+28. **Terminator 2: Judgment Day** — O Exterminador do Futuro 2: O Julgamento Final
+
+
+29. **Back to the Future** — De Volta para o Futuro
+
+
+30. **Star Wars** — Star Wars, Episódio IV: Uma Nova Esperança
+
+
+31. **Kill Bill: The Whole Bloody Affair** — Kill Bill: A Era da Carnificina
+
+
+32. **Spirited Away** — A Viagem de Chihiro
+
+
+33. **Gladiator** — Gladiador
+
+
+34. **The Pianist** — O Pianista
+
+
+35. **Parasite** — Parasita
+
+
+36. **Grave of the Fireflies** — Túmulo dos Vagalumes
+
+
+37. **Harakiri** — Harakiri
+
+
+38. **Psycho** — Psicose
+
+
+39. **The Lion King** — O Rei Leão
+
+
+40. **The Departed** — Os Os infiltrados
+
+
+41. **Whiplash** — Whiplash: Em Busca da Perfeição
+
+
+42. **The Prestige** — O Grande Truque
+
+
+43. **American History X** — A Outra História Americana
+
+
+44. **Spider-Man: Across the Spider-Verse** — Homem-Aranha: Através do Aranhaverso
+
+
+45. **Léon: The Professional** — O Profissional
+
+
+46. **Cinema Paradiso** — Cinema Paradiso
+
+
+47. **Casablanca** — Casablanca
+
+
+48. **The Intouchables** — Intocáveis
+
+
+49. **The Usual Suspects** — Os Suspeitos
+
+
+50. **Django Unchained** — Django Livre
+
+
+51. **Alien** — Alien, o Oitavo Passageiro
+
+
+52. **Rear Window** — Janela Indiscreta
+
+
+53. **Modern Times** — Tempos Modernos
+
+
+54. **Once Upon a Time in the West** — Era Uma Vez no Oeste
+
+
+55. **The Odyssey** — A Odisseia
+
+
+56. **City Lights** — Luzes da Cidade
+
+
+57. **WALL·E** — WALL-E
+
+
+58. **Apocalypse Now** — Apocalypse Now
+
+
+59. **Memento** — Amnésia
+
+
+60. **Avengers: Infinity War** — Vingadores: Guerra Infinita
+
+
+61. **Dune: Part Two** — Duna: Parte 2
+
+
+62. **Raiders of the Lost Ark** — Os Caçadores da Arca Perdida
+
+
+63. **Spider-Man: Into the Spider-Verse** — Homem-Aranha: No Aranhaverso
+
+
+64. **The Lives of Others** — A Vida dos Outros
+
+
+65. **Sunset Boulevard** — Crepúsculo dos Deuses
+
+
+66. **Witness for the Prosecution** — Testemunha de Acusação
+
+
+67. **Paths of Glory** — Glória Feita de Sangue
+
+
+68. **The Shining** — O Iluminado
+
+
+69. **Inglourious Basterds** — Bastardos Inglórios
+
+
+70. **The Great Dictator** — O Grande Ditador
+
+
+71. **Aliens** — Aliens, O Resgate
+
+
+72. **12th Fail** — Reinício Alvo
+
+
+73. **High and Low** — Céu e Inferno
+
+
+74. **Avengers: Endgame** — Vingadores: Ultimato
+
+
+75. **Good Will Hunting** — Gênio Indomável
+
+
+76. **Coco** — Viva: A Vida É uma Festa
+
+
+77. **The Dark Knight Rises** — Batman: O Cavaleiro das Trevas Ressurge
+
+
+78. **Toy Story** — Toy Story: Um Mundo de Aventuras
+
+
+79. **Amadeus** — Amadeus
+
+
+80. **Your Name.** — Seu Nome
+
+
+81. **Das Boot** — O Barco: Inferno no Mar
+
+
+82. **Braveheart** — Coração Valente
+
+
+83. **Princess Mononoke** — Princesa Mononoke
+
+
+84. **3 Idiots** — 3 Idiotas
+
+
+85. **Oldboy** — Oldboy
+
+
+86. **Dr. Strangelove or: How I Learned to Stop Worrying and Love the Bomb** — Dr. Fantástico
+
+
+87. **American Beauty** — Beleza Americana
+
+
+88. **Capernaum** — Cafarnaum
+
+
+89. **Singin' in the Rain** — Cantando na Chuva
+
+
+90. **Once Upon a Time in America** — Era Uma Vez na América
+
+
+91. **Joker** — Coringa
+
+
+92. **Toy Story 3** — Toy Story 3
+
+
+93. **Return of the Jedi** — Star Wars, Episódio VI: O Retorno de Jedi
+
+
+94. **Come and See** — Vá e Veja
+
+
+95. **Requiem for a Dream** — Réquiem para um Sonho
+
+
+96. **Ikiru** — Viver
+
+
+97. **Incendies** — Incêndios
+
+
+98. **The Hunt** — A Caça
+
+
+99. **Eternal Sunshine of the Spotless Mind** — Brilho Eterno de uma Mente sem Lembranças
+
+
+100. **The Apartment** — Se Meu Apartamento Falasse
+
+
+101. **Lawrence of Arabia** — Lawrence da Arábia
+
+
+102. **Heat** — Fogo Contra Fogo
+
+
+103. **Scarface** — Scarface
+
+
+104. **Attack on Titan: THE LAST ATTACK** — Attack on Titan: O Último Ataque
+
+
+105. **Reservoir Dogs** — Cães de Aluguel
+
+
+106. **2001: A Space Odyssey** — 2001: Uma Odisséia no Espaço
+
+
+107. **Up** — Up: Altas Aventuras
+
+
+108. **Double Indemnity** — Pacto de Sangue
+
+
+109. **Like Stars on Earth** — Como Estrelas na Terra
+
+
+110. **North by Northwest** — Intriga Internacional
+
+
+111. **Full Metal Jacket** — Nascido para Matar
+
+
+112. **I Swear** — Eu Juro
+
+
+113. **A Separation** — A Separação
+
+
+114. **M** — M, o Vampiro de Düsseldorf
+
+
+115. **Amélie** — O Fabuloso Destino de Amélie Poulain
+
+
+116. **Die Hard** — Duro de Matar
+
+
+117. **Vertigo** — Um Corpo que Cai
+
+
+118. **Citizen Kane** — Cidadão Kane
+
+
+119. **To Kill a Mockingbird** — O Sol É para Todos
+
+
+120. **Indiana Jones and the Last Crusade** — Indiana Jones e a Última Cruzada
+
+
+121. **The Sting** — Golpe de Mestre
+
+
+122. **A Clockwork Orange** — Laranja Mecânica
+
+
+123. **Woman in the Dunes** — A Mulher da Areia
+
+
+124. **Metropolis** — Metrópolis
+
+
+125. **1917** — 1917
+
+
+126. **Snatch** — Snatch: Porcos e Diamantes
+
+
+127. **The Wolf of Wall Street** — O Lobo de Wall Street
+
+
+128. **The Truman Show** — O Show de Truman: O Show da Vida
+
+
+129. **Downfall** — A Queda! As Últimas Horas de Hitler
+
+
+130. **L.A. Confidential** — Los Angeles: Em Segredo
+
+
+131. **Shutter Island** — A Ilha do Medo
+
+
+132. **Dangal** — Dangal
+
+
+133. **Green Book** — Green Book: O Guia
+
+
+134. **Bicycle Thieves** — Ladrões de Bicicleta
+
+
+135. **Judgment at Nuremberg** — Julgamento em Nuremberg
+
+
+136. **Jurassic Park** — Jurassic Park: Parque dos Dinossauros
+
+
+137. **Oppenheimer** — Oppenheimer
+
+
+138. **Batman Begins** — Batman Begins
+
+
+139. **For a Few Dollars More** — Por uns Dólares a Mais
+
+
+140. **Hamilton** — Hamilton
+
+
+141. **Some Like It Hot** — Quanto Mais Quente Melhor
+
+
+142. **There Will Be Blood** — Sangue Negro
+
+
+143. **Taxi Driver** — Taxi Driver: Motorista de Táxi
+
+
+144. **The Father** — Meu Pai
+
+
+145. **The Kid** — O Garoto
+
+
+146. **All About Eve** — A Eva da História / A Malvada
+
+
+147. **The Sixth Sense** — O Sexto Sentido
+
+
+148. **Ran** — Ran
+
+
+149. **Casino** — Cassino
+
+
+150. **The Thing** — O Enigma de Outro Mundo
+
+
+151. **No Country for Old Men** — Onde os Fracos Não Têm Vez
+
+
+152. **Prisoners** — Os Suspeitos
+
+
+153. **Top Gun: Maverick** — Top Gun: Maverick
+
+
+154. **Kill Bill: Vol. 1** — Kill Bill: Volume 1
+
+
+155. **Project Hail Mary** — Projeto Hail Mary
+
+
+156. **Pan's Labyrinth** — O Labirinto do Fauno
+
+
+157. **Unforgiven** — Os Imperdoáveis
+
+
+158. **A Beautiful Mind** — Uma Mente Brilhante
+
+
+159. **Howl's Moving Castle** — O Castelo Animado
+
+
+160. **The Treasure of the Sierra Madre** — O Tesouro de Sierra Madre
+
+
+161. **Finding Nemo** — Procurando Nemo
+
+
+162. **Demon Slayer: Kimetsu no Yaiba Infinity Castle** — Demon Slayer: O Castelo Infinito
+
+
+163. **Klaus** — Klaus
+
+
+164. **Yojimbo** — Yojimbo: O Guarda-Costas
+
+
+165. **The Elephant Man** — O Homem Elefante
+
+
+166. **The Great Escape** — Fugindo do Inferno
+
+
+167. **Monty Python and the Holy Grail** — Monty Python em Busca do Cálice Sagrado
+
+
+168. **Dial M for Murder** — Disque M para Matar
+
+
+169. **The Secret in Their Eyes** — O Segredo dos Seus Olhos
+
+
+170. **Gone with the Wind** — E o Vento Levou
+
+
+171. **Lock, Stock and Two Smoking Barrels** — Jogos, Trapaças e Dois Canos Fumegantes
+
+
+172. **Chinatown** — Chinatown
+
+
+173. **Catch Me If You Can** — Prenda-me Se For Capaz
+
+
+174. **V for Vendetta** — V de Vingança
+
+
+175. **The Best of Youth** — O Melhor da Juventude
+
+
+176. **Inside Out** — Divertida Mente
+
+
+177. **Dead Poets Society** — Sociedade dos Poetas Mortos
+
+
+178. **Trainspotting** — Trainspotting: Sem Limites
+
+
+179. **Three Billboards Outside Ebbing, Missouri** — Três Anúncios Para Um Crime
+
+
+180. **Harry Potter and the Deathly Hallows: Part 2** — Harry Potter e as Relíquias da Morte: Parte 2
+
+
+181. **The Bridge on the River Kwai** — A Ponte do Rio Kwai
+
+
+182. **Rashomon** — Rashomon
+
+
+183. **Barry Lyndon** — Barry Lyndon
+
+
+184. **The Wild Robot** — Robô Selvagem
+
+
+185. **Ben-Hur** — Ben-Hur
+
+
+186. **Warrior** — Guerreiro
+
+
+187. **Fargo** — Fargo
+
+
+188. **Hacksaw Ridge** — Até o Último Homem
+
+
+189. **Mad Max: Fury Road** — Mad Max: Estrada da Fúria
+
+
+190. **Million Dollar Baby** — Menina de Ouro
+
+
+191. **Ratatouille** — Ratatouille
+
+
+192. **Children of Heaven** — Filhos do Paraíso
+
+
+193. **My Neighbor Totoro** — Meu Amigo Totoro
+
+
+194. **Gran Torino** — Gran Torino
+
+
+195. **Raging Bull** — Touro Indomável
+
+
+196. **12 Years a Slave** — 12 Anos de Escravidão
+
+
+197. **How to Train Your Dragon** — Como Treinar o Seu Dragão
+
+
+198. **Memories of Murder** — Memórias de um Assassino
+
+
+199. **The Grand Budapest Hotel** — O Grande Hotel Budapeste
+
+
+200. **Before Sunrise** — Antes do Amanhecer
+
+
+201. **Blade Runner** — Blade Runner: O Caçador de Androides
+
+
+202. **Monsters, Inc.** — Monstrinhos S.A. / Monstros S.A.
+
+
+203. **Gone Girl** — Garota Exemplar
+
+
+204. **Jaws** — Tubarão
+
+
+205. **Ford v Ferrari** — Ford vs Ferrari
+
+
+206. **In the Name of the Father** — Em Nome do Pai
+
+
+207. **Spider-Man: No Way Home** — Homem-Aranha: Sem Volta Para Casa
+
+
+208. **Wild Tales** — Relatos Selvagens
+
+
+209. **The Gold Rush** — Em Busca do Ouro
+
+
+210. **Sherlock Jr.** — Cenas de Vida Selvagem / Sherlock Jr.
+
+
+211. **Chainsaw Man – The Movie: Reze Arc** — Chainsaw Man - O Filme: Arco da Reze
+
+
+212. **Mary and Max** — Mary e Max: Uma Amizade Diferente
+
+
+213. **A Silent Voice: The Movie** — A Voz do Silêncio
+
+
+214. **The Wages of Fear** — O Salário do Medo
+
+
+215. **The Deer Hunter** — O Franco Atirador
+
+
+216. **Rocky** — Rocky: Um Lutador
+
+
+217. **Logan** — Logan
+
+
+218. **The General** — A General
+
+
+219. **Pirates of the Caribbean: The Curse of the Black Pearl** — Piratas do Caribe: A Maldição do Pérola Negra
+
+
+220. **Mr. Smith Goes to Washington** — A Mulher Faz o Homem
+
+
+221. **Tokyo Story** — Era Uma Vez em Tóquio
+
+
+222. **La Haine** — O Ódio
+
+
+223. **Spotlight** — Spotlight: Segredos Revelados
+
+
+224. **Jai Bhim** — Jai Bhim
+
+
+225. **The Sound of Music** — A Noviça Rebelde
+
+
+226. **The Chaos Class Failed the Class** — Hababam Sınıfı Sınıfta Kaldı
+
+
+227. **Maharaja** — Maharaja
+
+
+228. **The Terminator** — O Exterminador do Futuro
+
+
+229. **On the Waterfront** — Sindicato de Ladrões
+
+
+230. **Wild Strawberries** — Morangos Silvestres
+
+
+231. **The Best Years of Our Lives** — Os Melhores Anos de Nossas Vidas
+
+
+232. **The Third Man** — O Terceiro Homem
+
+
+233. **The Big Lebowski** — O Grande Lebowski
+
+
+234. **The Incredibles** — Os Incríveis
+
+
+235. **Before Sunset** — Antes do Pôr-do-Sol
+
+
+236. **Hachi: A Dog's Tale** — Sempre ao Seu Lado
+
+
+237. **Room** — O Quarto de Jack
+
+
+238. **The Seventh Seal** — O Sétimo Selo
+
+
+239. **Hotel Rwanda** — Hotel Ruanda
+
+
+240. **The Exorcist** — O Exorcista
+
+
+241. **Platoon** — Platoon
+
+
+242. **The Iron Giant** — O Gigante de Ferro
+
+
+243. **Rush** — Rush: No Limite da Emoção
+
+
+244. **Stand by Me** — Conta Comigo
+
+
+245. **The Wizard of Oz** — O Mágico de Oz
+
+
+246. **The Battle of Algiers** — A Batalha de Argel
+
+
+247. **My Father and My Son** — Meu Pai e Meu Filho
+
+
+248. **The Passion of Joan of Arc** — A Paixão de Joana d'Arc
+
+
+249. **Spider-Man: Brand New Day** — Homem-Aranha: Um Novo Dia
+
+
+250. **The Handmaiden** — A Criada`;
+
+  var map = {};
+  var lines = txt.split(/\r?\n/);
+  for (var i = 0; i < lines.length; i++) {
+    var m = lines[i].match(/^\s*\d+\.\s*\*\*(.+?)\*\*\s*—\s*(.+?)\s*$/);
+    if (m) map[m[1]] = m[2];
+  }
+
+  var els = document.querySelectorAll('.movie');
+  var ok = 0;
+  for (var j = 0; j < els.length; j++) {
+    var en = els[j].dataset.title;
+    if (map[en]) {
+      var pt = map[en];
+      els[j].dataset.title = pt + ' | ' + en;
+      var t = els[j].querySelector('.title');
+      t.innerHTML = pt + '<br><small style="color:#858d99;font-size:12px;font-weight:normal">' + en + '</small>';
+      ok++;
+    }
+  }
+  console.log('Títulos atualizados:', ok);
+})();
+</script>
 
 <script>
 function toggleMovie(btn) {
