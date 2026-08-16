@@ -17,12 +17,16 @@ h1{font-size:21px;margin:0 0 4px}
 .progress{height:6px;background:#292e36;border-radius:8px;margin-top:10px;overflow:hidden}
 #bar{height:100%;width:0;background:#e4b94e}
 .controls{display:flex;gap:7px;padding:10px 12px;background:#101216;position:sticky;top:126px;z-index:9}
-.controls2{display:flex;gap:7px;padding:0 12px 10px;background:#101216;position:sticky;top:174px;z-index:8;flex-wrap:wrap}
-.btn{padding:8px 10px;border-radius:9px;border:1px solid #30353d;background:#191c22;color:#f4f5f7;font-size:12px;cursor:pointer;white-space:nowrap}
+.controls2{display:flex;gap:7px;padding:0 12px 6px;background:#101216;position:sticky;top:174px;z-index:8;flex-wrap:wrap}
+.btn{padding:10px 12px;min-height:38px;border-radius:9px;border:1px solid #30353d;background:#191c22;color:#f4f5f7;font-size:13px;cursor:pointer;white-space:nowrap;-webkit-tap-highlight-color:transparent}
 .btn:active{transform:scale(.97)}
 .btn.primary{background:#e4b94e;color:#111;border-color:#e4b94e}
-.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#191c22;border:1px solid #2a2e35;padding:10px 16px;border-radius:10px;font-size:13px;z-index:999;box-shadow:0 4px 20px rgba(0,0,0,.5)}
-#fileInput{display:none}
+.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#191c22;border:1px solid #2a2e35;padding:10px 16px;border-radius:10px;font-size:13px;z-index:9999;box-shadow:0 4px 20px rgba(0,0,0,.5);max-width:80vw;text-align:center}
+#fileInput{position:absolute;left:-9999px;top:-9999px;opacity:0;width:0;height:0}
+.hiddenTA{position:fixed;left:-9999px;top:0;opacity:.01;width:1px;height:1px}
+.syncBadge{padding:2px 10px;margin:0 12px 8px;background:#111317;border:1px solid #252930;border-radius:20px;color:#858d99;font-size:11px;display:inline-flex;align-items:center;gap:5px}
+.syncBadge b{color:#5ebf6e}
+.hint{padding:2px 12px 10px;color:#858d99;font-size:11px;line-height:1.4}
 #search{flex:1;min-width:0;padding:10px;border-radius:9px;border:1px solid #30353d;background:#191c22;color:#fff;font-size:14px}
 #filter{padding:10px;border-radius:9px;border:1px solid #30353d;background:#191c22;color:#fff}
 main{max-width:760px;margin:auto;padding:0 12px 35px}
@@ -60,11 +64,13 @@ footer{text-align:center;color:#737b87;font-size:10px;padding:20px}
 
 <div class="controls2">
 <button class="btn primary" type="button" onclick="copyShareLink()">🔗 Copiar link</button>
-<button class="btn" type="button" onclick="exportJSON()">⬇ Exportar (.json)</button>
-<button class="btn" type="button" onclick="document.getElementById('fileInput').click()">⬆ Importar</button>
-<button class="btn" type="button" onclick="clearAll()" title="Zera tudo">🗑 Limpar</button>
+<button class="btn" type="button" onclick="exportJSON()">⬇ Backup</button>
+<button class="btn" type="button" onclick="document.getElementById('fileInput').click()">⬆ Restaurar</button>
+<button class="btn" type="button" onclick="clearAll()" title="Zera tudo">🗑</button>
 </div>
-<input type="file" id="fileInput" accept=".json,application/json">
+<div class="syncBadge">Status: <b id="syncStatus"> salvo no link ✓</b></div>
+<div class="hint">💡 Para usar em outro iPhone/PC: clique em <b>🔗 Copiar link</b> → envie por WhatsApp/E-mail → abra o link no outro dispositivo. Ou use ⬇ Backup para salvar um arquivo.</div>
+<input type="file" id="fileInput">
 
 <main id="list">
 
@@ -2097,203 +2103,310 @@ footer{text-align:center;color:#737b87;font-size:10px;padding:20px}
 </script>
 
 <script>
-function getStates() {
-  return Array.from(document.querySelectorAll('.movie')).map(function(m) {
-    return m.classList.contains('watched');
-  });
-}
+(function(){
+  var isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
 
-function applyStates(arr) {
-  document.querySelectorAll('.movie').forEach(function(m, i) {
-    if (arr && arr[i]) {
-      m.classList.add('watched');
-      m.querySelector('.check').textContent = '✓';
-    } else {
-      m.classList.remove('watched');
-      m.querySelector('.check').textContent = '○';
-    }
-  });
-}
+  function setSyncStatus(msg, ok) {
+    var s = document.getElementById('syncStatus');
+    if (!s) return;
+    s.textContent = ' ' + msg + (ok ? ' ✓' : '');
+    s.style.color = ok ? '#5ebf6e' : '#e4b94e';
+  }
 
-function saveAll() {
-  var states = getStates();
-  try { localStorage.setItem('imdb250_states_v2', JSON.stringify(states)); } catch(e) {}
-  try {
+  function getStates() {
+    return Array.from(document.querySelectorAll('.movie')).map(function(m) {
+      return m.classList.contains('watched');
+    });
+  }
+
+  function applyStates(arr) {
+    document.querySelectorAll('.movie').forEach(function(m, i) {
+      if (arr && arr[i]) {
+        m.classList.add('watched');
+        var c1 = m.querySelector('.check');
+        if (c1) c1.textContent = '✓';
+      } else {
+        m.classList.remove('watched');
+        var c2 = m.querySelector('.check');
+        if (c2) c2.textContent = '○';
+      }
+    });
+  }
+
+  function encodeStates(states) {
     var bin = states.map(function(b){return b?'1':'0'}).join('');
     while (bin.length % 8 !== 0) bin += '0';
     var bytes = [];
     for (var i=0;i<bin.length;i+=8) bytes.push(parseInt(bin.substr(i,8),2));
-    var b64 = btoa(String.fromCharCode.apply(null, bytes));
-    b64 = b64.replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');
-    if (history.replaceState) history.replaceState(null, '', '#' + b64);
-    else location.hash = b64;
-  } catch(e) {}
-}
-
-function loadFromHash() {
-  var h = (location.hash || '').replace(/^#/, '');
-  if (!h) return false;
-  try {
-    var b64 = h.replace(/-/g,'+').replace(/_/g,'/');
-    while (b64.length % 4 !== 0) b64 += '=';
-    var binStr = atob(b64);
-    var bits = '';
-    for (var i=0;i<binStr.length;i++) {
-      var c = binStr.charCodeAt(i).toString(2);
-      bits += '00000000'.substring(c.length) + c;
-    }
-    var states = [];
-    for (var j=0;j<250;j++) states.push(bits[j] === '1');
-    applyStates(states);
-    return true;
-  } catch(e) { return false; }
-}
-
-function loadFromLocal() {
-  try {
-    var saved = JSON.parse(localStorage.getItem('imdb250_states_v2') || 'null');
-    if (Array.isArray(saved) && saved.length >= 250) { applyStates(saved); return true; }
-  } catch(e) {}
-  return false;
-}
-
-function showToast(msg) {
-  var el = document.createElement('div');
-  el.className = 'toast';
-  el.textContent = msg;
-  document.body.appendChild(el);
-  setTimeout(function(){ el.remove(); }, 2200);
-}
-
-function toggleMovie(btn) {
-  var movie = btn.parentElement;
-  movie.classList.toggle('watched');
-  btn.textContent = movie.classList.contains('watched') ? '✓' : '○';
-  updateStats();
-  saveAll();
-}
-
-function toggleMovie(button) {
-      const movieDiv = button.closest('.movie');
-      const title = movieDiv.getAttribute('data-title');
-      
-      movieDiv.classList.toggle('watched');
-      
-      let watchedMovies = JSON.parse(localStorage.getItem('watchedMovies') || '[]');
-      
-      if (movieDiv.classList.contains('watched')) {
-        button.textContent = '✓';
-        if (!watchedMovies.includes(title)) watchedMovies.push(title);
-      } else {
-        button.textContent = '○';
-        watchedMovies = watchedMovies.filter(t => t !== title);
-      }
-      
-      localStorage.setItem('watchedMovies', JSON.stringify(watchedMovies));
-    }
-
-    document.addEventListener('DOMContentLoaded', () => {
-      const watchedMovies = JSON.parse(localStorage.getItem('watchedMovies') || '[]');
-      document.querySelectorAll('.movie').forEach(movieDiv => {
-        const title = movieDiv.getAttribute('data-title');
-        if (watchedMovies.includes(title)) {
-          movieDiv.classList.add('watched');
-          const btn = movieDiv.querySelector('.check');
-          if (btn) btn.textContent = '✓';
-        }
-      
-function filterMovies() {
-  var q = document.getElementById('search').value.toLowerCase();
-  var f = document.getElementById('filter').value;
-  var visible = 0;
-  document.querySelectorAll('.movie').forEach(function(m) {
-    var matchText = m.dataset.title.toLowerCase().indexOf(q) !== -1;
-    var watched = m.classList.contains('watched');
-    var matchFilter = f === 'all' || (f === 'watched' && watched) || (f === 'unwatched' && !watched);
-    m.style.display = (matchText && matchFilter) ? 'grid' : 'none';
-    if (matchText && matchFilter) visible++;
-  });
-  var empty = document.getElementById('empty');
-  if (!visible) {
-    if (!empty) {
-      empty = document.createElement('div');
-      empty.id = 'empty';
-      empty.className = 'empty';
-      empty.textContent = 'Nenhum filme encontrado.';
-      document.getElementById('list').appendChild(empty);
-    }
-  } else if (empty) empty.remove();
-}
-
-function copyShareLink() {
-  saveAll();
-  var url = location.href;
-  if (navigator.clipboard) {
-    navigator.clipboard.writeText(url).then(function(){
-      showToast('Link copiado! Abra em qualquer dispositivo');
-    }, function(){ fallbackCopy(url); });
-  } else fallbackCopy(url);
-}
-function fallbackCopy(txt) {
-  var ta = document.createElement('textarea');
-  ta.value = txt; document.body.appendChild(ta); ta.select();
-  try { document.execCommand('copy'); showToast('Link copiado!'); }
-  catch(e) { prompt('Copie este link:', txt); }
-  ta.remove();
-}
-
-function exportJSON() {
-  saveAll();
-  var data = {
-    version: 2,
-    updatedAt: new Date().toISOString(),
-    states: getStates(),
-    count: getStates().filter(function(b){return b}).length
-  };
-  var blob = new Blob([JSON.stringify(data, null, 2)], {type: 'application/json'});
-  var a = document.createElement('a');
-  a.href = URL.createObjectURL(blob);
-  a.download = 'imdb250-progresso.json';
-  document.body.appendChild(a); a.click(); a.remove();
-  showToast('Arquivo exportado!');
-}
-
-function importJSON(file) {
-  var reader = new FileReader();
-  reader.onload = function() {
+    var b64;
     try {
-      var obj = JSON.parse(reader.result);
-      var arr = obj && Array.isArray(obj.states) ? obj.states : (Array.isArray(obj) ? obj : null);
-      if (arr && arr.length >= 250) {
-        applyStates(arr);
-        updateStats();
-        saveAll();
-        showToast('Progresso importado com sucesso!');
-      } else {
-        showToast('Arquivo inválido.');
+      b64 = btoa(String.fromCharCode.apply(null, bytes));
+    } catch(e) {
+      b64 = '';
+      for (var k=0;k<bytes.length;k++) b64 += String.fromCharCode(bytes[k]);
+      b64 = btoa(b64);
+    }
+    return b64.replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');
+  }
+
+  function decodeHash(h) {
+    if (!h) return null;
+    try {
+      var b64 = h.replace(/-/g,'+').replace(/_/g,'/');
+      while (b64.length % 4 !== 0) b64 += '=';
+      var binStr = atob(b64);
+      var bits = '';
+      for (var i=0;i<binStr.length;i++) {
+        var c = binStr.charCodeAt(i).toString(2);
+        bits += '00000000'.substring(c.length) + c;
       }
-    } catch(e) { showToast('Erro ao ler arquivo.'); }
+      var states = [];
+      for (var j=0;j<250;j++) states.push(bits[j] === '1');
+      return states;
+    } catch(e) { return null; }
+  }
+
+  function saveAll(showToastFlag) {
+    var states = getStates();
+    try { localStorage.setItem('imdb250_states_v2', JSON.stringify(states)); } catch(e) {}
+    try {
+      var b64 = encodeStates(states);
+      if (b64) {
+        if (history.replaceState) history.replaceState(null, '', '#' + b64);
+        else location.hash = b64;
+        setSyncStatus('salvo no link', true);
+      }
+    } catch(e) {}
+    if (showToastFlag) showToast('Progresso salvo ✅');
+  }
+
+  function loadFromHash() {
+    var h = (location.hash || '').replace(/^#/, '');
+    if (!h) return false;
+    var states = decodeHash(h);
+    if (states) {
+      applyStates(states);
+      setSyncStatus('carregado do link', true);
+      return true;
+    }
+    return false;
+  }
+
+  function loadFromLocal() {
+    try {
+      var saved = JSON.parse(localStorage.getItem('imdb250_states_v2') || 'null');
+      if (Array.isArray(saved) && saved.length >= 250) {
+        applyStates(saved);
+        setSyncStatus('carregado localmente', true);
+        saveAll(false);
+        return true;
+      }
+    } catch(e) {}
+    return false;
+  }
+
+  var toastTimer = null;
+  function showToast(msg) {
+    var old = document.querySelector('.toast');
+    if (old) old.remove();
+    if (toastTimer) clearTimeout(toastTimer);
+    var el = document.createElement('div');
+    el.className = 'toast';
+    el.textContent = msg;
+    document.body.appendChild(el);
+    toastTimer = setTimeout(function(){ el.remove(); }, 2800);
+  }
+
+  function iosCopy(text) {
+    var ta = document.createElement('textarea');
+    ta.className = 'hiddenTA';
+    ta.value = text;
+    ta.setAttribute('readonly','');
+    ta.contentEditable = 'true';
+    document.body.appendChild(ta);
+    try {
+      if (window.getSelection && document.createRange) {
+        var range = document.createRange();
+        range.selectNodeContents(ta);
+        var sel = window.getSelection();
+        sel.removeAllRanges();
+        sel.addRange(range);
+        ta.setSelectionRange(0, ta.value.length);
+      } else {
+        ta.select();
+        ta.focus();
+      }
+      var ok = document.execCommand('copy');
+      ta.remove();
+      return ok;
+    } catch(e) {
+      ta.remove();
+      return false;
+    }
+  }
+
+  window.copyShareLink = function() {
+    saveAll(false);
+    var url = location.href;
+    var done = false;
+    if (navigator.share && isIOS) {
+      try {
+        navigator.share({title:'IMDb Top 250 — meu progresso', url:url}).then(function(){
+          showToast('Link compartilhado ✅');
+          done = true;
+        }).catch(function(){ done = false; });
+        if (done) return;
+      } catch(e) {}
+    }
+    if (!done && navigator.clipboard && navigator.clipboard.writeText && !isIOS) {
+      navigator.clipboard.writeText(url).then(function(){
+        showToast('Link copiado! Abra em qualquer dispositivo ✅');
+      }, function(){
+        if (iosCopy(url)) showToast('Link copiado! ✅');
+        else prompt('👉 Copie este link e envie para o outro dispositivo:', url);
+      });
+    } else {
+      if (iosCopy(url)) showToast('Link copiado! ✅');
+      else prompt('👉 Copie este link e envie para o outro dispositivo:', url);
+    }
   };
-  reader.readAsText(file);
-}
 
-function clearAll() {
-  if (!confirm('Tem certeza que deseja limpar todo o progresso?')) return;
-  applyStates(new Array(250).fill(false));
+  window.exportJSON = function() {
+    saveAll(false);
+    var states = getStates();
+    var data = {
+      app: 'imdb-top250-checklist',
+      version: 2,
+      exportedAt: new Date().toISOString(),
+      countWatched: states.filter(function(b){return b}).length,
+      states: states
+    };
+    var json = JSON.stringify(data, null, 2);
+    var blob, a;
+    try {
+      blob = new Blob([json], {type: 'application/json'});
+      var downloadName = 'imdb250-progresso-' + new Date().toISOString().slice(0,10) + '.json';
+      if (navigator.msSaveBlob) {
+        navigator.msSaveBlob(blob, downloadName);
+      } else {
+        a = document.createElement('a');
+        var url = URL.createObjectURL(blob);
+        a.href = url;
+        a.download = downloadName;
+        a.rel = 'noopener';
+        a.target = '_blank';
+        document.body.appendChild(a);
+        setTimeout(function(){ a.click(); }, 50);
+        setTimeout(function(){ try{ URL.revokeObjectURL(url); } catch(e){} a.remove(); }, 1500);
+      }
+      showToast('Arquivo de backup salvo ✅');
+    } catch(e) {
+      var b64d = 'data:application/json;charset=utf-8,' + encodeURIComponent(json);
+      if (isIOS) {
+        window.open(b64d, '_blank');
+        showToast('Toque em ⬇ no topo ou Segure → Salvar');
+      } else {
+        prompt('Conteúdo JSON (copie e salve em arquivo .json):', json);
+      }
+    }
+  };
+
+  window.importJSON = function(file) {
+    if (!file) return;
+    var reader = new FileReader();
+    reader.onload = function() {
+      try {
+        var obj = JSON.parse(reader.result);
+        var arr = obj && Array.isArray(obj.states) ? obj.states : (Array.isArray(obj) ? obj : null);
+        if (arr && arr.length >= 250) {
+          if (confirm('Restaurar ' + arr.filter(function(b){return b}).length + ' filmes assistidos?')) {
+            applyStates(arr);
+            updateStats();
+            saveAll(true);
+          }
+        } else {
+          showToast('❌ Arquivo inválido ou corrompido');
+        }
+      } catch(e) {
+        showToast('❌ Não foi possível ler o arquivo');
+      }
+    };
+    reader.onerror = function(){ showToast('❌ Erro ao ler arquivo'); };
+    try { reader.readAsText(file); } catch(e) { showToast('❌ Formato não suportado'); }
+  };
+
+  window.clearAll = function() {
+    if (!confirm('Tem CERTEZA que deseja apagar TODO o progresso?\nEsta ação NÃO pode ser desfeita!')) return;
+    if (!confirm('Confirma novamente? Todos os 250 filmes serão marcados como não assistidos.')) return;
+    applyStates(new Array(250).fill(false));
+    updateStats();
+    saveAll(true);
+  };
+
+  window.toggleMovie = function(btn) {
+    var movie = btn.parentElement;
+    movie.classList.toggle('watched');
+    btn.textContent = movie.classList.contains('watched') ? '✓' : '○';
+    updateStats();
+    saveAll(false);
+  };
+
+  function updateStats() {
+    var movies = document.querySelectorAll('.movie');
+    var count = 0;
+    for (var i=0;i<movies.length;i++) if (movies[i].classList.contains('watched')) count++;
+    var pct = count / 250 * 100;
+    var cc = document.getElementById('count'); if (cc) cc.textContent = count;
+    var cl = document.getElementById('left'); if (cl) cl.textContent = 250-count;
+    var cp = document.getElementById('pct'); if (cp) cp.textContent = pct.toFixed(1).replace('.',',') + '%';
+    var cb = document.getElementById('bar'); if (cb) cb.style.width = pct + '%';
+  }
+
+  function filterMovies() {
+    var q = (document.getElementById('search').value || '').toLowerCase();
+    var f = document.getElementById('filter').value;
+    var visible = 0;
+    var ms = document.querySelectorAll('.movie');
+    for (var i=0;i<ms.length;i++) {
+      var m = ms[i];
+      var mt = (m.dataset.title || '').toLowerCase();
+      var matchText = mt.indexOf(q) !== -1;
+      var watched = m.classList.contains('watched');
+      var matchFilter = f === 'all' || (f === 'watched' && watched) || (f === 'unwatched' && !watched);
+      m.style.display = (matchText && matchFilter) ? 'grid' : 'none';
+      if (matchText && matchFilter) visible++;
+    }
+    var empty = document.getElementById('empty');
+    if (!visible) {
+      if (!empty) {
+        empty = document.createElement('div');
+        empty.id = 'empty';
+        empty.className = 'empty';
+        empty.textContent = 'Nenhum filme encontrado.';
+        document.getElementById('list').appendChild(empty);
+      }
+    } else if (empty) empty.remove();
+  }
+
+  function onHashChange() {
+    if (loadFromHash()) {
+      updateStats();
+      showToast('Progresso atualizado do link 🔄');
+    }
+  }
+
+  document.getElementById('search').addEventListener('input', filterMovies);
+  document.getElementById('filter').addEventListener('change', filterMovies);
+  document.getElementById('fileInput').addEventListener('change', function(e) {
+    if (e.target.files && e.target.files[0]) importJSON(e.target.files[0]);
+    e.target.value = '';
+  });
+  window.addEventListener('hashchange', onHashChange);
+
+  if (!loadFromHash()) loadFromLocal();
   updateStats();
-  saveAll();
-  showToast('Progresso zerado.');
-}
-
-document.getElementById('search').addEventListener('input', filterMovies);
-document.getElementById('filter').addEventListener('change', filterMovies);
-document.getElementById('fileInput').addEventListener('change', function(e) {
-  if (e.target.files && e.target.files[0]) importJSON(e.target.files[0]);
-  e.target.value = '';
-});
-
-if (!loadFromHash()) loadFromLocal();
-updateStats();
+  setTimeout(function(){ saveAll(false); }, 300);
+})();
 </script>
 </body>
 </html>
