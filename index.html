@@ -2173,16 +2173,35 @@ function toggleMovie(btn) {
   saveAll();
 }
 
-function updateStats() {
-  var movies = Array.from(document.querySelectorAll('.movie'));
-  var count = movies.filter(function(m){ return m.classList.contains('watched'); }).length;
-  var pct = count / 250 * 100;
-  document.getElementById('count').textContent = count;
-  document.getElementById('left').textContent = 250-count;
-  document.getElementById('pct').textContent = pct.toFixed(1).replace('.',',') + '%';
-  document.getElementById('bar').style.width = pct + '%';
-}
+function toggleMovie(button) {
+      const movieDiv = button.closest('.movie');
+      const title = movieDiv.getAttribute('data-title');
+      
+      movieDiv.classList.toggle('watched');
+      
+      let watchedMovies = JSON.parse(localStorage.getItem('watchedMovies') || '[]');
+      
+      if (movieDiv.classList.contains('watched')) {
+        button.textContent = '✓';
+        if (!watchedMovies.includes(title)) watchedMovies.push(title);
+      } else {
+        button.textContent = '○';
+        watchedMovies = watchedMovies.filter(t => t !== title);
+      }
+      
+      localStorage.setItem('watchedMovies', JSON.stringify(watchedMovies));
+    }
 
+    document.addEventListener('DOMContentLoaded', () => {
+      const watchedMovies = JSON.parse(localStorage.getItem('watchedMovies') || '[]');
+      document.querySelectorAll('.movie').forEach(movieDiv => {
+        const title = movieDiv.getAttribute('data-title');
+        if (watchedMovies.includes(title)) {
+          movieDiv.classList.add('watched');
+          const btn = movieDiv.querySelector('.check');
+          if (btn) btn.textContent = '✓';
+        }
+      
 function filterMovies() {
   var q = document.getElementById('search').value.toLowerCase();
   var f = document.getElementById('filter').value;
