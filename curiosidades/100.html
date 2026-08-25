@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The 100-Gear Exponential Machine</title>
+<style>
+*{box-sizing:border-box}
+
+body{
+    margin:0;
+    min-height:100vh;
+    background:#080d12;
+    color:#e8edf2;
+    font-family:Arial,Helvetica,sans-serif;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    padding:20px;
+    overflow-x:hidden;
+}
+
+h1{
+    margin:0 0 5px;
+    font-size:clamp(22px,4vw,40px);
+    text-align:center;
+}
+.subtitle{
+    opacity:.65;
+    margin-bottom:18px;
+    text-align:center;
+}
+
+.machine-container {
+    width: 96vw;
+    max-width: 1200px;
+    border: 1px solid #30404e;
+    border-radius: 18px;
+    background: radial-gradient(circle at 50% 45%,#172431,#090e13 72%);
+    box-shadow: 0 20px 60px #000b;
+    padding: 20px;
+}
+
+.gears-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 25px 15px;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.gear-wrap{
+    width: 110px;
+    height: 160px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+}
+
+.label{
+    font-size: 11px;
+    font-weight: bold;
+    white-space: nowrap;
+    margin-bottom: 8px;
+    color: #aab2b8;
+}
+
+.status{
+    font: 10px monospace;
+    color: #83919d;
+    white-space: nowrap;
+    margin-top: 8px;
+}
+
+.active .label, .active .status{ color: #49b6ff; }
+.waiting .gear{ opacity: .38; }
+.active .gear{ filter: drop-shadow(0 0 10px #49b6ff); }
+
+.gear{
+    --size: 90px;
+    width: var(--size);
+    height: var(--size);
+    position: relative;
+    flex: none;
+    border-radius: 50%;
+    background:
+      radial-gradient(circle,
+        #222a31 0 9%,
+        #9ca5ac 10% 16%,
+        #5c6871 17% 20%,
+        #c3c9cd 21% 64%,
+        #5a646c 65% 72%,
+        #252c32 73% 100%);
+    border: 5px solid #56616a;
+    box-shadow:
+      inset 0 0 0 2px #d9dde0,
+      inset 0 0 12px #111,
+      0 5px 15px #000c;
+    transition: transform 0.1s linear;
+}
+
+.gear-1 {
+    transition: none !important;
+}
+
+.gear::before{
+    content:"";
+    position:absolute;
+    inset:-12px;
+    border-radius:50%;
+    background:repeating-conic-gradient(
+      from 0deg,
+      #c3cbd0 0deg 1.8deg,
+      transparent 1.8deg 3.6deg
+    );
+    -webkit-mask:radial-gradient(circle,transparent 0 44px,#000 45px);
+    mask:radial-gradient(circle,transparent 0 44px,#000 45px);
+    z-index:-1;
+}
+
+.gear::after{
+    content:"";
+    position:absolute;
+    width:14px;
+    height:14px;
+    left:50%;
+    top:50%;
+    transform:translate(-50%,-50%);
+    border-radius:50%;
+    background:#1e252b;
+    border:3px solid #aab2b8;
+    box-shadow:0 0 0 2px #46515a;
+    z-index: 2;
+}
+
+.arrow-pointer {
+    position: absolute;
+    width: 4px;
+    height: 32px;
+    background: #ff4949;
+    left: calc(50% - 2px);
+    bottom: 50%;
+    transform-origin: 50% 100%;
+    border-radius: 2px;
+    z-index: 1;
+    box-shadow: 0 0 5px rgba(255, 73, 73, 0.8);
+}
+
+.arrow-pointer::before {
+    content: "";
+    position: absolute;
+    top: -6px;
+    left: -3px;
+    width: 0;
+    height: 0;
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+    border-bottom: 8px solid #ff4949;
+}
+
+.counter{
+    display: flex;
+    justify-content: space-between;
+    font: 13px monospace;
+    color: #8da0af;
+    border-top: 1px solid #283947;
+    padding-top: 12px;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.timer{
+    color:#49b6ff;
+    font-weight:bold;
+}
+
+.controls{
+    margin-top:20px;
+    display:flex;
+    gap:12px;
+    flex-wrap:wrap;
+    justify-content:center;
+    align-items:center;
+}
+
+button, select{
+    padding:12px 18px;
+    border:1px solid #3b4b58;
+    border-radius:8px;
+    background:#17232e;
+    color:#fff;
+    cursor:pointer;
+    font-size:14px;
+}
+
+button:hover, select:hover{background:#233442}
+
+.speed-control {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    color: #8da0af;
+}
+
+.info{
+    max-width:900px;
+    text-align:center;
+    line-height:1.5;
+    opacity:.72;
+    margin-top:16px;
+}
+
+.eta-box{
+    margin-top: 10px;
+    padding: 12px 16px;
+    background: #111b24;
+    border: 1px solid #283947;
+    border-radius: 8px;
+    font-family: monospace;
+    font-size: 12px;
+    color: #ffca28;
+    text-align: left;
+    max-width: 1200px;
+    width: 96vw;
+    line-height: 1.6;
+    max-height: 280px;
+    overflow-y: auto;
+}
+
+.nomenclature {
+    color: #49b6ff;
+    font-weight: bold;
+}
+
+.universe-scale {
+    color: #ff6b6b;
+    font-weight: bold;
+}
+</style>
+</head>
+
+<body>
+
+<h1>The 100-Gear Exponential Machine</h1>
+<div class="subtitle">10 engrenagens — Redução contínua de 1:100 por estágio ($100^9$)</div>
+
+<div class="machine-container">
+    <div class="gears-grid" id="gearsContainer"></div>
+
+    <div class="counter">
+        <span id="cycle">VOLTAS G1: 0</span>
+        <span id="timer" class="timer">DECORRIDO: 00:00:00.0</span>
+        <span id="current">DENTES G2: 0</span>
+    </div>
+</div>
+
+<div class="eta-box" id="etaBox"></div>
+
+<div class="controls">
+    <button onclick="start()">▶ Iniciar</button>
+    <button onclick="pause()">Ⅱ Pausar</button>
+    <button onclick="resetMachine()">↻ Reiniciar</button>
+    
+    <div class="speed-control">
+        <label for="speedSelect"><b>Tempo da G1:</b></label>
+        <select id="speedSelect" onchange="updateSpeed()">
+            <option value="0.1">0.1s (Ultra Rápido)</option>
+            <option value="0.5">0.5s por volta</option>
+            <option value="1" selected>1.0s por volta (Padrão)</option>
+            <option value="3.5">3.5s por volta</option>
+        </select>
+    </div>
+</div>
+
+<div class="info">
+    Modelo matemático contínuo baseado em engrenagens sem fim (worm gears). Cada engrenagem transmite $1/100$ do seu movimento angular diretamente para a engrenagem seguinte.
+</div>
+
+<script>
+const TOTAL_GEARS = 10;
+const TEETH = 100;
+const RATIO = 100; // Transmissão 1:100
+
+let gears = [];
+let wraps = [];
+let statuses = [];
+
+let running = false;
+let lastTime = null;
+let elapsedTime = 0;
+
+let turnsG1 = 0;
+let secondsPerRotation = 1;
+
+function initGearsHTML() {
+    const container = document.getElementById("gearsContainer");
+    container.innerHTML = "";
+    
+    for (let i = 1; i <= TOTAL_GEARS; i++) {
+        const wrap = document.createElement("div");
+        wrap.className = `gear-wrap ${i === 1 ? 'active' : 'waiting'}`;
+        wrap.id = `wrap${i}`;
+        
+        wrap.innerHTML = `
+            <div class="label">ENGRENAGEM ${i}</div>
+            <div class="gear ${i === 1 ? 'gear-1' : ''}" id="gear${i}">
+                <div class="arrow-pointer"></div>
+            </div>
+            <div class="status" id="status${i}">${i === 1 ? 'VOLTAS: 0' : 'DENTES: 0/100'}</div>
+        `;
+        
+        container.appendChild(wrap);
+    }
+
+    for (let i = 1; i <= TOTAL_GEARS; i++) {
+        gears.push(document.getElementById(`gear${i}`));
+        wraps.push(document.getElementById(`wrap${i}`));
+        statuses.push(document.getElementById(`status${i}`));
+    }
+}
+
+function updateSpeed() {
+    secondsPerRotation = parseFloat(document.getElementById("speedSelect").value);
+    renderETA();
+}
+
+function getNomenclature(years) {
+    if (years < 1) return "";
+    if (years < 10) return " (Anos)";
+    if (years < 100) return " (Década)";
+    if (years < 1000) return " (Século)";
+    if (years < 1e6) return " (Milênio)";
+    if (years < 1e9) return " (Era Astronômica / Megano)";
+    if (years < 1e12) return " (Éon / Gigano)";
+    if (years < 1e15) return " (Escala Cósmica / Terano)";
+    return " (Morte Térmica do Universo)";
+}
+
+function formatUniverseAgeRatio(years) {
+    const UNIVERSE_AGE_YEARS = 13.8e9;
+    const ratio = years / UNIVERSE_AGE_YEARS;
+
+    if (ratio < 0.0001) {
+        return `<span class="universe-scale">[ < 0,0001x Idade do Universo ]</span>`;
+    }
+    if (ratio < 1e5) {
+        return `<span class="universe-scale">[ ~${ratio.toLocaleString('pt-BR', { maximumFractionDigits: 2 })}x a Idade do Universo ]</span>`;
+    }
+    return `<span class="universe-scale">[ ~${ratio.toExponential(2)}x a Idade do Universo ]</span>`;
+}
+function formatLargeYears(years) {
+    if (years < 1e3) return `${Math.floor(years).toLocaleString('pt-BR')} anos`;
+    
+    const units = [
+        { value: 1e24, singular: "septilhão", plural: "septilhões" },
+        { value: 1e21, singular: "sextilhão", plural: "sextilhões" },
+        { value: 1e18, singular: "quintilhão", plural: "quintilhões" },
+        { value: 1e15, singular: "quatrilhão", plural: "quatrilhões" },
+        { value: 1e12, singular: "trilhão", plural: "trilhões" },
+        { value: 1e9,  singular: "bilhão",  plural: "bilhões" },
+        { value: 1e6,  singular: "milhão",  plural: "milhões" },
+        { value: 1e3,  singular: "mil",     plural: "mil" }
+    ];
+
+    for (const unit of units) {
+        if (years >= unit.value) {
+            const val = years / unit.value;
+            const formattedVal = val.toLocaleString('pt-BR', { maximumFractionDigits: 2 });
+            const label = (val >= 1 && val < 2 && unit.singular !== "mil") ? unit.singular : unit.plural;
+            return `${formattedVal} ${label} de anos`;
+        }
+    }
+}
+
+function formatDuration(totalSeconds) {
+    const SECONDS_PER_YEAR = 31536000;
+    const years = totalSeconds / SECONDS_PER_YEAR;
+
+    if (totalSeconds < 60) {
+        return { text: `${totalSeconds.toFixed(1)}s`, nom: " (Segundos)", universeRatio: `<span class="universe-scale">[ Fração de Segundo ]</span>` };
+    }
+    if (totalSeconds < 3600) {
+        return { text: `${(totalSeconds / 60).toFixed(1)} min`, nom: " (Minutos)", universeRatio: `<span class="universe-scale">[ < 0,0001x Idade do Universo ]</span>` };
+    }
+    if (totalSeconds < 86400) {
+        return { text: `${(totalSeconds / 3600).toFixed(1)} horas`, nom: " (Horas)", universeRatio: `<span class="universe-scale">[ < 0,0001x Idade do Universo ]</span>` };
+    }
+    if (totalSeconds < SECONDS_PER_YEAR) {
+        return { text: `${(totalSeconds / 86400).toFixed(1)} dias`, nom: " (Dias)", universeRatio: `<span class="universe-scale">[ < 0,0001x Idade do Universo ]</span>` };
+    }
+
+    return {
+        text: formatLargeYears(years),
+        nom: getNomenclature(years),
+        universeRatio: formatUniverseAgeRatio(years)
+    };
+
+}
+
+function renderETA() {
+    let html = `⏱ <b>ESTIMATIVA PARA 1 VOLTA COMPLETA (G1 a ${secondsPerRotation}s/volta):</b><br>`;
+    
+    for (let i = 2; i <= TOTAL_GEARS; i++) {
+        const requiredSeconds = Math.pow(RATIO, i - 1) * secondsPerRotation;
+        const dur = formatDuration(requiredSeconds);
+        html += `• <b>Engrenagem ${i}:</b> ${dur.text} <span class="nomenclature">${dur.nom}</span> ${dur.universeRatio}<br>`;
+    }
+
+    document.getElementById("etaBox").innerHTML = html;
+}
+
+function formatTime(seconds) {
+    const hrs = Math.floor(seconds / 3600);
+    const mins = Math.floor((seconds % 3600) / 60);
+    const secs = Math.floor(seconds % 60);
+    const ms = Math.floor((seconds % 1) * 10);
+
+    const pad = (num) => String(num).padStart(2, '0');
+    return `${pad(hrs)}:${pad(mins)}:${pad(secs)}.${ms}`;
+}
+
+function animate(timestamp) {
+    if (!running) return;
+
+    if (!lastTime) lastTime = timestamp;
+    const deltaTime = (timestamp - lastTime) / 1000;
+    lastTime = timestamp;
+
+    elapsedTime += deltaTime;
+    turnsG1 += deltaTime / secondsPerRotation;
+
+    // Atualiza estado de movimento de cada engrenagem continuamente: Turns_N = Turns_G1 / (100^(N-1))
+    for (let i = 0; i < TOTAL_GEARS; i++) {
+        const gearTurns = turnsG1 / Math.pow(RATIO, i);
+        const angle = (gearTurns * 360) % 360;
+        
+        gears[i].style.transform = `rotate(${angle}deg)`;
+
+        if (i === 0) {
+            statuses[i].textContent = `VOLTAS: ${Math.floor(gearTurns)}`;
+        } else {
+            const teethMoved = Math.floor((gearTurns % 1) * TEETH);
+            statuses[i].textContent = `DENTES: ${teethMoved}/${TEETH}`;
+            
+            if (teethMoved > 0 || gearTurns >= 1) {
+                wraps[i].classList.add("active");
+                wraps[i].classList.remove("waiting");
+            }
+        }
+    }
+
+    document.getElementById("cycle").textContent = `VOLTAS G1: ${Math.floor(turnsG1)}`;
+    document.getElementById("timer").textContent = `DECORRIDO: ${formatTime(elapsedTime)}`;
+    
+    const teethG2 = Math.floor((turnsG1 / RATIO) * TEETH);
+    document.getElementById("current").textContent = `DENTES G2: ${teethG2}`;
+
+    requestAnimationFrame(animate);
+}
+
+function start() {
+    if (running) return;
+    running = true;
+    lastTime = null;
+    wraps[0].classList.add("active");
+    wraps[0].classList.remove("waiting");
+    requestAnimationFrame(animate);
+}
+
+function pause() {
+    running = false;
+    wraps.forEach(w => w.classList.remove("active"));
+}
+
+function resetMachine() {
+    running = false;
+    lastTime = null;
+    elapsedTime = 0;
+    turnsG1 = 0;
+
+    gears.forEach(g => g.style.transform = "rotate(0deg)");
+
+    wraps.forEach((w) => {
+        w.classList.remove("active");
+        w.classList.add("waiting");
+    });
+
+    wraps[0].classList.remove("waiting");
+    wraps[0].classList.add("active");
+
+    statuses[0].textContent = "VOLTAS: 0";
+    for (let i = 1; i < TOTAL_GEARS; i++) {
+        statuses[i].textContent = "DENTES: 0/100";
+    }
+
+    document.getElementById("cycle").textContent = "VOLTAS G1: 0";
+    document.getElementById("timer").textContent = "DECORRIDO: 00:00:00.0";
+    document.getElementById("current").textContent = "DENTES G2: 0";
+}
+
+initGearsHTML();
+renderETA();
+</script>
+
+</body>
+</html>
