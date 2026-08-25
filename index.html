@@ -5,6 +5,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Minhas páginas — Central</title>
 
+    <!-- PWA -->
+    <link rel="manifest" href="/pages/manifest.webmanifest">
+    <meta name="theme-color" content="#0b0d12">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Minhas Páginas">
+    <link rel="apple-touch-icon" sizes="180x180" href="/pages/icons/icon-180.png">
+
     <style>
         * {
             box-sizing: border-box;
@@ -49,7 +58,6 @@
             letter-spacing: 0.5px;
         }
 
-        /* Seções por Categoria */
         .section-title {
             font-size: 20px;
             font-weight: 700;
@@ -201,7 +209,7 @@
         <h2 class="section-title">🇬🇧 English Learning</h2>
         <div class="grid">
 
-            <a class="card" href="https://ragnnar2026.github.io/pages/english/heteronyms_and_homophones/" target="_blank">
+            <a class="card" href="https://ragnnar2026.github.io/pages/english/heteronyms_and_homophones/" target="_blank" rel="noopener">
                 <div class="card-content">
                     <div class="icon">📚</div>
                     <h2>Heteronyms & Homophones</h2>
@@ -243,7 +251,7 @@
         <h2 class="section-title">💡 Curiosidades</h2>
         <div class="grid">
 
-            <a class="card" href="https://ragnnar2026.github.io/pages/imdb/" target="_blank">
+            <a class="card" href="https://ragnnar2026.github.io/pages/imdb/" target="_blank" rel="noopener">
                 <div class="card-content">
                     <div class="icon">🎬</div>
                     <h2>250 IMDb Best</h2>
@@ -255,7 +263,7 @@
                 </div>
             </a>
 
-            <a class="card" href="https://ragnnar2026.github.io/pages/curiosidades/100.html" target="_blank">
+            <a class="card" href="https://ragnnar2026.github.io/pages/curiosidades/100.html" target="_blank" rel="noopener">
                 <div class="card-content">
                     <div class="icon">⚙️</div>
                     <h2>The 100-Gear Exponential Machine</h2>
@@ -277,5 +285,22 @@
 
 </div>
 
+<script>
+    // Registro do Service Worker do PWA
+    if ("serviceWorker" in navigator) {
+        window.addEventListener("load", () => {
+            navigator.serviceWorker.register("/pages/sw.js", {
+                scope: "/pages/"
+            })
+            .then(() => {
+                console.log("PWA: Service Worker registrado.");
+            })
+            .catch(error => {
+                console.error("PWA: erro ao registrar Service Worker:", error);
+            });
+        });
+    }
+</script>
+
 </body>
-</html>s
+</html>
