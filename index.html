@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PAGES — Central</title>
+    <title>Minhas páginas — Central</title>
 
     <style>
         * {
@@ -19,8 +19,8 @@
             color: #ffffff;
             display: flex;
             justify-content: center;
-            align-items: center;
-            padding: 40px 20px;
+            align-items: flex-start;
+            padding: 50px 20px;
         }
 
         .container {
@@ -35,7 +35,7 @@
 
         header h1 {
             font-size: 42px;
-            letter-spacing: 10px;
+            letter-spacing: 6px;
             font-weight: 800;
             background: linear-gradient(135deg, #ffffff 30%, #8aabff 100%);
             -webkit-background-clip: text;
@@ -47,6 +47,22 @@
             color: #8f96a3;
             font-size: 15px;
             letter-spacing: 0.5px;
+        }
+
+        /* Seções por Categoria */
+        .section-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: #4f8cff;
+            margin-bottom: 20px;
+            margin-top: 40px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section-title:first-of-type {
+            margin-top: 0;
         }
 
         .grid {
@@ -62,13 +78,18 @@
             backdrop-filter: blur(10px);
             border: 1px solid rgba(255, 255, 255, 0.06);
             border-radius: 18px;
-            padding: 30px 26px;
+            padding: 26px;
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             position: relative;
             overflow: hidden;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
+        }
+
+        .card.disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
         }
 
         .card::before {
@@ -83,14 +104,14 @@
             transition: opacity 0.3s ease;
         }
 
-        .card:hover {
+        .card:not(.disabled):hover {
             transform: translateY(-6px);
             border-color: rgba(79, 140, 255, 0.4);
             background: rgba(29, 33, 43, 0.85);
             box-shadow: 0 16px 35px rgba(0, 0, 0, 0.4), 0 0 20px rgba(79, 140, 255, 0.1);
         }
 
-        .card:hover::before {
+        .card:not(.disabled):hover::before {
             opacity: 1;
         }
 
@@ -99,26 +120,26 @@
         }
 
         .icon {
-            font-size: 36px;
-            margin-bottom: 16px;
+            font-size: 32px;
+            margin-bottom: 14px;
             display: inline-block;
             transition: transform 0.3s ease;
         }
 
-        .card:hover .icon {
+        .card:not(.disabled):hover .icon {
             transform: scale(1.1);
         }
 
         .card h2 {
-            font-size: 19px;
-            margin-bottom: 8px;
+            font-size: 18px;
+            margin-bottom: 6px;
             font-weight: 600;
         }
 
         .card p {
             color: #969daa;
-            font-size: 14px;
-            line-height: 1.6;
+            font-size: 13px;
+            line-height: 1.5;
         }
 
         .card-footer {
@@ -134,7 +155,7 @@
             transition: all 0.3s ease;
         }
 
-        .card:hover .card-footer {
+        .card:not(.disabled):hover .card-footer {
             opacity: 1;
             transform: translateY(0);
         }
@@ -150,12 +171,12 @@
 
         @media (max-width: 600px) {
             body {
-                padding: 20px 15px;
+                padding: 30px 15px;
             }
 
             header h1 {
-                font-size: 32px;
-                letter-spacing: 6px;
+                font-size: 30px;
+                letter-spacing: 4px;
             }
 
             .grid {
@@ -170,97 +191,91 @@
 <div class="container">
 
     <header>
-        <h1>PAGES</h1>
-        <p>Central de acesso aos meus projetos</p>
+        <h1>Minhas páginas</h1>
+        <p>Central de acesso aos meus projetos e estudos</p>
     </header>
 
-    <main class="grid">
+    <main>
 
-        <!-- Card 1: IMDb -->
-        <a class="card" href="https://SEU-LINK-AQUI" target="_blank">
-            <div class="card-content">
-                <div class="icon">🎬</div>
-                <h2>IMDb</h2>
-                <p>Projeto relacionado ao IMDb.</p>
-            </div>
-            <div class="card-footer">
-                <span>Acessar projeto</span>
-                <span>&rarr;</span>
-            </div>
-        </a>
+        <!-- CATEGORIA: ENGLISH LEARNING -->
+        <h2 class="section-title">🇬🇧 English Learning</h2>
+        <div class="grid">
 
-        <!-- Card 2: Vouchers -->
-        <a class="card" href="https://SEU-LINK-AQUI" target="_blank">
-            <div class="card-content">
-                <div class="icon">🎟️</div>
-                <h2>Vouchers</h2>
-                <p>Sistema de vouchers e códigos.</p>
-            </div>
-            <div class="card-footer">
-                <span>Acessar projeto</span>
-                <span>&rarr;</span>
-            </div>
-        </a>
+            <a class="card" href="https://ragnnar2026.github.io/pages/english/heteronyms_and_homophones/" target="_blank">
+                <div class="card-content">
+                    <div class="icon">📚</div>
+                    <h2>Heteronyms & Homophones</h2>
+                    <p>Estudos sobre palavras com grafia ou pronúncia parecidas.</p>
+                </div>
+                <div class="card-footer">
+                    <span>Acessar estudo</span>
+                    <span>&rarr;</span>
+                </div>
+            </a>
 
-        <!-- Card 3: Flashcards -->
-        <a class="card" href="https://SEU-LINK-AQUI" target="_blank">
-            <div class="card-content">
-                <div class="icon">📚</div>
-                <h2>Flashcards</h2>
-                <p>Estudos e prática de inglês.</p>
-            </div>
-            <div class="card-footer">
-                <span>Acessar projeto</span>
-                <span>&rarr;</span>
-            </div>
-        </a>
+            <a class="card disabled" href="#" onclick="return false;">
+                <div class="card-content">
+                    <div class="icon">💬</div>
+                    <h2>Phrasal Verbs</h2>
+                    <p>Em breve / Em desenvolvimento.</p>
+                </div>
+                <div class="card-footer">
+                    <span>Em breve</span>
+                    <span>&rarr;</span>
+                </div>
+            </a>
 
-        <!-- Card 4: Projeto 04 -->
-        <a class="card" href="https://SEU-LINK-AQUI" target="_blank">
-            <div class="card-content">
-                <div class="icon">🔧</div>
-                <h2>Projeto 04</h2>
-                <p>Outro projeto.</p>
-            </div>
-            <div class="card-footer">
-                <span>Acessar projeto</span>
-                <span>&rarr;</span>
-            </div>
-        </a>
+            <a class="card disabled" href="#" onclick="return false;">
+                <div class="card-content">
+                    <div class="icon">🗣️</div>
+                    <h2>Idioms</h2>
+                    <p>Em breve / Em desenvolvimento.</p>
+                </div>
+                <div class="card-footer">
+                    <span>Em breve</span>
+                    <span>&rarr;</span>
+                </div>
+            </a>
 
-        <!-- Card 5: Projeto 05 -->
-        <a class="card" href="https://SEU-LINK-AQUI" target="_blank">
-            <div class="card-content">
-                <div class="icon">🌐</div>
-                <h2>Projeto 05</h2>
-                <p>Outro projeto.</p>
-            </div>
-            <div class="card-footer">
-                <span>Acessar projeto</span>
-                <span>&rarr;</span>
-            </div>
-        </a>
+        </div>
 
-        <!-- Card 6: Projeto 06 -->
-        <a class="card" href="https://SEU-LINK-AQUI" target="_blank">
-            <div class="card-content">
-                <div class="icon">📁</div>
-                <h2>Projeto 06</h2>
-                <p>Outro projeto.</p>
-            </div>
-            <div class="card-footer">
-                <span>Acessar projeto</span>
-                <span>&rarr;</span>
-            </div>
-        </a>
+        <!-- CATEGORIA: CURIOSIDADES -->
+        <h2 class="section-title">💡 Curiosidades</h2>
+        <div class="grid">
+
+            <a class="card" href="https://ragnnar2026.github.io/pages/imdb/" target="_blank">
+                <div class="card-content">
+                    <div class="icon">🎬</div>
+                    <h2>250 IMDb Best</h2>
+                    <p>Lista e projetos relacionados aos melhores filmes do IMDb.</p>
+                </div>
+                <div class="card-footer">
+                    <span>Acessar página</span>
+                    <span>&rarr;</span>
+                </div>
+            </a>
+
+            <a class="card" href="https://ragnnar2026.github.io/pages/curiosidades/100.html" target="_blank">
+                <div class="card-content">
+                    <div class="icon">⚙️</div>
+                    <h2>The 100-Gear Exponential Machine</h2>
+                    <p>Curiosidades sobre engenharia e mecânica.</p>
+                </div>
+                <div class="card-footer">
+                    <span>Acessar página</span>
+                    <span>&rarr;</span>
+                </div>
+            </a>
+
+        </div>
 
     </main>
 
     <footer>
-        PAGES &bull; 2026
+        Ragnnar2026 &bull; GitHub Pages
     </footer>
 
 </div>
 
 </body>
-</html>
+</html>s
