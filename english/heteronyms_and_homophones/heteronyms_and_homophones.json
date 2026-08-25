@@ -1,0 +1,33 @@
+{
+  "heteronyms": [
+    {
+      "word": "Bass",
+      "meanings": [
+        {
+          "pronunciation": "/beɪs/",
+          "pos": "Noun",
+          "definition": "Low-frequency sound / musical instrument"
+        },
+        {
+          "pronunciation": "/bæs/",
+          "pos": "Noun",
+          "definition": "A type of fish"
+        }
+      ]
+    },
+    {
+      "word": "Bow",
+      "meanings": [
+        {
+          "pronunciation": "/baʊ/",
+          "pos": "Verb",
+          "definition": "To bend forward"
+        },
+        {
+          "pronunciation": "/boʊ/",
+          "pos": "Noun",
+          "definition": "A tied ribbon or weapon for arrows"
+        }
+      ]
+    }
+}

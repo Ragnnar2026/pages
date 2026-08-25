@@ -1,0 +1,4333 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>FlashCards Pro</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --mode-color: #0D9488;
+      --mode-color-light: rgba(13,148,136,0.08);
+      --mode-color-glow: rgba(13,148,136,0.25);
+      --bg: #F4F6F8;
+      --surface: #FFFFFF;
+      --text-primary: #0F172A;
+      --text-secondary: #475569;
+      --text-muted: #94A3B8;
+      --border: #E2E8F0;
+      --orange: #EA580C;
+      --orange-light: rgba(234,88,12,0.08);
+      --emerald: #059669;
+      --emerald-light: rgba(5,150,105,0.1);
+      --radius-lg: 28px;
+      --radius-full: 999px;
+      --shadow-card: 0 20px 50px -12px rgba(0,0,0,0.12), 0 4px 16px -4px rgba(0,0,0,0.06);
+      --shadow-btn: 0 4px 14px -2px rgba(0,0,0,0.06);
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    html, body {
+      height: 100%;
+      width: 100%;
+      overflow: hidden;
+      font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+      background: var(--bg);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
+    }
+
+    body::before, body::after {
+      content: '';
+      position: fixed;
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 0;
+    }
+    body::before {
+      top: -20%; right: -15%;
+      width: 500px; height: 500px;
+      background: radial-gradient(circle, rgba(13,148,136,0.05) 0%, transparent 70%);
+    }
+    body::after {
+      bottom: -15%; left: -10%;
+      width: 400px; height: 400px;
+      background: radial-gradient(circle, rgba(234,88,12,0.04) 0%, transparent 70%);
+    }
+
+    .app-container {
+      width: 100%;
+      max-width: 420px;
+      height: 100vh;
+      height: 100dvh;
+      display: flex;
+      flex-direction: column;
+      padding: env(safe-area-inset-top, 10px) 18px env(safe-area-inset-bottom, 10px);
+      position: relative;
+      z-index: 1;
+      animation: appEnter 0.5s ease-out;
+    }
+
+    @keyframes appEnter {
+      from { opacity: 0; transform: translateY(16px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .header-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 10px;
+      padding: 0 2px;
+    }
+
+    .app-title {
+      font-size: 1.15rem;
+      font-weight: 800;
+      color: var(--text-primary);
+      letter-spacing: -0.3px;
+    }
+    .app-title span {
+      color: var(--mode-color);
+      transition: color 0.3s;
+    }
+
+    .lang-toggle {
+      display: flex;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-full);
+      padding: 3px;
+      box-shadow: var(--shadow-btn);
+    }
+
+    .lang-btn {
+      background: none;
+      border: none;
+      padding: 5px 14px;
+      border-radius: var(--radius-full);
+      font-family: inherit;
+      font-weight: 700;
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: all 0.25s;
+      letter-spacing: 0.5px;
+    }
+
+    .lang-btn.active {
+      background: var(--text-primary);
+      color: white;
+      box-shadow: 0 2px 8px rgba(15,23,42,0.2);
+    }
+
+    .mode-tabs {
+      display: flex;
+      gap: 6px;
+      margin-bottom: 10px;
+      background: var(--surface);
+      border-radius: var(--radius-full);
+      padding: 5px;
+      box-shadow: var(--shadow-btn);
+      border: 1px solid var(--border);
+    }
+
+    .mode-btn {
+      flex: 1;
+      background: transparent;
+      border: none;
+      padding: 11px 6px;
+      border-radius: var(--radius-full);
+      font-family: inherit;
+      font-weight: 600;
+      font-size: 0.88rem;
+      color: var(--text-secondary);
+      transition: all 0.3s cubic-bezier(0.23,1,0.32,1);
+      cursor: pointer;
+      white-space: nowrap;
+      letter-spacing: -0.1px;
+    }
+
+    .mode-btn.active {
+      background: var(--mode-color);
+      color: white;
+      font-weight: 700;
+      box-shadow: 0 6px 18px var(--mode-color-glow);
+    }
+
+    .progress-section {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 8px;
+      padding: 0 2px;
+    }
+
+    .progress-bar-track {
+      flex: 1;
+      height: 5px;
+      background: var(--border);
+      border-radius: 10px;
+      overflow: hidden;
+    }
+
+    .progress-bar-fill {
+      height: 100%;
+      background: var(--mode-color);
+      border-radius: 10px;
+      transition: width 0.4s cubic-bezier(0.23,1,0.32,1), background 0.3s;
+      width: 10%;
+    }
+
+    .progress-text {
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      white-space: nowrap;
+      min-width: 48px;
+      text-align: right;
+      letter-spacing: -0.2px;
+    }
+
+    .shuffle-btn {
+      background: var(--surface);
+      border: 1.5px solid rgba(234,88,12,0.25);
+      color: var(--orange);
+      font-family: inherit;
+      font-weight: 700;
+      font-size: 0.78rem;
+      padding: 7px 14px;
+      border-radius: var(--radius-full);
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      cursor: pointer;
+      transition: all 0.2s;
+      box-shadow: var(--shadow-btn);
+      white-space: nowrap;
+    }
+
+    .shuffle-btn:active {
+      background: var(--orange);
+      color: white;
+      transform: scale(0.95);
+    }
+
+    .shuffle-icon {
+      display: inline-flex;
+      width: 14px;
+      height: 14px;
+    }
+
+    .card-scene {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      perspective: 1200px;
+      min-height: 0;
+      margin: 4px 0;
+    }
+
+    .card {
+      width: 100%;
+      max-width: 340px;
+      aspect-ratio: 5 / 6;
+      max-height: 100%;
+      position: relative;
+      transform-style: preserve-3d;
+      transition: transform 0.55s cubic-bezier(0.23, 1, 0.32, 1);
+      cursor: pointer;
+      border-radius: var(--radius-lg);
+    }
+
+    .card.flipped { transform: rotateY(180deg); }
+
+    .card-face {
+      position: absolute;
+      inset: 0;
+      backface-visibility: hidden;
+      -webkit-backface-visibility: hidden;
+      border-radius: var(--radius-lg);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      background: var(--surface);
+      box-shadow: var(--shadow-card);
+      border: 1px solid rgba(226,232,240,0.6);
+      overflow: hidden;
+    }
+
+    .card-face::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 4px;
+      background: var(--mode-color);
+      transition: background 0.3s;
+    }
+
+    .card-front {
+      background:
+        radial-gradient(ellipse at 25% 85%, var(--mode-color-light) 0%, transparent 50%),
+        radial-gradient(ellipse at 75% 15%, var(--orange-light) 0%, transparent 50%),
+        var(--surface);
+      padding: 28px 22px;
+    }
+
+    .front-mode-label {
+      font-size: 0.7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      color: var(--mode-color);
+      background: var(--mode-color-light);
+      padding: 4px 14px;
+      border-radius: var(--radius-full);
+      margin-bottom: 20px;
+      transition: all 0.3s;
+    }
+
+    .front-word {
+      font-size: 2.8rem;
+      font-weight: 900;
+      color: var(--text-primary);
+      letter-spacing: -0.5px;
+      line-height: 1.15;
+      margin-bottom: 6px;
+      word-break: break-word;
+    }
+
+    .front-word-accent {
+      display: block;
+      width: 36px;
+      height: 4px;
+      background: var(--mode-color);
+      border-radius: 2px;
+      margin: 14px auto 0;
+      transition: background 0.3s;
+    }
+
+    .front-sub {
+      font-size: 0.88rem;
+      font-weight: 600;
+      color: var(--text-secondary);
+      margin-top: 14px;
+      background: rgba(241,245,249,0.8);
+      padding: 5px 16px;
+      border-radius: var(--radius-full);
+    }
+
+    .tap-hint {
+      margin-top: auto;
+      padding-top: 16px;
+      font-size: 0.75rem;
+      font-weight: 500;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .tap-hint-dot {
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      border: 1.5px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.6rem;
+      color: var(--text-muted);
+    }
+
+    .card-back {
+      transform: rotateY(180deg);
+      justify-content: flex-start;
+      padding: 28px 18px 18px;
+      overflow-y: auto;
+      overscroll-behavior: contain;
+      background:
+        radial-gradient(ellipse at 50% 0%, var(--mode-color-light) 0%, transparent 40%),
+        var(--surface);
+    }
+
+    .back-title {
+      font-size: 1.5rem;
+      font-weight: 800;
+      color: var(--text-primary);
+      margin-bottom: 16px;
+      letter-spacing: -0.3px;
+    }
+
+    .meaning-block {
+      background: #F8FAFC;
+      border-radius: 18px;
+      padding: 14px 14px 14px 18px;
+      margin-bottom: 10px;
+      width: 100%;
+      border-left: 4px solid var(--mode-color);
+      text-align: left;
+      transition: border-color 0.3s;
+    }
+
+    .pronunciation-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 8px;
+    }
+
+    .pronunciation {
+      font-weight: 700;
+      color: var(--mode-color);
+      font-size: 0.95rem;
+      background: var(--mode-color-light);
+      padding: 3px 12px;
+      border-radius: var(--radius-full);
+      transition: all 0.3s;
+    }
+
+    .audio-btn {
+      background: var(--emerald-light);
+      border: none;
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s;
+      flex-shrink: 0;
+    }
+
+    .audio-btn:active {
+      background: var(--emerald);
+      transform: scale(1.12);
+    }
+
+    .audio-btn:active svg { stroke: white; }
+
+    .audio-btn svg {
+      width: 16px;
+      height: 16px;
+      stroke: var(--emerald);
+      fill: none;
+      stroke-width: 2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    .pos-badge {
+      display: inline-block;
+      background: var(--orange);
+      color: white;
+      font-size: 0.68rem;
+      font-weight: 700;
+      padding: 2px 10px;
+      border-radius: var(--radius-full);
+      letter-spacing: 0.3px;
+      text-transform: lowercase;
+    }
+
+    .definition {
+      font-size: 0.87rem;
+      color: var(--text-secondary);
+      margin-top: 8px;
+      line-height: 1.45;
+      font-weight: 500;
+    }
+
+    .homo-word-card {
+      background: #F8FAFC;
+      border-radius: 18px;
+      padding: 14px 14px 14px 18px;
+      margin-bottom: 10px;
+      width: 100%;
+      border-left: 4px solid var(--mode-color);
+      text-align: left;
+      transition: border-color 0.3s;
+    }
+
+    .homo-word-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 6px;
+    }
+
+    .homo-word-name {
+      font-size: 1.15rem;
+      font-weight: 800;
+      color: var(--text-primary);
+      letter-spacing: -0.2px;
+    }
+
+    .back-tap-hint {
+      margin-top: auto;
+      padding-top: 10px;
+      font-size: 0.72rem;
+      font-weight: 500;
+      color: var(--text-muted);
+      text-align: center;
+    }
+
+    .nav-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      margin-top: 6px;
+      padding: 2px 0;
+    }
+
+    .nav-btn {
+      background: var(--surface);
+      border: 1.5px solid var(--border);
+      padding: 13px 20px;
+      border-radius: var(--radius-full);
+      font-family: inherit;
+      font-weight: 700;
+      font-size: 0.88rem;
+      color: var(--text-primary);
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      cursor: pointer;
+      transition: all 0.2s;
+      box-shadow: var(--shadow-btn);
+    }
+
+    .nav-btn.primary {
+      background: var(--mode-color);
+      border-color: var(--mode-color);
+      color: white;
+      box-shadow: 0 6px 18px var(--mode-color-glow);
+    }
+
+    .nav-btn:active { transform: scale(0.95); }
+    .nav-btn:disabled { opacity: 0.4; pointer-events: none; }
+
+    .nav-btn svg {
+      width: 16px; height: 16px;
+      stroke: currentColor; fill: none;
+      stroke-width: 2.5;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    .nav-btn.primary svg { stroke: white; }
+
+    .hint-row {
+      text-align: center;
+      padding: 8px 0 2px;
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      font-weight: 500;
+      letter-spacing: 0.2px;
+    }
+
+    .hint-row kbd {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      padding: 1px 6px;
+      border-radius: 4px;
+      font-family: inherit;
+      font-size: 0.65rem;
+      font-weight: 600;
+    }
+
+    .card-scene.exit-left  { animation: exitL 0.18s ease-in forwards; }
+    .card-scene.enter-right { animation: enterR 0.22s ease-out; }
+    .card-scene.exit-right  { animation: exitR 0.18s ease-in forwards; }
+    .card-scene.enter-left  { animation: enterL 0.22s ease-out; }
+
+    @keyframes exitL  { to { opacity: 0; transform: translateX(-35px) scale(0.97); } }
+    @keyframes enterR { from { opacity: 0; transform: translateX(35px) scale(0.97); } to { opacity: 1; transform: translateX(0) scale(1); } }
+    @keyframes exitR  { to { opacity: 0; transform: translateX(35px) scale(0.97); } }
+    @keyframes enterL { from { opacity: 0; transform: translateX(-35px) scale(0.97); } to { opacity: 1; transform: translateX(0) scale(1); } }
+
+    .card-back::-webkit-scrollbar { width: 3px; }
+    .card-back::-webkit-scrollbar-thumb { background: var(--border); border-radius: 10px; }
+
+    @media (max-height: 640px) {
+      .front-mode-label { margin-bottom: 12px; padding: 3px 10px; font-size: 0.65rem; }
+      .front-word { font-size: 2.2rem; }
+      .front-word-accent { margin-top: 10px; width: 28px; height: 3px; }
+      .front-sub { margin-top: 10px; font-size: 0.82rem; }
+      .tap-hint { padding-top: 10px; }
+      .card { aspect-ratio: 5 / 5.5; }
+      .back-title { font-size: 1.3rem; margin-bottom: 12px; }
+      .meaning-block, .homo-word-card { padding: 10px 12px 10px 16px; margin-bottom: 8px; }
+      .hint-row { display: none; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .card { transition: none; }
+      .card-scene.exit-left, .card-scene.enter-right,
+      .card-scene.exit-right, .card-scene.enter-left { animation: none; }
+      .app-container { animation: none; }
+    }
+  </style>
+</head>
+<body>
+<div class="app-container">
+  <div class="header-row">
+    <div class="app-title">FlashCards <span>Pro</span></div>
+    <div class="lang-toggle">
+      <button class="lang-btn active" data-lang="en">EN</button>
+      <button class="lang-btn" data-lang="pt">PT</button>
+    </div>
+  </div>
+
+  <div class="mode-tabs">
+    <button class="mode-btn active" id="heteronymsTab"></button>
+    <button class="mode-btn" id="homophonesTab"></button>
+  </div>
+
+  <div class="progress-section">
+    <div class="progress-bar-track">
+      <div class="progress-bar-fill" id="progressBar"></div>
+    </div>
+    <span class="progress-text" id="progressText"></span>
+    <button class="shuffle-btn" id="shuffleBtn">
+      <span class="shuffle-icon">
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M2 4h3l3 4-3 4H2"/><path d="M14 4h-3l-3 4 3 4h3"/>
+          <path d="M10 2l2 2-2 2"/><path d="M6 10l-2 2 2 2"/>
+        </svg>
+      </span>
+      <span id="shuffleLabel"></span>
+    </button>
+  </div>
+
+  <div class="card-scene" id="cardScene">
+    <div class="card" id="flashcard">
+      <div class="card-face card-front" id="cardFront">
+        <div class="front-mode-label" id="frontModeLabel"></div>
+        <div class="front-word" id="frontMain"></div>
+        <div class="front-word-accent"></div>
+        <div class="front-sub" id="frontSub"></div>
+        <div class="tap-hint">
+          <span class="tap-hint-dot">?</span>
+          <span id="tapHintText"></span>
+        </div>
+      </div>
+      <div class="card-face card-back" id="cardBack"></div>
+    </div>
+  </div>
+
+  <div class="nav-row">
+    <button class="nav-btn" id="prevBtn">
+      <svg viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+      <span id="prevLabel"></span>
+    </button>
+    <button class="nav-btn primary" id="nextBtn">
+      <span id="nextLabel"></span>
+      <svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+    </button>
+  </div>
+
+  <div class="hint-row" id="hintRow"></div>
+</div>
+
+<script>
+(function() {
+
+  /* ================================
+     i18n
+     ================================ */
+  var UI = {
+    en: {
+      heteronyms: 'Heteronyms',
+      homophones: 'Homophones',
+      of: 'of',
+      shuffle: 'Shuffle',
+      prev: 'Prev',
+      next: 'Next',
+      tapHint: 'Tap to reveal',
+      tapBack: 'Tap to flip back',
+      meanings: 'meanings',
+      noun: 'noun',
+      verb: 'verb',
+      adj: 'adj',
+      keyboard: '<kbd>Space</kbd> flip &nbsp; <kbd>\u2190</kbd><kbd>\u2192</kbd> navigate'
+    },
+    pt: {
+      heteronyms: 'Heter\u00f4nimos',
+      homophones: 'Hom\u00f3fonos',
+      of: 'de',
+      shuffle: 'Embaralhar',
+      prev: 'Anterior',
+      next: 'Pr\u00f3ximo',
+      tapHint: 'Toque para revelar',
+      tapBack: 'Toque para voltar',
+      meanings: 'significados',
+      noun: 'subst.',
+      verb: 'verbo',
+      adj: 'adj.',
+      keyboard: '<kbd>Space</kbd> virar &nbsp; <kbd>\u2190</kbd><kbd>\u2192</kbd> navegar'
+    }
+  };
+
+  function t(key) { return UI[lang][key] || key; }
+
+  /* ================================
+     DADOS — formato exato solicitado
+     pair: ["Word1", "Word2"]
+     definition: { en: "...", pt: "..." }
+     ================================ */
+var DATA = {
+    "heteronyms": [
+      {
+        "word": "Bass",
+        "meanings": [
+        {
+          "pronunciation": "/beɪs/",
+          "pos": "Noun",
+          "definition": "Low-frequency sound / musical instrument"
+        },
+        {
+          "pronunciation": "/bæs/",
+          "pos": "Noun",
+          "definition": "A type of fish"
+        }
+      ]
+    },
+    {
+      "word": "Bow",
+      "meanings": [
+        {
+          "pronunciation": "/baʊ/",
+          "pos": "Verb",
+          "definition": "To bend forward"
+        },
+        {
+          "pronunciation": "/boʊ/",
+          "pos": "Noun",
+          "definition": "A tied ribbon or weapon for arrows"
+        }
+      ]
+    },
+    {
+      "word": "Close",
+      "meanings": [
+        {
+          "pronunciation": "/kloʊz/",
+          "pos": "Verb",
+          "definition": "To shut"
+        },
+        {
+          "pronunciation": "/kloʊs/",
+          "pos": "Adjective",
+          "definition": "Nearby / tight"
+        }
+      ]
+    },
+    {
+      "word": "Desert",
+      "meanings": [
+        {
+          "pronunciation": "/ˈdɛzərt/",
+          "pos": "Noun",
+          "definition": "An arid land"
+        },
+        {
+          "pronunciation": "/dɪˈzɜːrt/",
+          "pos": "Verb",
+          "definition": "To abandon"
+        }
+      ]
+    },
+    {
+      "word": "Dove",
+      "meanings": [
+        {
+          "pronunciation": "/dʌv/",
+          "pos": "Noun",
+          "definition": "A white bird"
+        },
+        {
+          "pronunciation": "/doʊv/",
+          "pos": "Verb (Past Tense)",
+          "definition": "Past tense of 'dive'"
+        }
+      ]
+    },
+    {
+      "word": "Lead",
+      "meanings": [
+        {
+          "pronunciation": "/liːd/",
+          "pos": "Verb",
+          "definition": "To guide"
+        },
+        {
+          "pronunciation": "/lɛd/",
+          "pos": "Noun",
+          "definition": "A heavy metal"
+        }
+      ]
+    },
+    {
+      "word": "Minute",
+      "meanings": [
+        {
+          "pronunciation": "/ˈmɪnɪt/",
+          "pos": "Noun",
+          "definition": "60 seconds"
+        },
+        {
+          "pronunciation": "/maɪˈnjuːt/",
+          "pos": "Adjective",
+          "definition": "Extremely small"
+        }
+      ]
+    },
+    {
+      "word": "Object",
+      "meanings": [
+        {
+          "pronunciation": "/ˈɒbdʒɪkt/",
+          "pos": "Noun",
+          "definition": "A physical item"
+        },
+        {
+          "pronunciation": "/əbˈdʒɛkt/",
+          "pos": "Verb",
+          "definition": "To express disagreement"
+        }
+      ]
+    },
+    {
+      "word": "Polish",
+      "meanings": [
+        {
+          "pronunciation": "/ˈpɒlɪʃ/",
+          "pos": "Verb / Noun",
+          "definition": "To make shiny / substance used to shine"
+        },
+        {
+          "pronunciation": "/ˈpoʊlɪʃ/",
+          "pos": "Adjective",
+          "definition": "Relating to Poland"
+        }
+      ]
+    },
+    {
+      "word": "Present",
+      "meanings": [
+        {
+          "pronunciation": "/ˈprɛzənt/",
+          "pos": "Noun / Adjective",
+          "definition": "A gift / current time or existing"
+        },
+        {
+          "pronunciation": "/prɪˈzɛnt/",
+          "pos": "Verb",
+          "definition": "To introduce or display"
+        }
+      ]
+    },
+    {
+      "word": "Read",
+      "meanings": [
+        {
+          "pronunciation": "/riːd/",
+          "pos": "Verb (Present)",
+          "definition": "Present tense of reading"
+        },
+        {
+          "pronunciation": "/rɛd/",
+          "pos": "Verb (Past)",
+          "definition": "Past tense of reading"
+        }
+      ]
+    },
+    {
+      "word": "Refuse",
+      "meanings": [
+        {
+          "pronunciation": "/rɪˈfjuːz/",
+          "pos": "Verb",
+          "definition": "To decline"
+        },
+        {
+          "pronunciation": "/ˈrɛfjuːs/",
+          "pos": "Noun",
+          "definition": "Garbage/waste material"
+        }
+      ]
+    },
+    {
+      "word": "Row",
+      "meanings": [
+        {
+          "pronunciation": "/roʊ/",
+          "pos": "Noun / Verb",
+          "definition": "A line of objects / paddling a boat"
+        },
+        {
+          "pronunciation": "/raʊ/",
+          "pos": "Noun / Verb",
+          "definition": "A noisy argument"
+        }
+      ]
+    },
+    {
+      "word": "Separate",
+      "meanings": [
+        {
+          "pronunciation": "/ˈsɛpəreɪt/",
+          "pos": "Verb",
+          "definition": "To divide"
+        },
+        {
+          "pronunciation": "/ˈsɛpərət/",
+          "pos": "Adjective",
+          "definition": "Disconnected / distinct"
+        }
+      ]
+    },
+    {
+      "word": "Sow",
+      "meanings": [
+        {
+          "pronunciation": "/soʊ/",
+          "pos": "Verb",
+          "definition": "To plant seeds"
+        },
+        {
+          "pronunciation": "/saʊ/",
+          "pos": "Noun",
+          "definition": "An adult female pig"
+        }
+      ]
+    },
+    {
+      "word": "Tear",
+      "meanings": [
+        {
+          "pronunciation": "/tɪər/",
+          "pos": "Noun",
+          "definition": "A drop of liquid from the eye"
+        },
+        {
+          "pronunciation": "/tɛər/",
+          "pos": "Verb / Noun",
+          "definition": "To rip apart / a rip"
+        }
+      ]
+    },
+    {
+      "word": "Wind",
+      "meanings": [
+        {
+          "pronunciation": "/wɪnd/",
+          "pos": "Noun",
+          "definition": "Moving air"
+        },
+        {
+          "pronunciation": "/waɪnd/",
+          "pos": "Verb",
+          "definition": "To twist or turn"
+        }
+      ]
+    },
+    {
+      "word": "Wound",
+      "meanings": [
+        {
+          "pronunciation": "/wuːnd/",
+          "pos": "Noun / Verb",
+          "definition": "An injury / to injure"
+        },
+        {
+          "pronunciation": "/waʊnd/",
+          "pos": "Verb (Past Tense)",
+          "definition": "Past tense of 'wind'"
+        }
+      ]
+    },
+    {
+      "word": "August",
+      "meanings": [
+        {
+          "pronunciation": "/ˈɔːɡəst/",
+          "pos": "Proper Noun",
+          "definition": "The eighth month"
+        },
+        {
+          "pronunciation": "/ɔːˈɡʌst/",
+          "pos": "Adjective",
+          "definition": "Respected/impressive"
+        }
+      ]
+    },
+    {
+      "word": "Content",
+      "meanings": [
+        {
+          "pronunciation": "/ˈkɒntɛnt/",
+          "pos": "Noun",
+          "definition": "Topic/information inside something"
+        },
+        {
+          "pronunciation": "/kənˈtɛnt/",
+          "pos": "Adjective / Verb",
+          "definition": "Satisfied / to satisfy"
+        }
+      ]
+    },
+    {
+      "word": "Contract",
+      "meanings": [
+        {
+          "pronunciation": "/ˈkɒntrækt/",
+          "pos": "Noun",
+          "definition": "A legal agreement"
+        },
+        {
+          "pronunciation": "/kənˈtrækt/",
+          "pos": "Verb",
+          "definition": "To shrink or catch an illness"
+        }
+      ]
+    },
+    {
+      "word": "Convict",
+      "meanings": [
+        {
+          "pronunciation": "/ˈkɒnvɪkt/",
+          "pos": "Noun",
+          "definition": "A prisoner"
+        },
+        {
+          "pronunciation": "/kənˈvɪkt/",
+          "pos": "Verb",
+          "definition": "To declare guilty"
+        }
+      ]
+    },
+    {
+      "word": "Discount",
+      "meanings": [
+        {
+          "pronunciation": "/ˈdɪskaʊnt/",
+          "pos": "Noun",
+          "definition": "A price reduction"
+        },
+        {
+          "pronunciation": "/dɪsˈkaʊnt/",
+          "pos": "Verb",
+          "definition": "To disregard"
+        }
+      ]
+    },
+    {
+      "word": "Invalid",
+      "meanings": [
+        {
+          "pronunciation": "/ɪnˈvælɪd/",
+          "pos": "Adjective",
+          "definition": "Not legally binding or correct"
+        },
+        {
+          "pronunciation": "/ˈɪnvəlɪd/",
+          "pos": "Noun",
+          "definition": "A sick or disabled person"
+        }
+      ]
+    },
+    {
+      "word": "Live",
+      "meanings": [
+        {
+          "pronunciation": "/lɪv/",
+          "pos": "Verb",
+          "definition": "To exist"
+        },
+        {
+          "pronunciation": "/laɪv/",
+          "pos": "Adjective / Adverb",
+          "definition": "Broadcast in real-time"
+        }
+      ]
+    },
+    {
+      "word": "Permit",
+      "meanings": [
+        {
+          "pronunciation": "/ˈpɜːrmɪt/",
+          "pos": "Noun",
+          "definition": "An official license"
+        },
+        {
+          "pronunciation": "/pərˈmɪt/",
+          "pos": "Verb",
+          "definition": "To allow"
+        }
+      ]
+    },
+    {
+      "word": "Produce",
+      "meanings": [
+        {
+          "pronunciation": "/ˈprɒdjuːs/",
+          "pos": "Noun",
+          "definition": "Fresh farm yield (fruits/vegetables)"
+        },
+        {
+          "pronunciation": "/prəˈdjuːs/",
+          "pos": "Verb",
+          "definition": "To manufacture"
+        }
+      ]
+    },
+    {
+      "word": "Record",
+      "meanings": [
+        {
+          "pronunciation": "/ˈrɛkərd/",
+          "pos": "Noun",
+          "definition": "An audio disc or documented evidence"
+        },
+        {
+          "pronunciation": "/rɪˈkɔːrd/",
+          "pos": "Verb",
+          "definition": "To register or capture audio/video"
+        }
+      ]
+    },
+    {
+      "word": "Subject",
+      "meanings": [
+        {
+          "pronunciation": "/ˈsʌbdʒɪkt/",
+          "pos": "Noun / Adjective",
+          "definition": "Topic or citizen / liable to"
+        },
+        {
+          "pronunciation": "/səbˈdʒɛkt/",
+          "pos": "Verb",
+          "definition": "To force someone to undergo something"
+        }
+      ]
+    },
+    {
+      "word": "Use",
+      "meanings": [
+        {
+          "pronunciation": "/juːs/",
+          "pos": "Noun",
+          "definition": "Purpose or utility"
+        },
+        {
+          "pronunciation": "/juːz/",
+          "pos": "Verb",
+          "definition": "To operate or handle"
+        }
+      ]
+    },
+    {
+      "word": "Accent",
+      "meanings": [
+        {
+          "pronunciation": "/ˈæksɛnt/",
+          "pos": "Noun",
+          "definition": "Pronunciation pattern"
+        },
+        {
+          "pronunciation": "/ækˈsɛnt/",
+          "pos": "Verb",
+          "definition": "To emphasize"
+        }
+      ]
+    },
+    {
+      "word": "Addict",
+      "meanings": [
+        {
+          "pronunciation": "/ˈædɪkt/",
+          "pos": "Noun",
+          "definition": "A person dependent on a substance"
+        },
+        {
+          "pronunciation": "/əˈdɪkt/",
+          "pos": "Verb",
+          "definition": "To cause dependence"
+        }
+      ]
+    },
+    {
+      "word": "Address",
+      "meanings": [
+        {
+          "pronunciation": "/ˈædrɛs/",
+          "pos": "Noun",
+          "definition": "Physical location"
+        },
+        {
+          "pronunciation": "/əˈdrɛs/",
+          "pos": "Verb",
+          "definition": "To speak to an audience"
+        }
+      ]
+    },
+    {
+      "word": "Advocate",
+      "meanings": [
+        {
+          "pronunciation": "/ˈædvəkət/",
+          "pos": "Noun",
+          "definition": "A supporter/lawyer"
+        },
+        {
+          "pronunciation": "/ˈædvəkeɪt/",
+          "pos": "Verb",
+          "definition": "To publicly support"
+        }
+      ]
+    },
+    {
+      "word": "Aggregate",
+      "meanings": [
+        {
+          "pronunciation": "/ˈæɡrɪɡət/",
+          "pos": "Noun / Adjective",
+          "definition": "A total collection / formed by collection"
+        },
+        {
+          "pronunciation": "/ˈæɡrɪɡeɪt/",
+          "pos": "Verb",
+          "definition": "To gather together"
+        }
+      ]
+    },
+    {
+      "word": "Alternate",
+      "meanings": [
+        {
+          "pronunciation": "/ˈɔːltərnət/",
+          "pos": "Noun / Adjective",
+          "definition": "A substitute / every other"
+        },
+        {
+          "pronunciation": "/ˈɔːltərneɪt/",
+          "pos": "Verb",
+          "definition": "To switch back and forth"
+        }
+      ]
+    },
+    {
+      "word": "Animate",
+      "meanings": [
+        {
+          "pronunciation": "/ˈænɪmət/",
+          "pos": "Adjective",
+          "definition": "Alive"
+        },
+        {
+          "pronunciation": "/ˈænɪmeɪt/",
+          "pos": "Verb",
+          "definition": "To bring to life"
+        }
+      ]
+    },
+    {
+      "word": "Attribute",
+      "meanings": [
+        {
+          "pronunciation": "/ˈætrɪbjuːt/",
+          "pos": "Noun",
+          "definition": "A quality/feature"
+        },
+        {
+          "pronunciation": "/əˈtrɪbjuːt/",
+          "pos": "Verb",
+          "definition": "To credit or assign cause"
+        }
+      ]
+    },
+    {
+      "word": "Buffet",
+      "meanings": [
+        {
+          "pronunciation": "/ˈbʊfeɪ/",
+          "pos": "Noun",
+          "definition": "A self-service meal"
+        },
+        {
+          "pronunciation": "/ˈbʌfɪt/",
+          "pos": "Verb",
+          "definition": "To strike repeatedly"
+        }
+      ]
+    },
+    {
+      "word": "Combat",
+      "meanings": [
+        {
+          "pronunciation": "/ˈkɒmbæt/",
+          "pos": "Noun",
+          "definition": "Fighting or battle"
+        },
+        {
+          "pronunciation": "/kəmˈbæt/",
+          "pos": "Verb",
+          "definition": "To fight against"
+        }
+      ]
+    },
+    {
+      "word": "Combine",
+      "meanings": [
+        {
+          "pronunciation": "/ˈkɒmbaɪn/",
+          "pos": "Noun",
+          "definition": "An agricultural harvesting machine"
+        },
+        {
+          "pronunciation": "/kəmˈbaɪn/",
+          "pos": "Verb",
+          "definition": "To merge"
+        }
+      ]
+    },
+    {
+      "word": "Compact",
+      "meanings": [
+        {
+          "pronunciation": "/ˈkɒmpækt/",
+          "pos": "Noun / Adjective",
+          "definition": "A small makeup case / dense"
+        },
+        {
+          "pronunciation": "/kəmˈpækt/",
+          "pos": "Verb",
+          "definition": "To press tightly together"
+        }
+      ]
+    },
+    {
+      "word": "Complex",
+      "meanings": [
+        {
+          "pronunciation": "/ˈkɒmplɛks/",
+          "pos": "Noun",
+          "definition": "A building structure"
+        },
+        {
+          "pronunciation": "/kəmˈplɛks/",
+          "pos": "Adjective",
+          "definition": "Complicated"
+        }
+      ]
+    },
+    {
+      "word": "Compound",
+      "meanings": [
+        {
+          "pronunciation": "/ˈkɒmpaʊnd/",
+          "pos": "Noun / Adjective",
+          "definition": "An enclosure or mixture / made of parts"
+        },
+        {
+          "pronunciation": "/kəmˈpaʊnd/",
+          "pos": "Verb",
+          "definition": "To make worse or combine"
+        }
+      ]
+    },
+    {
+      "word": "Compress",
+      "meanings": [
+        {
+          "pronunciation": "/ˈkɒmprɛs/",
+          "pos": "Noun",
+          "definition": "A cloth pad applied to a wound"
+        },
+        {
+          "pronunciation": "/kəmˈpprɛs/",
+          "pos": "Verb",
+          "definition": "To squeeze"
+        }
+      ]
+    },
+    {
+      "word": "Concert",
+      "meanings": [
+        {
+          "pronunciation": "/ˈkɒnsərt/",
+          "pos": "Noun",
+          "definition": "A musical performance"
+        },
+        {
+          "pronunciation": "/kənˈsɜːrt/",
+          "pos": "Verb",
+          "definition": "To arrange together"
+        }
+      ]
+    },
+    {
+      "word": "Conduct",
+      "meanings": [
+        {
+          "pronunciation": "/ˈkɒndʌkt/",
+          "pos": "Noun",
+          "definition": "Behavior"
+        },
+        {
+          "pronunciation": "/kənˈdʌkt/",
+          "pos": "Verb",
+          "definition": "To lead or direct"
+        }
+      ]
+    },
+    {
+      "word": "Conflict",
+      "meanings": [
+        {
+          "pronunciation": "/ˈkɒnflɪkt/",
+          "pos": "Noun",
+          "definition": "A clash or battle"
+        },
+        {
+          "pronunciation": "/kənˈflɪkt/",
+          "pos": "Verb",
+          "definition": "To be incompatible"
+        }
+      ]
+    },
+    {
+      "word": "Consort",
+      "meanings": [
+        {
+          "pronunciation": "/ˈkɒnsɔːrt/",
+          "pos": "Noun",
+          "definition": "A companion/spouse"
+        },
+        {
+          "pronunciation": "/kənˈsɔːrt/",
+          "pos": "Verb",
+          "definition": "To associate with someone"
+        }
+      ]
+    },
+    {
+      "word": "Console",
+      "meanings": [
+        {
+          "pronunciation": "/ˈkɒnsoʊl/",
+          "pos": "Noun",
+          "definition": "A control panel or gaming unit"
+        },
+        {
+          "pronunciation": "/kənˈsoʊl/",
+          "pos": "Verb",
+          "definition": "To comfort someone"
+        }
+      ]
+    },
+    {
+      "word": "Contest",
+      "meanings": [
+        {
+          "pronunciation": "/ˈkɒntɛst/",
+          "pos": "Noun",
+          "definition": "A competition"
+        },
+        {
+          "pronunciation": "/kənˈtɛst/",
+          "pos": "Verb",
+          "definition": "To challenge or oppose"
+        }
+      ]
+    },
+    {
+      "word": "Decrease",
+      "meanings": [
+        {
+          "pronunciation": "/ˈdiːkriːs/",
+          "pos": "Noun",
+          "definition": "A reduction"
+        },
+        {
+          "pronunciation": "/dɪˈkriːs/",
+          "pos": "Verb",
+          "definition": "To become smaller"
+        }
+      ]
+    },
+    {
+      "word": "Defect",
+      "meanings": [
+        {
+          "pronunciation": "/ˈdiːfɛkt/",
+          "pos": "Noun",
+          "definition": "A flaw or fault"
+        },
+        {
+          "pronunciation": "/dɪˈfɛkt/",
+          "pos": "Verb",
+          "definition": "To desert a country or cause"
+        }
+      ]
+    },
+    {
+      "word": "Delegate",
+      "meanings": [
+        {
+          "pronunciation": "/ˈdɛlɪɡət/",
+          "pos": "Noun",
+          "definition": "A representative"
+        },
+        {
+          "pronunciation": "/ˈdɛlɪɡeɪt/",
+          "pos": "Verb",
+          "definition": "To entrust tasks"
+        }
+      ]
+    },
+    {
+      "word": "Deliberate",
+      "meanings": [
+        {
+          "pronunciation": "/dɪˈlɪbərət/",
+          "pos": "Adjective",
+          "definition": "Intentional"
+        },
+        {
+          "pronunciation": "/dɪˈlɪbəreɪt/",
+          "pos": "Verb",
+          "definition": "To consider carefully"
+        }
+      ]
+    },
+    {
+      "word": "Diagonal",
+      "meanings": [
+        {
+          "pronunciation": "/daɪˈæɡənəl/",
+          "pos": "Noun / Adjective",
+          "definition": "Slanted line / slanting"
+        },
+        {
+          "pronunciation": "/daɪˈæɡənli/",
+          "pos": "Adverb",
+          "definition": "Across diagonally"
+        }
+      ]
+    },
+    {
+      "word": "Digest",
+      "meanings": [
+        {
+          "pronunciation": "/ˈdaɪdʒɛst/",
+          "pos": "Noun",
+          "definition": "A summary of information"
+        },
+        {
+          "pronunciation": "/daɪˈdʒɛst/",
+          "pos": "Verb",
+          "definition": "To process food in the stomach"
+        }
+      ]
+    },
+    {
+      "word": "Entrance",
+      "meanings": [
+        {
+          "pronunciation": "/ˈɛntrəns/",
+          "pos": "Noun",
+          "definition": "An entry door or gate"
+        },
+        {
+          "pronunciation": "/ɪnˈtræns/",
+          "pos": "Verb",
+          "definition": "To fill with delight/spellbind"
+        }
+      ]
+    },
+    {
+      "word": "Escort",
+      "meanings": [
+        {
+          "pronunciation": "/ˈɛskɔːrt/",
+          "pos": "Noun",
+          "definition": "A guard or companion"
+        },
+        {
+          "pronunciation": "/ɪˈskɔːrt/",
+          "pos": "Verb",
+          "definition": "To accompany someone"
+        }
+      ]
+    },
+    {
+      "word": "Estimate",
+      "meanings": [
+        {
+          "pronunciation": "/ˈɛstɪmət/",
+          "pos": "Noun",
+          "definition": "An approximate value"
+        },
+        {
+          "pronunciation": "/ˈɛstɪmeɪt/",
+          "pos": "Verb",
+          "definition": "To judge or calculate value"
+        }
+      ]
+    },
+    {
+      "word": "Excise",
+      "meanings": [
+        {
+          "pronunciation": "/ˈɛksaɪz/",
+          "pos": "Noun",
+          "definition": "A tax on goods"
+        },
+        {
+          "pronunciation": "/ɪkˈsaɪz/",
+          "pos": "Verb",
+          "definition": "To cut out surgically"
+        }
+      ]
+    },
+    {
+      "word": "Excuse",
+      "meanings": [
+        {
+          "pronunciation": "/ɪkˈskjuːs/",
+          "pos": "Noun",
+          "definition": "An explanation/apology"
+        },
+        {
+          "pronunciation": "/ɪkˈskjuːz/",
+          "pos": "Verb",
+          "definition": "To forgive or grant leave"
+        }
+      ]
+    },
+    {
+      "word": "Exploit",
+      "meanings": [
+        {
+          "pronunciation": "/ˈɛksplɔɪt/",
+          "pos": "Noun",
+          "definition": "A daring deed"
+        },
+        {
+          "pronunciation": "/ɪkˈsplɔɪt/",
+          "pos": "Verb",
+          "definition": "To take unfair advantage of"
+        }
+      ]
+    },
+    {
+      "word": "Extract",
+      "meanings": [
+        {
+          "pronunciation": "/ˈɛkstrækt/",
+          "pos": "Noun",
+          "definition": "A short passage or culinary flavor"
+        },
+        {
+          "pronunciation": "/ɪkˈstrækt/",
+          "pos": "Verb",
+          "definition": "To pull out forcefully"
+        }
+      ]
+    },
+    {
+      "word": "Impact",
+      "meanings": [
+        {
+          "pronunciation": "/ˈɪmpækt/",
+          "pos": "Noun",
+          "definition": "An effect or collision"
+        },
+        {
+          "pronunciation": "/ɪmˈpækt/",
+          "pos": "Verb",
+          "definition": "To strike forcefully"
+        }
+      ]
+    },
+    {
+      "word": "Import",
+      "meanings": [
+        {
+          "pronunciation": "/ˈɪmpɔːrt/",
+          "pos": "Noun",
+          "definition": "An imported product"
+        },
+        {
+          "pronunciation": "/ɪmˈpɔːrt/",
+          "pos": "Verb",
+          "definition": "To bring in from abroad"
+        }
+      ]
+    },
+    {
+      "word": "Incense",
+      "meanings": [
+        {
+          "pronunciation": "/ˈɪnsɛns/",
+          "pos": "Noun",
+          "definition": "A fragrant burning substance"
+        },
+        {
+          "pronunciation": "/ɪnˈsɛns/",
+          "pos": "Verb",
+          "definition": "To make extremely angry"
+        }
+      ]
+    },
+    {
+      "word": "Incline",
+      "meanings": [
+        {
+          "pronunciation": "/ˈɪnklaɪn/",
+          "pos": "Noun",
+          "definition": "A slope"
+        },
+        {
+          "pronunciation": "/ɪnˈklaɪn/",
+          "pos": "Verb",
+          "definition": "To lean or feel disposed toward"
+        }
+      ]
+    },
+    {
+      "word": "Increase",
+      "meanings": [
+        {
+          "pronunciation": "/ˈɪnkriːs/",
+          "pos": "Noun",
+          "definition": "A growth"
+        },
+        {
+          "pronunciation": "/inˈkriːs/",
+          "pos": "Verb",
+          "definition": "To grow larger"
+        }
+      ]
+    },
+    {
+      "word": "Insert",
+      "meanings": [
+        {
+          "pronunciation": "/ˈɪnsɜːrt/",
+          "pos": "Noun",
+          "definition": "Something put inside"
+        },
+        {
+          "pronunciation": "/ɪnˈsɜːrt/",
+          "pos": "Verb",
+          "definition": "To put something in"
+        }
+      ]
+    },
+    {
+      "word": "Insult",
+      "meanings": [
+        {
+          "pronunciation": "/ˈɪnsʌlt/",
+          "pos": "Noun",
+          "definition": "An offensive remark"
+        },
+        {
+          "pronunciation": "/ɪnˈsʌlt/",
+          "pos": "Verb",
+          "definition": "To offend someone"
+        }
+      ]
+    },
+    {
+      "word": "Intern",
+      "meanings": [
+        {
+          "pronunciation": "/ˈɪntɜːrn/",
+          "pos": "Noun",
+          "definition": "A trainee practitioner"
+        },
+        {
+          "pronunciation": "/ɪnˈtɜːrn/",
+          "pos": "Verb",
+          "definition": "To confine or imprison"
+        }
+      ]
+    },
+    {
+      "word": "Intimate",
+      "meanings": [
+        {
+          "pronunciation": "/ˈɪntɪmət/",
+          "pos": "Adjective / Noun",
+          "definition": "Private/close relation"
+        },
+        {
+          "pronunciation": "/ˈɪntɪmeɪt/",
+          "pos": "Verb",
+          "definition": "To hint or imply"
+        }
+      ]
+    },
+    {
+      "word": "Moped",
+      "meanings": [
+        {
+          "pronunciation": "/ˈmoʊpɛd/",
+          "pos": "Noun",
+          "definition": "A light motorcycle"
+        },
+        {
+          "pronunciation": "/moʊpt/",
+          "pos": "Verb (Past Tense)",
+          "definition": "Gloomed / sulked (past of mope)"
+        }
+      ]
+    },
+    {
+      "word": "Number",
+      "meanings": [
+        {
+          "pronunciation": "/ˈnʌmbər/",
+          "pos": "Noun",
+          "definition": "A mathematical digit"
+        },
+        {
+          "pronunciation": "/ˈnʌmər/",
+          "pos": "Adjective (Comparative)",
+          "definition": "More numb"
+        }
+      ]
+    },
+    {
+      "word": "Offense",
+      "meanings": [
+        {
+          "pronunciation": "/ˈɒfɛns/",
+          "pos": "Noun",
+          "definition": "The attacking side in a game"
+        },
+        {
+          "pronunciation": "/əˈfɛns/",
+          "pos": "Noun",
+          "definition": "A crime or emotional injury"
+        }
+      ]
+    },
+    {
+      "word": "Overcharge",
+      "meanings": [
+        {
+          "pronunciation": "/ˈoʊvərˌtʃɑːrdʒ/",
+          "pos": "Noun",
+          "definition": "An excessive price"
+        },
+        {
+          "pronunciation": "/ˌoʊvərˈtʃɑːrdʒ/",
+          "pos": "Verb",
+          "definition": "To demand too much money"
+        }
+      ]
+    },
+    {
+      "word": "Perfect",
+      "meanings": [
+        {
+          "pronunciation": "/ˈpɜːrfɪkt/",
+          "pos": "Adjective",
+          "definition": "Faultless"
+        },
+        {
+          "pronunciation": "/pərˈfɛkt/",
+          "pos": "Verb",
+          "definition": "To make flawless"
+        }
+      ]
+    },
+    {
+      "word": "Permeate",
+      "meanings": [
+        {
+          "pronunciation": "/ˈpɜːrmieɪt/",
+          "pos": "Verb",
+          "definition": "To spread throughout"
+        },
+        {
+          "pronunciation": "/ˈpɜːrmɪət/",
+          "pos": "Adjective",
+          "definition": "Penetrated state"
+        }
+      ]
+    },
+    {
+      "word": "Permit",
+      "meanings": [
+        {
+          "pronunciation": "/ˈpɜːrmɪt/",
+          "pos": "Noun",
+          "definition": "A written authorization"
+        },
+        {
+          "pronunciation": "/pərˈmɪt/",
+          "pos": "Verb",
+          "definition": "To give permission"
+        }
+      ]
+    },
+    {
+      "word": "Project",
+      "meanings": [
+        {
+          "pronunciation": "/ˈprɒdʒɛkt/",
+          "pos": "Noun",
+          "definition": "A task or plan"
+        },
+        {
+          "pronunciation": "/prəˈdʒɛkt/",
+          "pos": "Verb",
+          "definition": "To throw forward or display on a screen"
+        }
+      ]
+    },
+    {
+      "word": "Protest",
+      "meanings": [
+        {
+          "pronunciation": "/ˈproʊtɛst/",
+          "pos": "Noun",
+          "definition": "A public objection"
+        },
+        {
+          "pronunciation": "/prəˈtɛst/",
+          "pos": "Verb",
+          "definition": "To declare firm disapproval"
+        }
+      ]
+    },
+    {
+      "word": "Pussy",
+      "meanings": [
+        {
+          "pronunciation": "/ˈpʊsi/",
+          "pos": "Noun",
+          "definition": "A cat"
+        },
+        {
+          "pronunciation": "/ˈpʌsi/",
+          "pos": "Adjective",
+          "definition": "Resembling or containing pus"
+        }
+      ]
+    },
+    {
+      "word": "Rebel",
+      "meanings": [
+        {
+          "pronunciation": "/ˈrɛbəl/",
+          "pos": "Noun",
+          "definition": "A resistant person"
+        },
+        {
+          "pronunciation": "/rɪˈbɛl/",
+          "pos": "Verb",
+          "definition": "To resist authority"
+        }
+      ]
+    },
+    {
+      "word": "Refund",
+      "meanings": [
+        {
+          "pronunciation": "/ˈriːfʌnd/",
+          "pos": "Noun",
+          "definition": "Money returned"
+        },
+        {
+          "pronunciation": "/rɪˈfʌnd/",
+          "pos": "Verb",
+          "definition": "To pay money back"
+        }
+      ]
+    },
+    {
+      "word": "Refuse",
+      "meanings": [
+        {
+          "pronunciation": "/ˈrɛfjuːs/",
+          "pos": "Noun",
+          "definition": "Garbage"
+        },
+        {
+          "pronunciation": "/rɪˈfjuːz/",
+          "pos": "Verb",
+          "definition": "To decline"
+        }
+      ]
+    },
+    {
+      "word": "Reject",
+      "meanings": [
+        {
+          "pronunciation": "/ˈriːdʒɛkt/",
+          "pos": "Noun",
+          "definition": "A discarded item"
+        },
+        {
+          "pronunciation": "/rɪˈdʒɛkt/",
+          "pos": "Verb",
+          "definition": "To dismiss or refuse"
+        }
+      ]
+    },
+    {
+      "word": "Rerun",
+      "meanings": [
+        {
+          "pronunciation": "/ˈriːrʌn/",
+          "pos": "Noun",
+          "definition": "A repeated broadcast"
+        },
+        {
+          "pronunciation": "/ˌriːˈrʌn/",
+          "pos": "Verb",
+          "definition": "To run again"
+        }
+      ]
+    },
+    {
+      "word": "Resign",
+      "meanings": [
+        {
+          "pronunciation": "/rɪˈzaɪn/",
+          "pos": "Verb",
+          "definition": "To quit a job"
+        },
+        {
+          "pronunciation": "/riːˈsaɪn/",
+          "pos": "Verb",
+          "definition": "To sign a document again"
+        }
+      ]
+    },
+    {
+      "word": "Resume",
+      "meanings": [
+        {
+          "pronunciation": "/rɪˈzjuːm/",
+          "pos": "Verb",
+          "definition": "To restart"
+        },
+        {
+          "pronunciation": "/ˈrɛzjʊmeɪ/",
+          "pos": "Noun",
+          "definition": "A summary of work history (CV)"
+        }
+      ]
+    },
+    {
+      "word": "Sake",
+      "meanings": [
+        {
+          "pronunciation": "/seɪk/",
+          "pos": "Noun",
+          "definition": "Purpose or benefit"
+        },
+        {
+          "pronunciation": "/ˈsɑːki/",
+          "pos": "Noun",
+          "definition": "Japanese rice wine"
+        }
+      ]
+    },
+    {
+      "word": "Secret",
+      "meanings": [
+        {
+          "pronunciation": "/ˈsiːkrɪt/",
+          "pos": "Noun / Adjective",
+          "definition": "Hidden knowledge / hidden"
+        },
+        {
+          "pronunciation": "/sɪˈkriːt/",
+          "pos": "Verb",
+          "definition": "To produce and release liquid"
+        }
+      ]
+    },
+    {
+      "word": "Sewer",
+      "meanings": [
+        {
+          "pronunciation": "/ˈsoʊər/",
+          "pos": "Noun",
+          "definition": "One who sews clothes"
+        },
+        {
+          "pronunciation": "/ˈsuːər/",
+          "pos": "Noun",
+          "definition": "An underground drain pipe"
+        }
+      ]
+    },
+    {
+      "word": "Slough",
+      "meanings": [
+        {
+          "pronunciation": "/slaʊ/",
+          "pos": "Noun",
+          "definition": "A swamp or muddy area"
+        },
+        {
+          "pronunciation": "/slʌf/",
+          "pos": "Verb",
+          "definition": "To shed skin"
+        }
+      ]
+    },
+    {
+      "word": "Subject",
+      "meanings": [
+        {
+          "pronunciation": "/ˈsʌbdʒɪkt/",
+          "pos": "Noun",
+          "definition": "Theme or topic"
+        },
+        {
+          "pronunciation": "/səbˈdʒɛkt/",
+          "pos": "Verb",
+          "definition": "To bring under control"
+        }
+      ]
+    },
+    {
+      "word": "Survey",
+      "meanings": [
+        {
+          "pronunciation": "/ˈsɜːrveɪ/",
+          "pos": "Noun",
+          "definition": "An investigation or poll"
+        },
+        {
+          "pronunciation": "/sərˈveɪ/",
+          "pos": "Verb",
+          "definition": "To examine carefully"
+        }
+      ]
+    },
+    {
+      "word": "Suspect",
+      "meanings": [
+        {
+          "pronunciation": "/ˈsʌspɛkt/",
+          "pos": "Noun / Adjective",
+          "definition": "A believed offender / doubtful"
+        },
+        {
+          "pronunciation": "/səˈspɛkt/",
+          "pos": "Verb",
+          "definition": "To doubt or mistrust"
+        }
+      ]
+    },
+    {
+      "word": "Tarry",
+      "meanings": [
+        {
+          "pronunciation": "/ˈtæri/",
+          "pos": "Verb",
+          "definition": "To delay or linger"
+        },
+        {
+          "pronunciation": "/ˈtɑːri/",
+          "pos": "Adjective",
+          "definition": "Covered in tar"
+        }
+      ]
+    },
+    {
+      "word": "Tear",
+      "meanings": [
+        {
+          "pronunciation": "/tɪər/",
+          "pos": "Noun",
+          "definition": "Eye drop from crying"
+        },
+        {
+          "pronunciation": "/tɛər/",
+          "pos": "Verb",
+          "definition": "To pull apart forcibly"
+        }
+      ]
+    },
+    {
+      "word": "Unionized",
+      "meanings": [
+        {
+          "pronunciation": "/ˈjuːnjənaɪzd/",
+          "pos": "Adjective / Verb",
+          "definition": "Formed into a labor union"
+        },
+        {
+          "pronunciation": "/aɪˈɒnaɪzd/",
+          "pos": "Adjective",
+          "definition": "Not converted into ions"
+        }
+      ]
+    }
+  ],
+  "homophones": [
+    {
+      "pair": [
+        "Air",
+        "Heir"
+      ],
+      "words": [
+        {
+          "word": "Air",
+          "pos": "Noun",
+          "definition": "Atmosphere"
+        },
+        {
+          "word": "Heir",
+          "pos": "Noun",
+          "definition": "Legal inheritor"
+        }
+      ]
+    },
+    {
+      "pair": [
+        "Aisle",
+        "Isle"
+      ],
+      "words": [
+        {
+          "word": "Aisle",
+          "pos": "Noun",
+          "definition": "Walkway between seats"
+        },
+        {
+          "word": "Isle",
+          "pos": "Noun",
+          "definition": "A small island"
+        }
+      ]
+    },
+    {
+      "pair": [
+        "Allowed",
+        "Aloud"
+      ],
+      "words": [
+        {
+          "word": "Allowed",
+          "pos": "Verb (Past)",
+          "definition": "Permitted"
+        },
+        {
+          "word": "Aloud",
+          "pos": "Adverb",
+          "definition": "Out loud"
+        }
+      ]
+    },
+    {
+      "pair": [
+        "Altar",
+        "Alter"
+      ],
+      "words": [
+        {
+          "word": "Altar",
+          "pos": "Noun",
+          "definition": "Sacred platform"
+        },
+        {
+          "word": "Alter",
+          "pos": "Verb",
+          "definition": "To change"
+        }
+      ]
+    },
+    {
+      "pair": [
+        "Ate",
+        "Eight"
+      ],
+      "words": [
+        {
+          "word": "Ate",
+          "pos": "Verb (Past)",
+          "definition": "Consumed food"
+        },
+        {
+          "word": "Eight",
+          "pos": "Noun / Adjective",
+          "definition": "The number 8"
+        }
+      ]
+    },
+    {
+      "pair": [
+        "Bare",
+        "Bear"
+      ],
+      "words": [
+        {
+          "word": "Bare",
+          "pos": "Adjective",
+          "definition": "Naked/uncovered"
+        },
+        {
+          "word": "Bear",
+          "pos": "Noun / Verb",
+          "definition": "Large wild mammal / to endure"
+        }
+      ]
+    },
+    {
+      "pair": [
+        "Be",
+        "Bee"
+      ],
+      "words": [
+        {
+          "word": "Be",
+          "pos": "Verb",
+          "definition": "To exist"
+        },
+        {
+          "word": "Bee",
+          "pos": "Noun",
+          "definition": "Stinging insect"
+        }
+      ]
+    },
+    {
+      "pair": [
+        "Blew",
+        "Blue"
+      ],
+      "words": [
+        {
+          "word": "Blew",
+          "pos": "Verb (Past)",
+          "definition": "Past tense of blow"
+        },
+        {
+          "word": "Blue",
+          "pos": "Noun / Adjective",
+          "definition": "The color"
+        }
+      ]
+    },
+    {
+      "pair": [
+        "Brake",
+        "Break"
+      ],
+      "words": [
+        {
+          "word": "Brake",
+          "pos": "Noun / Verb",
+          "definition": "Stopping device on a vehicle / to stop"
+        },
+        {
+          "word": "Break",
+          "pos": "Verb / Noun",
+          "definition": "To fracture or separate / a pause"
+        }
+      ]
+    },
+    {
+      "pair": [
+        "Buy",
+        "By"
+      ],
+      "words": [
+        {
+          "word": "Buy",
+          "pos": "Verb",
+          "definition": "To purchase"
+        },
+        {
+          "word": "By",
+          "pos": "Preposition",
+          "definition": "Near or written of"
+        }
+      ]
+    },
+    {
+      "pair": [
+        "Cell",
+        "Sell"
+      ],
+      "words": [
+        {
+          "word": "Cell",
+          "pos": "Noun",
+          "definition": "Small room or basic biological unit"
+        },
+        {
+          "word": "Sell",
+          "pos": "Verb",
+          "definition": "To exchange goods for money"
+        }
+      ]
+    },
+    {
+      "pair": [
+        "Cent",
+        "Scent"
+      ],
+      "words": [
+        {
+          "word": "Cent",
+          "pos": "Noun",
+          "definition": "A coin worth 1/100th of a dollar"
+        },
+        {
+          "word": "Scent",
+          "pos": "Noun",
+          "definition": "Aroma/smell"
+        }
+      ]
+    },
+    {
+      "pair": [
+        "Cereal",
+        "Serial"
+      ],
+      "words": [
+        {
+          "word": "Cereal",
+          "pos": "Noun",
+          "definition": "Breakfast food"
+        },
+        {
+          "word": "Serial",
+          "pos": "Adjective / Noun",
+          "definition": "Published in sequential parts"
+        }
+      ]
+    },
+    {
+      "pair": [
+        "Coarse",
+        "Course"
+      ],
+      "words": [
+        {
+          "word": "Coarse",
+          "pos": "Adjective",
+          "definition": "Rough texture"
+        },
+        {
+          "word": "Course",
+          "pos": "Noun",
+          "definition": "Direction/path or academic class"
+        }
+      ]
+    },
+    {
+      "pair": [
+        "Complement",
+        "Compliment"
+      ],
+      "words": [
+        {
+          "word": "Complement",
+          "pos": "Noun / Verb",
+          "definition": "Something that completes another"
+        },
+        {
+          "word": "Compliment",
+          "pos": "Noun / Verb",
+          "definition": "Praise or flattery"
+        }
+      ]
+    },
+    {
+      "pair": [
+        "Dam",
+        "Damn"
+      ],
+      "words": [
+        {
+          "word": "Dam",
+          "pos": "Noun",
+          "definition": "Water barrier structure"
+        },
+        {
+          "word": "Damn",
+          "pos": "Verb / Interjection",
+          "definition": "To condemn"
+        }
+      ]
+    },
+    {
+      "pair": [
+        "Dear",
+        "Deer"
+      ],
+      "words": [
+        {
+          "word": "Dear",
+          "pos": "Adjective",
+          "definition": "Beloved or expensive"
+        },
+        {
+          "word": "Deer",
+          "pos": "Noun",
+          "definition": "Hoofed mammal"
+        }
+      ]
+    },
+    {
+      "pair": [
+        "Die",
+        "Dye"
+      ],
+      "words": [
+        {
+          "word": "Die",
+          "pos": "Verb",
+          "definition": "To cease living"
+        },
+        {
+          "word": "Dye",
+          "pos": "Noun / Verb",
+          "definition": "Substance used to color material / to color"
+        }
+      ]
+    },
+    {
+      "pair": [
+        "Fair",
+        "Fare"
+      ],
+      "words": [
+        {
+          "word": "Fair",
+          "pos": "Adjective / Noun",
+          "definition": "Just / carnival"
+        },
+        {
+          "word": "Fare",
+          "pos": "Noun / Verb",
+          "definition": "Transportation fee / to perform"
+        }
+      ]
+    },
+    {
+      "pair": [
+        "Fir",
+        "Fur"
+      ],
+      "words": [
+        {
+          "word": "Fir",
+          "pos": "Noun",
+          "definition": "Evergreen tree"
+        },
+        {
+          "word": "Fur",
+          "pos": "Noun",
+          "definition": "Soft hair of an animal"
+        }
+      ]
+    },
+    {
+      "pair": [
+        "Flea",
+        "Flee"
+      ],
+      "words": [
+        {
+          "word": "Flea",
+          "pos": "Noun",
+          "definition": "Biting insect"
+        },
+        {
+          "word": "Flee",
+          "pos": "Verb",
+          "definition": "To run away"
+        }
+      ]
+    },
+    {
+      "pair": [
+        "Flour",
+        "Flower"
+      ],
+      "words": [
+        {
+          "word": "Flour",
+          "pos": "Noun",
+          "definition": "Ground grain powder"
+        },
+        {
+          "word": "Flower",
+          "pos": "Noun",
+          "definition": "Blossoming plant"
+        }
+      ]
+    },
+    {
+      "pair": [
+        "For",
+        "Four"
+      ],
+      "words": [
+        {
+          "word": "For",
+          "pos": "Preposition",
+          "definition": "In favor of / intended to"
+        },
+        {
+          "word": "Four",
+          "pos": "Noun / Adjective",
+          "definition": "The number 4"
+        }
+      ]
+    },
+    {
+      "pair": [
+        "Grate",
+        "Great"
+      ],
+      "words": [
+        {
+          "word": "Grate",
+          "pos": "Verb / Noun",
+          "definition": "To shred / iron frame"
+        },
+        {
+          "word": "Great",
+          "pos": "Adjective",
+          "definition": "Wonderful or immense"
+        }
+      ]
+    },
+    {
+      "pair": [
+        "Groan",
+        "Grown"
+      ],
+      "words": [
+        {
+          "word": "Groan",
+          "pos": "Noun / Verb",
+          "definition": "Low sound of pain / to emit a low sound"
+        },
+        {
+          "word": "Grown",
+          "pos": "Verb (Participle)",
+          "definition": "Fully matured"
+        }
+      ]
+    },
+    {
+      "pair": [
+        "Hair",
+        "Hare"
+      ],
+      "words": [
+        {
+          "word": "Hair",
+          "pos": "Noun",
+          "definition": "Strands growing on head/skin"
+        },
+        {
+          "word": "Hare",
+          "pos": "Noun",
+          "definition": "Animal similar to a rabbit"
+        }
+      ]
+    },
+    {
+      "pair": [
+        "Heal",
+        "Heel"
+      ],
+      "words": [
+        {
+          "word": "Heal",
+          "pos": "Verb",
+          "definition": "To cure or become healthy"
+        },
+        {
+          "word": "Heel",
+          "pos": "Noun",
+          "definition": "Back part of the foot"
+        }
+      ]
+    },
+    {
+      "pair": [
+        "Hear",
+        "Here"
+      ],
+      "words": [
+        {
+          "word": "Hear",
+          "pos": "Verb",
+          "definition": "To perceive sound"
+        },
+        {
+          "word": "Here",
+          "pos": "Adverb",
+          "definition": "In this current location"
+        }
+      ]
+    },
+    {
+      "pair": [
+        "Hi",
+        "High"
+      ],
+      "words": [
+        {
+          "word": "Hi",
+          "pos": "Interjection",
+          "definition": "Informal greeting"
+        },
+        {
+          "word": "High",
+          "pos": "Adjective / Adverb",
+          "definition": "Elevated / tall"
+        }
+      ]
+    },
+    {
+      "pair": [
+        "Hole",
+        "Whole"
+      ],
+      "words": [
+        {
+          "word": "Hole",
+          "pos": "Noun",
+          "definition": "An opening or void"
+        },
+        {
+          "word": "Whole",
+          "pos": "Adjective / Noun",
+          "definition": "Complete / entire"
+        }
+      ]
+    },
+    {
+      "pair": [
+        "Hour",
+        "Our"
+      ],
+      "words": [
+        {
+          "word": "Hour",
+          "pos": "Noun",
+          "definition": "60 minutes"
+        },
+        {
+          "word": "Our",
+          "pos": "Possessive Pronoun",
+          "definition": "Belonging to us"
+        }
+      ]
+    },
+    {
+      "pair": [
+        "In",
+        "Inn"
+      ],
+      "words": [
+        {
+          "word": "In",
+          "pos": "Preposition",
+          "definition": "Inside"
+        },
+        {
+          "word": "Inn",
+          "pos": "Noun",
+          "definition": "Small hotel or tavern"
+        }
+      ]
+    },
+    {
+      "pair": [
+        "Knight",
+        "Night"
+      ],
+      "words": [
+        {
+          "word": "Knight",
+          "pos": "Noun",
+          "definition": "Medieval armored warrior"
+        },
+        {
+          "word": "Night",
+          "pos": "Noun",
+          "definition": "Period of darkness"
+        }
+      ]
+    },
+    {
+      "pair": [
+        "Knot",
+        "Not"
+      ],
+      "words": [
+        {
+          "word": "Knot",
+          "pos": "Noun / Verb",
+          "definition": "Fastened loop of rope / to tie"
+        },
+        {
+          "word": "Not",
+          "pos": "Adverb",
+          "definition": "Used for negation"
+        }
+      ]
+    },
+    {
+      "pair": [
+        "Know",
+        "No"
+      ],
+      "words": [
+        {
+          "word": "Know",
+          "pos": "Verb",
+          "definition": "To understand"
+        },
+        {
+          "word": "No",
+          "pos": "Adverb / Determiner",
+          "definition": "Negative reply"
+        }
+      ]
+    },
+    {
+      "pair": [
+        "Knows",
+        "Nose"
+      ],
+      "words": [
+        {
+          "word": "Knows",
+          "pos": "Verb",
+          "definition": "Understands"
+        },
+        {
+          "word": "Nose",
+          "pos": "Noun",
+          "definition": "Facial organ for smelling"
+        }
+      ]
+    },
+    {
+      "pair": [
+        "Lead",
+        "Led"
+      ],
+      "words": [
+        {
+          "word": "Lead",
+          "pos": "Noun",
+          "definition": "Soft metal"
+        },
+        {
+          "word": "Led",
+          "pos": "Verb (Past)",
+          "definition": "Guided (past tense of lead)"
+        }
+      ]
+    },
+    {
+      "pair": [
+        "Made",
+        "Maid"
+      ],
+      "words": [
+        {
+          "word": "Made",
+          "pos": "Verb (Past)",
+          "definition": "Created"
+        },
+        {
+          "word": "Maid",
+          "pos": "Noun",
+          "definition": "House cleaner/servant"
+        }
+      ]
+    },
+    {
+      "pair": [
+        "Mail",
+        "Male"
+      ],
+      "words": [
+        {
+          "word": "Mail",
+          "pos": "Noun / Verb",
+          "definition": "Postal delivery / to send"
+        },
+        {
+          "word": "Male",
+          "pos": "Adjective / Noun",
+          "definition": "Masculine gender"
+        }
+      ]
+    },
+    {
+      "pair": [
+        "Meat",
+        "Meet"
+      ],
+      "words": [
+        {
+          "word": "Meat",
+          "pos": "Noun",
+          "definition": "Animal tissue used as food"
+        },
+        {
+          "word": "Meet",
+          "pos": "Verb",
+          "definition": "To encounter someone"
+        }
+      ]
+    },
+    {
+      "pair": [
+        "Morning",
+        "Mourning"
+      ],
+      "words": [
+        {
+          "word": "Morning",
+          "pos": "Noun",
+          "definition": "Early part of the day"
+        },
+        {
+          "word": "Mourning",
+          "pos": "Noun / Verb (Present Participle)",
+          "definition": "Grieving a death"
+        }
+      ]
+    },
+    {
+      "pair": [
+        "None",
+        "Nun"
+      ],
+      "words": [
+        {
+          "word": "None",
+          "pos": "Pronoun",
+          "definition": "Not any"
+        },
+        {
+          "word": "Nun",
+          "pos": "Noun",
+          "definition": "Female member of a religious order"
+        }
+      ]
+    },
+    {
+      "pair": [
+        "One",
+        "Won"
+      ],
+      "words": [
+        {
+          "word": "One",
+          "pos": "Noun / Adjective",
+          "definition": "Single item / digit 1"
+        },
+        {
+          "word": "Won",
+          "pos": "Verb (Past)",
+          "definition": "Triumphed in a game"
+        }
+      ]
+    },
+    {
+      "pair": [
+        "Pair",
+        "Pear"
+      ],
+      "words": [
+        {
+          "word": "Pair",
+          "pos": "Noun",
+          "definition": "Set of two"
+        },
+        {
+          "word": "Pear",
+          "pos": "Noun",
+          "definition": "A fruit"
+        }
+      ]
+    },
+    {
+      "pair": [
+        "Peace",
+        "Piece"
+      ],
+      "words": [
+        {
+          "word": "Peace",
+          "pos": "Noun",
+          "definition": "Absence of war or quiet"
+        },
+        {
+          "word": "Piece",
+          "pos": "Noun",
+          "definition": "A portion/slice"
+        }
+      ]
+    },
+    {
+      "pair": [
+        "Peak",
+        "Peek"
+      ],
+      "words": [
+        {
+          "word": "Peak",
+          "pos": "Noun",
+          "definition": "Mountain summit"
+        },
+        {
+          "word": "Peek",
+          "pos": "Verb / Noun",
+          "definition": "A quick look / to look quickly"
+        }
+      ]
+    },
+    {
+      "pair": [
+        "Plain",
+        "Plane"
+      ],
+      "words": [
+        {
+          "word": "Plain",
+          "pos": "Adjective / Noun",
+          "definition": "Simple / flat land"
+        },
+        {
+          "word": "Plane",
+          "pos": "Noun",
+          "definition": "Aircraft"
+        }
+      ]
+    },
+    {
+      "pair": [
+        "Poor",
+        "Pour"
+      ],
+      "words": [
+        {
+          "word": "Poor",
+          "pos": "Adjective",
+          "definition": "Lacking money"
+        },
+        {
+          "word": "Pour",
+          "pos": "Verb",
+          "definition": "To spill or discharge liquid"
+        }
+      ]
+    },
+    {
+      "pair": [
+        "Pray",
+        "Prey"
+      ],
+      "words": [
+        {
+          "word": "Pray",
+          "pos": "Verb",
+          "definition": "To offer worship"
+        },
+        {
+          "word": "Prey",
+          "pos": "Noun / Verb",
+          "definition": "Animal hunted for food / to hunt"
+        }
+      ]
+    },
+    {
+      "pair": [
+        "Principal",
+        "Principle"
+      ],
+      "words": [
+        {
+          "word": "Principal",
+          "pos": "Noun / Adjective",
+          "definition": "School head / main sum / primary"
+        },
+        {
+          "word": "Principle",
+          "pos": "Noun",
+          "definition": "Fundamental truth or rule"
+        }
+      ]
+    },
+    {
+      "pair": [
+        "Profit",
+        "Prophet"
+      ],
+      "words": [
+        {
+          "word": "Profit",
+          "pos": "Noun / Verb",
+          "definition": "Financial gain / to earn money"
+        },
+        {
+          "word": "Prophet",
+          "pos": "Noun",
+          "definition": "Religious seer"
+        }
+      ]
+    },
+    {
+      "pair": [
+        "Rain",
+        "Reign"
+      ],
+      "words": [
+        {
+          "word": "Rain",
+          "pos": "Noun / Verb",
+          "definition": "Precipitation / to fall as water"
+        },
+        {
+          "word": "Reign",
+          "pos": "Noun / Verb",
+          "definition": "Period of rule / to govern"
+        }
+      ]
+    },
+    {
+      "pair": [
+        "Raise",
+        "Rays"
+      ],
+      "words": [
+        {
+          "word": "Raise",
+          "pos": "Verb",
+          "definition": "To lift up"
+        },
+        {
+          "word": "Rays",
+          "pos": "Noun",
+          "definition": "Beams of light"
+        }
+      ]
+    },
+    {
+      "pair": [
+        "Right",
+        "Write"
+      ],
+      "words": [
+        {
+          "word": "Right",
+          "pos": "Adjective / Noun",
+          "definition": "Correct / direction opposite of left"
+        },
+        {
+          "word": "Write",
+          "pos": "Verb",
+          "definition": "To put text on paper"
+        }
+      ]
+    },
+    {
+      "pair": [
+        "Ring",
+        "Wring"
+      ],
+      "words": [
+        {
+          "word": "Ring",
+          "pos": "Noun / Verb",
+          "definition": "Jewelry circle / sound of bell / to sound"
+        },
+        {
+          "word": "Wring",
+          "pos": "Verb",
+          "definition": "To twist water out of cloth"
+        }
+      ]
+    },
+    {
+      "pair": [
+        "Road",
+        "Rode"
+      ],
+      "words": [
+        {
+          "word": "Road",
+          "pos": "Noun",
+          "definition": "Street/thoroughfare"
+        },
+        {
+          "word": "Rode",
+          "pos": "Verb (Past)",
+          "definition": "Past tense of ride"
+        }
+      ]
+    },
+    {
+      "pair": [
+        "Root",
+        "Route"
+      ],
+      "words": [
+        {
+          "word": "Root",
+          "pos": "Noun / Verb",
+          "definition": "Underground plant structure / to plant"
+        },
+        {
+          "word": "Route",
+          "pos": "Noun",
+          "definition": "Path or course to travel"
+        }
+      ]
+    },
+    {
+      "pair": [
+        "Rose",
+        "Rows"
+      ],
+      "words": [
+        {
+          "word": "Rose",
+          "pos": "Noun",
+          "definition": "A flower"
+        },
+        {
+          "word": "Rows",
+          "pos": "Noun",
+          "definition": "Lines of items"
+        }
+      ]
+    },
+    {
+      "pair": [
+        "Sail",
+        "Sale"
+      ],
+      "words": [
+        {
+          "word": "Sail",
+          "pos": "Noun / Verb",
+          "definition": "Wind catching fabric on a boat / to travel on water"
+        },
+        {
+          "word": "Sale",
+          "pos": "Noun",
+          "definition": "Discounted transaction"
+        }
+      ]
+    },
+    {
+      "pair": [
+        "Sea",
+        "See"
+      ],
+      "words": [
+        {
+          "word": "Sea",
+          "pos": "Noun",
+          "definition": "Ocean body"
+        },
+        {
+          "word": "See",
+          "pos": "Verb",
+          "definition": "To observe with eyes"
+        }
+      ]
+    },
+    {
+      "pair": [
+        "Seam",
+        "Seem"
+      ],
+      "words": [
+        {
+          "word": "Seam",
+          "pos": "Noun",
+          "definition": "Line where fabrics stitch together"
+        },
+        {
+          "word": "Seem",
+          "pos": "Verb",
+          "definition": "To appear"
+        }
+      ]
+    },
+    {
+      "pair": [
+        "Sew",
+        "So"
+      ],
+      "words": [
+        {
+          "word": "Sew",
+          "pos": "Verb",
+          "definition": "To stitch clothing"
+        },
+        {
+          "word": "So",
+          "pos": "Adverb / Conjunction",
+          "definition": "Therefore / to such a degree"
+        }
+      ]
+    },
+    {
+      "pair": [
+        "Sight",
+        "Site"
+      ],
+      "words": [
+        {
+          "word": "Sight",
+          "pos": "Noun",
+          "definition": "Vision/view"
+        },
+        {
+          "word": "Site",
+          "pos": "Noun",
+          "definition": "Specific area/location"
+        }
+      ]
+    },
+    {
+      "pair": [
+        "Soar",
+        "Sore"
+      ],
+      "words": [
+        {
+          "word": "Soar",
+          "pos": "Verb",
+          "definition": "To fly high"
+        },
+        {
+          "word": "Sore",
+          "pos": "Adjective / Noun",
+          "definition": "Painful / an ache"
+        }
+      ]
+    },
+    {
+      "pair": [
+        "Sole",
+        "Soul"
+      ],
+      "words": [
+        {
+          "word": "Sole",
+          "pos": "Adjective / Noun",
+          "definition": "Single / bottom of foot or shoe"
+        },
+        {
+          "word": "Soul",
+          "pos": "Noun",
+          "definition": "Spiritual essence"
+        }
+      ]
+    },
+    {
+      "pair": [
+        "Some",
+        "Sum"
+      ],
+      "words": [
+        {
+          "word": "Some",
+          "pos": "Determiner / Pronoun",
+          "definition": "Unspecified quantity"
+        },
+        {
+          "word": "Sum",
+          "pos": "Noun",
+          "definition": "Total addition result"
+        }
+      ]
+    },
+    {
+      "pair": [
+        "Son",
+        "Sun"
+      ],
+      "words": [
+        {
+          "word": "Son",
+          "pos": "Noun",
+          "definition": "Male child"
+        },
+        {
+          "word": "Sun",
+          "pos": "Noun",
+          "definition": "Star at center of solar system"
+        }
+      ]
+    },
+    {
+      "pair": [
+        "Stair",
+        "Stare"
+      ],
+      "words": [
+        {
+          "word": "Stair",
+          "pos": "Noun",
+          "definition": "Step on a flight of steps"
+        },
+        {
+          "word": "Stare",
+          "pos": "Verb / Noun",
+          "definition": "To gaze fixedly / a fixed gaze"
+        }
+      ]
+    },
+    {
+      "pair": [
+        "Stationary",
+        "Stationery"
+      ],
+      "words": [
+        {
+          "word": "Stationary",
+          "pos": "Adjective",
+          "definition": "Fixed in place"
+        },
+        {
+          "word": "Stationery",
+          "pos": "Noun",
+          "definition": "Writing materials"
+        }
+      ]
+    },
+    {
+      "pair": [
+        "Steal",
+        "Steel"
+      ],
+      "words": [
+        {
+          "word": "Steal",
+          "pos": "Verb",
+          "definition": "To take illegally"
+        },
+        {
+          "word": "Steel",
+          "pos": "Noun",
+          "definition": "Strong iron alloy metal"
+        }
+      ]
+    },
+    {
+      "pair": [
+        "Suite",
+        "Sweet"
+      ],
+      "words": [
+        {
+          "word": "Suite",
+          "pos": "Noun",
+          "definition": "Connected set of rooms"
+        },
+        {
+          "word": "Sweet",
+          "pos": "Adjective / Noun",
+          "definition": "Sugary taste / candy"
+        }
+      ]
+    },
+    {
+      "pair": [
+        "Tail",
+        "Tale"
+      ],
+      "words": [
+        {
+          "word": "Tail",
+          "pos": "Noun",
+          "definition": "Rear appendage of an animal"
+        },
+        {
+          "word": "Tale",
+          "pos": "Noun",
+          "definition": "A story"
+        }
+      ]
+    },
+    {
+      "pair": [
+        "Their",
+        "There"
+      ],
+      "words": [
+        {
+          "word": "Their",
+          "pos": "Possessive Determiner",
+          "definition": "Belonging to them"
+        },
+        {
+          "word": "There",
+          "pos": "Adverb / Pronoun",
+          "definition": "In that place"
+        }
+      ]
+    },
+    {
+      "pair": [
+        "Threw",
+        "Through"
+      ],
+      "words": [
+        {
+          "word": "Threw",
+          "pos": "Verb (Past)",
+          "definition": "Cast through air"
+        },
+        {
+          "word": "Through",
+          "pos": "Preposition",
+          "definition": "Moving in and out of an enclosure"
+        }
+      ]
+    },
+    {
+      "pair": [
+        "To",
+        "Two"
+      ],
+      "words": [
+        {
+          "word": "To",
+          "pos": "Preposition",
+          "definition": "Direction or preposition"
+        },
+        {
+          "word": "Two",
+          "pos": "Noun / Adjective",
+          "definition": "Number 2"
+        }
+      ]
+    },
+    {
+      "pair": [
+        "Toe",
+        "Tow"
+      ],
+      "words": [
+        {
+          "word": "Toe",
+          "pos": "Noun",
+          "definition": "Digit on foot"
+        },
+        {
+          "word": "Tow",
+          "pos": "Verb / Noun",
+          "definition": "To pull a vehicle / an act of pulling"
+        }
+      ]
+    },
+    {
+      "pair": [
+        "Vain",
+        "Vein"
+      ],
+      "words": [
+        {
+          "word": "Vain",
+          "pos": "Adjective",
+          "definition": "Conceited / useless"
+        },
+        {
+          "word": "Vein",
+          "pos": "Noun",
+          "definition": "Blood vessel"
+        }
+      ]
+    },
+    {
+      "pair": [
+        "Waist",
+        "Waste"
+      ],
+      "words": [
+        {
+          "word": "Waist",
+          "pos": "Noun",
+          "definition": "Middle body section"
+        },
+        {
+          "word": "Waste",
+          "pos": "Noun / Verb",
+          "definition": "Trash / to expend uselessly"
+        }
+      ]
+    },
+    {
+      "pair": [
+        "Wait",
+        "Weight"
+      ],
+      "words": [
+        {
+          "word": "Wait",
+          "pos": "Verb / Noun",
+          "definition": "To delay or stay / a delay"
+        },
+        {
+          "word": "Weight",
+          "pos": "Noun",
+          "definition": "Mass or heaviness"
+        }
+      ]
+    },
+    {
+      "pair": [
+        "War",
+        "Wore"
+      ],
+      "words": [
+        {
+          "word": "War",
+          "pos": "Noun",
+          "definition": "Armed conflict"
+        },
+        {
+          "word": "Wore",
+          "pos": "Verb (Past)",
+          "definition": "Carried on body (past tense of wear)"
+        }
+      ]
+    },
+    {
+      "pair": [
+        "Way",
+        "Weigh"
+      ],
+      "words": [
+        {
+          "word": "Way",
+          "pos": "Noun",
+          "definition": "Manner or path"
+        },
+        {
+          "word": "Weigh",
+          "pos": "Verb",
+          "definition": "To measure mass"
+        }
+      ]
+    },
+    {
+      "pair": [
+        "Weak",
+        "Week"
+      ],
+      "words": [
+        {
+          "word": "Weak",
+          "pos": "Adjective",
+          "definition": "Lacking strength"
+        },
+        {
+          "word": "Week",
+          "pos": "Noun",
+          "definition": "7 days"
+        }
+      ]
+    },
+    {
+      "pair": [
+        "Wear",
+        "Where"
+      ],
+      "words": [
+        {
+          "word": "Wear",
+          "pos": "Verb",
+          "definition": "To put on clothing"
+        },
+        {
+          "word": "Where",
+          "pos": "Adverb / Conjunction",
+          "definition": "At what location"
+        }
+      ]
+    },
+    {
+      "pair": [
+        "Weather",
+        "Whether"
+      ],
+      "words": [
+        {
+          "word": "Weather",
+          "pos": "Noun",
+          "definition": "Atmospheric conditions"
+        },
+        {
+          "word": "Whether",
+          "pos": "Conjunction",
+          "definition": "Expressing a choice"
+        }
+      ]
+    },
+    {
+      "pair": [
+        "Which",
+        "Witch"
+      ],
+      "words": [
+        {
+          "word": "Which",
+          "pos": "Pronoun / Determiner",
+          "definition": "Asking to specify"
+        },
+        {
+          "word": "Witch",
+          "pos": "Noun",
+          "definition": "Mythical magic user"
+        }
+      ]
+    },
+    {
+      "pair": [
+        "Who's",
+        "Whose"
+      ],
+      "words": [
+        {
+          "word": "Who's",
+          "pos": "Contraction",
+          "definition": "Short for 'who is' or 'who has'"
+        },
+        {
+          "word": "Whose",
+          "pos": "Possessive Pronoun",
+          "definition": "Belonging to whom"
+        }
+      ]
+    },
+    {
+      "pair": [
+        "Wood",
+        "Would"
+      ],
+      "words": [
+        {
+          "word": "Wood",
+          "pos": "Noun",
+          "definition": "Timber/tree material"
+        },
+        {
+          "word": "Would",
+          "pos": "Modal Verb",
+          "definition": "Conditional auxiliary verb"
+        }
+      ]
+    },
+    {
+      "pair": [
+        "Your",
+        "You're"
+      ],
+      "words": [
+        {
+          "word": "Your",
+          "pos": "Possessive Determiner",
+          "definition": "Belonging to you"
+        },
+        {
+          "word": "You're",
+          "pos": "Contraction",
+          "definition": "Short for 'you are'"
+        }
+      ]
+    },
+    {
+      "pair": [
+        "Band",
+        "Banned"
+      ],
+      "words": [
+        {
+          "word": "Band",
+          "pos": "Noun / Verb",
+          "definition": "Musical group / ring"
+        },
+        {
+          "word": "Banned",
+          "pos": "Verb (Past) / Adjective",
+          "definition": "Prohibited"
+        }
+      ]
+    },
+    {
+      "pair": [
+        "Base",
+        "Bass"
+      ],
+      "words": [
+        {
+          "word": "Base",
+          "pos": "Noun / Adjective",
+          "definition": "Foundation / ignoble"
+        },
+        {
+          "word": "Bass",
+          "pos": "Noun / Adjective",
+          "definition": "Low musical pitch"
+        }
+      ]
+    },
+    {
+      "pair": [
+        "Bazaar",
+        "Bizarre"
+      ],
+      "words": [
+        {
+          "word": "Bazaar",
+          "pos": "Noun",
+          "definition": "Market"
+        },
+        {
+          "word": "Bizarre",
+          "pos": "Adjective",
+          "definition": "Strange/weird"
+        }
+      ]
+    },
+    {
+      "pair": [
+        "Berth",
+        "Birth"
+      ],
+      "words": [
+        {
+          "word": "Berth",
+          "pos": "Noun",
+          "definition": "Sleeping place on a train/ship"
+        },
+        {
+          "word": "Birth",
+          "pos": "Noun",
+          "definition": "Origin of life"
+        }
+      ]
+    },
+    {
+      "pair": [
+        "Byte",
+        "Bite"
+      ],
+      "words": [
+        {
+          "word": "Byte",
+          "pos": "Noun",
+          "definition": "Storage unit of digital data"
+        },
+        {
+          "word": "Bite",
+          "pos": "Verb / Noun",
+          "definition": "To cut with teeth / a wound from teeth"
+        }
+      ]
+    },
+    {
+      "pair": [
+        "Cast",
+        "Caste"
+      ],
+      "words": [
+        {
+          "word": "Cast",
+          "pos": "Verb / Noun",
+          "definition": "Actors / to throw"
+        },
+        {
+          "word": "Caste",
+          "pos": "Noun",
+          "definition": "Social class division"
+        }
+      ]
+    },
+    {
+      "pair": [
+        "Chord",
+        "Cord"
+      ],
+      "words": [
+        {
+          "word": "Chord",
+          "pos": "Noun",
+          "definition": "Musical notes played together"
+        },
+        {
+          "word": "Cord",
+          "pos": "Noun",
+          "definition": "Thin rope or electrical cable"
+        }
+      ]
+    },
+    {
+      "pair": [
+        "Dual",
+        "Duel"
+      ],
+      "words": [
+        {
+          "word": "Duel",
+          "pos": "Noun / Verb",
+          "definition": "Combat between two people / to fight"
+        }
+      ] // Fecha o array "words"
+    } // Fecha o objeto do par "Dual/Duel"
+  ] // Fecha o array "homophones"
+}; // Fecha o objeto principal DATA
+
+  /* ================================
+     Estado
+     ================================ */
+  var lang = 'en';
+  var currentMode = 'heteronyms';
+  var currentIndex = 0;
+  var isFlipped = false;
+  var heteronymsList = DATA.heteronyms.slice();
+  var homophonesList = DATA.homophones.slice();
+  var isTransitioning = false;
+
+  /* ================================
+     DOM
+     ================================ */
+  var $ = function(id) { return document.getElementById(id); };
+  var heteroTab = $('heteronymsTab');
+  var homoTab = $('homophonesTab');
+  var progressBar = $('progressBar');
+  var progressText = $('progressText');
+  var shuffleBtn = $('shuffleBtn');
+  var shuffleLabel = $('shuffleLabel');
+  var cardScene = $('cardScene');
+  var flashcard = $('flashcard');
+  var cardBack = $('cardBack');
+  var frontModeLabel = $('frontModeLabel');
+  var frontMain = $('frontMain');
+  var frontSub = $('frontSub');
+  var tapHintText = $('tapHintText');
+  var prevBtn = $('prevBtn');
+  var nextBtn = $('nextBtn');
+  var prevLabel = $('prevLabel');
+  var nextLabel = $('nextLabel');
+  var hintRow = $('hintRow');
+  var langBtns = document.querySelectorAll('.lang-btn');
+
+  /* ================================
+     Helpers
+     ================================ */
+  function getList() {
+    return currentMode === 'heteronyms' ? heteronymsList : homophonesList;
+  }
+
+  function shuffleArray(arr) {
+    var a = arr.slice();
+    for (var i = a.length - 1; i > 0; i--) {
+      var j = Math.floor(Math.random() * (i + 1));
+      var tmp = a[i]; a[i] = a[j]; a[j] = tmp;
+    }
+    return a;
+  }
+
+  function posLabel(pos) {
+    var p = pos.toLowerCase();
+    if (p === 'noun') return t('noun');
+    if (p === 'verb') return t('verb');
+    if (p === 'adj') return t('adj');
+    return pos;
+  }
+
+  /* pega a definição no idioma atual, com fallback */
+  function getDef(defObj) {
+    if (typeof defObj === 'string') return defObj;
+    return defObj[lang] || defObj.en || '';
+  }
+
+  /* formata o par para exibição: ["Air","Heir"] → "Air / Heir" */
+  function formatPair(pairArr) {
+    return pairArr.join(' / ');
+  }
+
+  /* ================================
+     Cores por modo
+     ================================ */
+  function applyModeColors() {
+    var r = document.documentElement.style;
+    if (currentMode === 'heteronyms') {
+      r.setProperty('--mode-color', '#0D9488');
+      r.setProperty('--mode-color-light', 'rgba(13,148,136,0.08)');
+      r.setProperty('--mode-color-glow', 'rgba(13,148,136,0.25)');
+    } else {
+      r.setProperty('--mode-color', '#D97706');
+      r.setProperty('--mode-color-light', 'rgba(217,119,6,0.08)');
+      r.setProperty('--mode-color-glow', 'rgba(217,119,6,0.25)');
+    }
+  }
+
+  /* ================================
+     Atualizar interface
+     ================================ */
+  function updateUI() {
+    heteroTab.textContent = t('heteronyms');
+    homoTab.textContent = t('homophones');
+    shuffleLabel.textContent = t('shuffle');
+    prevLabel.textContent = t('prev');
+    nextLabel.textContent = t('next');
+    tapHintText.textContent = t('tapHint');
+    hintRow.innerHTML = t('keyboard');
+    updateProgress();
+    renderFront();
+  }
+
+  function updateProgress() {
+    var list = getList();
+    var total = list.length;
+    var current = total > 0 ? currentIndex + 1 : 0;
+    progressText.textContent = current + ' ' + t('of') + ' ' + total;
+    progressBar.style.width = (total > 0 ? (current / total) * 100 : 0) + '%';
+  }
+
+  /* ================================
+     Renderização
+     ================================ */
+  function renderFront() {
+    var list = getList();
+    if (!list.length) {
+      frontModeLabel.textContent = '';
+      frontMain.textContent = '\u2014';
+      frontSub.textContent = '';
+      return;
+    }
+    var item = list[currentIndex];
+    frontModeLabel.textContent = currentMode === 'heteronyms' ? t('heteronyms') : t('homophones');
+
+    if (currentMode === 'heteronyms') {
+      frontMain.textContent = item.word;
+      frontSub.textContent = item.meanings.length + ' ' + t('meanings');
+    } else {
+      /* pair é array: ["Air","Heir"] */
+      frontMain.textContent = formatPair(item.pair);
+      frontSub.textContent = t('homophones');
+    }
+  }
+
+  function renderBack() {
+    var list = getList();
+    if (!list.length) { cardBack.innerHTML = ''; return; }
+    var item = list[currentIndex];
+    cardBack.innerHTML = '';
+
+    if (currentMode === 'heteronyms') {
+      var title = document.createElement('div');
+      title.className = 'back-title';
+      title.textContent = item.word;
+      cardBack.appendChild(title);
+
+      item.meanings.forEach(function(m) {
+        var block = document.createElement('div');
+        block.className = 'meaning-block';
+
+        var pronRow = document.createElement('div');
+        pronRow.className = 'pronunciation-row';
+
+        var pron = document.createElement('span');
+        pron.className = 'pronunciation';
+        pron.textContent = m.pronunciation;
+
+        pronRow.appendChild(pron);
+        pronRow.appendChild(createAudioBtn(item.word));
+        block.appendChild(pronRow);
+
+        var badge = document.createElement('span');
+        badge.className = 'pos-badge';
+        badge.textContent = posLabel(m.pos);
+        block.appendChild(badge);
+
+        var def = document.createElement('div');
+        def.className = 'definition';
+        def.textContent = getDef(m.definition);
+        block.appendChild(def);
+
+        cardBack.appendChild(block);
+      });
+    } else {
+      var title = document.createElement('div');
+      title.className = 'back-title';
+      title.textContent = formatPair(item.pair);
+      cardBack.appendChild(title);
+
+      item.words.forEach(function(w) {
+        var card = document.createElement('div');
+        card.className = 'homo-word-card';
+
+        var header = document.createElement('div');
+        header.className = 'homo-word-header';
+
+        var name = document.createElement('span');
+        name.className = 'homo-word-name';
+        name.textContent = w.word;
+
+        header.appendChild(name);
+        header.appendChild(createAudioBtn(w.word));
+        card.appendChild(header);
+
+        var badge = document.createElement('span');
+        badge.className = 'pos-badge';
+        badge.textContent = posLabel(w.pos);
+        card.appendChild(badge);
+
+        var def = document.createElement('div');
+        def.className = 'definition';
+        def.textContent = getDef(w.definition);
+        card.appendChild(def);
+
+        cardBack.appendChild(card);
+      });
+    }
+
+    var backHint = document.createElement('div');
+    backHint.className = 'back-tap-hint';
+    backHint.textContent = t('tapBack');
+    cardBack.appendChild(backHint);
+
+    cardBack.scrollTop = 0;
+  }
+
+  function createAudioBtn(text) {
+    var btn = document.createElement('button');
+    btn.className = 'audio-btn';
+    btn.setAttribute('aria-label', 'Play pronunciation');
+    btn.innerHTML = '<svg viewBox="0 0 24 24"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>';
+    btn.addEventListener('click', function(e) {
+      e.stopPropagation();
+      speak(text);
+    });
+    return btn;
+  }
+
+  /* ================================
+     Flip
+     ================================ */
+  function flipCard() {
+    if (isFlipped) {
+      flashcard.classList.remove('flipped');
+      isFlipped = false;
+    } else {
+      renderBack();
+      flashcard.classList.add('flipped');
+      isFlipped = true;
+    }
+  }
+
+  function closeCard() {
+    if (isFlipped) {
+      flashcard.classList.remove('flipped');
+      isFlipped = false;
+    }
+  }
+
+  /* ================================
+     Transição entre cards
+     ================================ */
+  function transitionCard(direction, callback) {
+    if (isTransitioning) return;
+    isTransitioning = true;
+    closeCard();
+
+    var exitCls = direction === 'next' ? 'exit-left' : 'exit-right';
+    var enterCls = direction === 'next' ? 'enter-right' : 'enter-left';
+
+    function onExit() {
+      cardScene.removeEventListener('animationend', onExit);
+      cardScene.classList.remove(exitCls);
+      callback();
+      cardScene.classList.add(enterCls);
+      function onEnter() {
+        cardScene.removeEventListener('animationend', onEnter);
+        cardScene.classList.remove(enterCls);
+        isTransitioning = false;
+      }
+      cardScene.addEventListener('animationend', onEnter);
+    }
+    cardScene.classList.add(exitCls);
+    cardScene.addEventListener('animationend', onExit);
+  }
+
+  /* ================================
+     Navegação
+     ================================ */
+  function goNext() {
+    var list = getList();
+    if (!list.length) return;
+    transitionCard('next', function() {
+      currentIndex = (currentIndex + 1) % list.length;
+      renderFront();
+      updateProgress();
+    });
+  }
+
+  function goPrev() {
+    var list = getList();
+    if (!list.length) return;
+    transitionCard('prev', function() {
+      currentIndex = (currentIndex - 1 + list.length) % list.length;
+      renderFront();
+      updateProgress();
+    });
+  }
+
+  function doShuffle() {
+    if (currentMode === 'heteronyms') {
+      heteronymsList = shuffleArray(heteronymsList);
+    } else {
+      homophonesList = shuffleArray(homophonesList);
+    }
+    transitionCard('next', function() {
+      currentIndex = 0;
+      renderFront();
+      updateProgress();
+    });
+  }
+
+  /* ================================
+     Mudança de modo
+     ================================ */
+  function switchMode(mode) {
+    if (currentMode === mode) return;
+    currentMode = mode;
+    currentIndex = 0;
+    applyModeColors();
+    heteroTab.classList.toggle('active', mode === 'heteronyms');
+    homoTab.classList.toggle('active', mode === 'homophones');
+    transitionCard('next', function() {
+      renderFront();
+      updateProgress();
+    });
+  }
+
+  /* ================================
+     Mudança de idioma
+     ================================ */
+  function switchLang(newLang) {
+    if (lang === newLang) return;
+    lang = newLang;
+    langBtns.forEach(function(b) { b.classList.toggle('active', b.dataset.lang === lang); });
+    updateUI();
+    if (isFlipped) renderBack();
+  }
+
+  /* ================================
+     Síntese de voz
+     ================================ */
+  function speak(text) {
+    if (!window.speechSynthesis) return;
+    speechSynthesis.cancel();
+    var utt = new SpeechSynthesisUtterance(text);
+    utt.lang = 'en-US';
+    utt.rate = 0.92;
+    var voices = speechSynthesis.getVoices();
+    var keys = ['female','samantha','zira','karen','moira','fiona','tessa','veena','google us english'];
+    var voice = null;
+    for (var i = 0; i < voices.length; i++) {
+      var n = voices[i].name.toLowerCase();
+      if (voices[i].lang.startsWith('en') && keys.some(function(k) { return n.indexOf(k) !== -1; })) {
+        voice = voices[i];
+        break;
+      }
+    }
+    if (voice) { utt.voice = voice; } else { utt.pitch = 1.3; }
+    speechSynthesis.speak(utt);
+  }
+
+  (function loadVoices() {
+    var v = speechSynthesis.getVoices();
+    if (!v.length) speechSynthesis.onvoiceschanged = function() { speechSynthesis.getVoices(); };
+  })();
+
+  /* ================================
+     Eventos
+     ================================ */
+  heteroTab.addEventListener('click', function() { switchMode('heteronyms'); });
+  homoTab.addEventListener('click', function() { switchMode('homophones'); });
+
+  flashcard.addEventListener('click', function(e) {
+    if (e.target.closest('.audio-btn')) return;
+    flipCard();
+  });
+
+  prevBtn.addEventListener('click', goPrev);
+  nextBtn.addEventListener('click', goNext);
+  shuffleBtn.addEventListener('click', doShuffle);
+
+  langBtns.forEach(function(btn) {
+    btn.addEventListener('click', function() { switchLang(btn.dataset.lang); });
+  });
+
+  window.addEventListener('keydown', function(e) {
+    if (e.key === 'ArrowLeft') { e.preventDefault(); goPrev(); }
+    else if (e.key === 'ArrowRight') { e.preventDefault(); goNext(); }
+    else if (e.key === ' ') { e.preventDefault(); flipCard(); }
+  });
+
+  /* swipe */
+  var touchX = 0, touchY = 0;
+  flashcard.addEventListener('touchstart', function(e) {
+    touchX = e.touches[0].clientX;
+    touchY = e.touches[0].clientY;
+  }, { passive: true });
+
+  flashcard.addEventListener('touchend', function(e) {
+    var dx = e.changedTouches[0].clientX - touchX;
+    var dy = e.changedTouches[0].clientY - touchY;
+    if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy) * 1.5) {
+      if (dx < 0) goNext(); else goPrev();
+    }
+  }, { passive: true });
+
+  /* ================================
+     Init
+     ================================ */
+  applyModeColors();
+  updateUI();
+
+})();
+</script>
+</body>
+</html>
