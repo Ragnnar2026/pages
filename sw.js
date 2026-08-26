@@ -36,12 +36,17 @@ self.addEventListener("fetch", event => {
 
     const url = new URL(event.request.url);
 
-    // Só trata requisições do próprio GitHub Pages /pages/
     if (url.origin !== self.location.origin) {
         return;
     }
 
     if (!url.pathname.startsWith(BASE)) {
+        return;
+    }
+
+    // NÃO armazenar ícones em cache
+    if (url.pathname.startsWith(BASE + "icons/")) {
+        event.respondWith(fetch(event.request));
         return;
     }
 
