@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#080808">
+  <meta name="description" content="Uma verdade por dia.">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Soco Diário">
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" href="icons/icon-180-v3.png" type="image/svg+xml">
+  <title>SOCO DIÁRIO</title>
+  <style>
+    :root{--bg:#080808;--fg:#f4f4f0;--muted:#777;--accent:#ff3b30;--line:#202020}
+    *{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;background:var(--bg);color:var(--fg);
+    font-family:Inter,ui-sans-serif,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif}
+    body{overflow:hidden;user-select:none;-webkit-user-select:none}
+    .app{min-height:100dvh;display:grid;grid-template-rows:auto 1fr auto;padding:max(22px,env(safe-area-inset-top)) 24px max(22px,env(safe-area-inset-bottom))}
+    header{display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--line);padding-bottom:16px}
+    .brand{font-size:11px;font-weight:800;letter-spacing:.22em}.counter{color:var(--muted);font-size:11px;letter-spacing:.14em;font-variant-numeric:tabular-nums}
+    main{display:flex;align-items:center;justify-content:center;padding:20px 0}.quote-wrap{width:min(920px,100%)}
+    .mark{color:var(--accent);font-size:clamp(42px,8vw,80px);line-height:.6;font-weight:900;margin-bottom:26px}
+    #quote{margin:0;font-size:clamp(34px,6.2vw,78px);line-height:1.02;font-weight:800;letter-spacing:-.045em;max-width:900px}
+    #quote.animate{animation:hit .65s cubic-bezier(.2,.8,.2,1)}.source{margin-top:32px;color:var(--muted);font-size:12px;letter-spacing:.08em;text-transform:uppercase}
+    footer{display:flex;align-items:center;justify-content:space-between;border-top:1px solid var(--line);padding-top:16px;gap:16px}
+    button{appearance:none;border:1px solid #303030;background:#111;color:var(--fg);border-radius:999px;padding:12px 18px;font-size:12px;font-weight:700;letter-spacing:.08em;cursor:pointer}
+    button:active{transform:scale(.96)}.hint{color:#555;font-size:10px;letter-spacing:.08em;text-transform:uppercase}
+    @keyframes hit{0%{opacity:0;transform:translateY(22px) scale(.98);filter:blur(8px)}65%{opacity:1;transform:translateY(-2px) scale(1.005);filter:blur(0)}100%{transform:translateY(0) scale(1)}}
+    @media(prefers-reduced-motion:reduce){#quote.animate{animation:none}}
+  </style>
+</head>
+<body>
+<div class="app">
+  <header><div class="brand">SOCO DIÁRIO</div><div class="counter" id="counter">01 / 05</div></header>
+  <main><section class="quote-wrap" aria-live="polite"><div class="mark">“</div><h1 id="quote"></h1><div class="source">Leia. Pense. Siga.</div></section></main>
+  <footer><div class="hint">Uma verdade por vez.</div><button id="next" type="button">OUTRA →</button></footer>
+</div>
+<script>
+const frases=[
+"Chore em silêncio. Sorria em público. Quem não pode resolver seus problemas não precisa conhecê-los.",
+"Quando estiver só, cuide dos seus pensamentos. Quando estiver entre pessoas, cuide da sua língua.",
+"Chegamos sem nada e partimos do mesmo jeito. E, ainda assim, brigamos por aquilo que não podemos levar.",
+"Trate bem os outros. É melhor praticar os ensinamentos da Bíblia do que apenas citar versículos.",
+"O casal se revela no divórcio; os irmãos, na herança; os filhos, na velhice; e os amigos, nas provações."
+];
+const quote=document.getElementById("quote"),counter=document.getElementById("counter"),next=document.getElementById("next");
+let index=Number(localStorage.getItem("soco-index")||0)%frases.length;
+function mostrar(i){quote.classList.remove("animate");void quote.offsetWidth;quote.textContent=frases[i];quote.classList.add("animate");counter.textContent=String(i+1).padStart(2,"0")+" / "+String(frases.length).padStart(2,"0");localStorage.setItem("soco-index",i)}
+function proxima(){index=(index+1)%frases.length;mostrar(index)}
+next.addEventListener("click",e=>{e.stopPropagation();proxima()});
+document.addEventListener("click",e=>{if(e.target!==next)proxima()});
+document.addEventListener("keydown",e=>{if(e.key===" "||e.key==="ArrowRight"){e.preventDefault();proxima()}});
+mostrar(index);
+if("serviceWorker" in navigator){window.addEventListener("load",()=>navigator.serviceWorker.register("service-worker.js").catch(()=>{}))}
+</script>
+</body>
+</html>
