@@ -1,4 +1,4 @@
-const CACHE_NAME = "minhas-paginas-v3";
+const CACHE_NAME = "minhas-paginas-v4";
 const BASE = "/pages/";
 
 const FILES_TO_CACHE = [
@@ -36,20 +36,47 @@ self.addEventListener("fetch", event => {
 
     const url = new URL(event.request.url);
 
-    if (url.origin !== self.location.origin) {
-        return;
-    }
+    if (url.origin !== self.location.origin) return;
+    if (!url.pathname.startsWith(BASE)) return;
 
-    if (!url.pathname.startsWith(BASE)) {
-        return;
-    }
-
-    // NÃO armazenar ícones em cache
+    // Ícones: sempre buscar da rede
     if (url.pathname.startsWith(BASE + "icons/")) {
         event.respondWith(fetch(event.request));
         return;
     }
 
+    // HTML: REDE PRIMEIRO
+    if (
+        event.request.destination === "document" ||
+        url.pathname.endsWith(".html") ||
+        url.pathname === BASE
+    ) {
+        event.respondWith(
+            fetch(event.request)
+                .then(response => {
+
+                    if (response && response.status === 200) {
+                        const responseClone = response.clone();
+
+                        caches.open(CACHE_NAME).then(cache => {
+                            cache.put(event.request, responseClone);
+                        });
+                    }
+
+                    return response;
+                })
+                .catch(() => {
+                    return caches.match(event.request)
+                        .then(cachedResponse => {
+                            return cachedResponse || caches.match(BASE);
+                        });
+                })
+        );
+
+        return;
+    }
+
+    // Outros arquivos: cache primeiro
     event.respondWith(
         caches.match(event.request).then(cachedResponse => {
 
@@ -75,9 +102,6 @@ self.addEventListener("fetch", event => {
                     });
 
                     return response;
-                })
-                .catch(() => {
-                    return caches.match(BASE);
                 });
         })
     );
