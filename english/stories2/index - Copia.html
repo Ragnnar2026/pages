@@ -1,0 +1,1374 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>ShadowSpeak — English Shadowing Trainer</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0c0e14;--bg2:#12141c;--card:#181b25;--card-active:#1e2130;
+  --text:#e4e2de;--text-muted:#7d7f8a;--border:#252836;
+  --accent:#e8a838;--accent-dim:rgba(232,168,56,.12);
+  --phrasal:#4ade80;--phrasal-dim:rgba(74,222,128,.1);
+  --idiom:#f59e0b;--idiom-dim:rgba(245,158,11,.1);
+  --danger:#ef4444;--danger-dim:rgba(239,68,68,.12);
+  --success:#22c55e;--radius:12px;--radius-sm:8px;
+}
+html{scroll-behavior:smooth}
+body{
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;
+  background:var(--bg);color:var(--text);line-height:1.65;
+  min-height:100vh;-webkit-font-smoothing:antialiased;
+  background-image:radial-gradient(ellipse at 15% 50%,rgba(232,168,56,.025) 0%,transparent 55%),
+                    radial-gradient(ellipse at 85% 15%,rgba(74,222,128,.015) 0%,transparent 50%);
+}
+.app{max-width:720px;margin:0 auto;padding:0 16px 80px}
+/* HEADER */
+header{padding:20px 0 12px;border-bottom:1px solid var(--border);margin-bottom:16px}
+.header-row{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px}
+h1{font-size:22px;font-weight:800;letter-spacing:-.5px;color:var(--accent)}
+.legend{display:flex;gap:14px;flex-wrap:wrap;font-size:12px;color:var(--text-muted)}
+.legend-item{display:flex;align-items:center;gap:5px}
+.legend-dot{width:10px;height:10px;border-radius:3px;flex-shrink:0}
+.legend-dot.g{background:var(--phrasal)}.legend-dot.y{background:var(--idiom)}
+.legend-dot.b{background:var(--text);font-weight:700;font-size:9px;display:flex;align-items:center;justify-content:center;color:var(--bg)}
+/* CONTROLES SUPERIORES */
+.controls-bar{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:14px;align-items:center}
+.level-tabs{display:flex;border-radius:var(--radius-sm);overflow:hidden;border:1px solid var(--border)}
+.level-tab{padding:8px 18px;font-size:13px;font-weight:700;cursor:pointer;background:var(--card);
+  color:var(--text-muted);border:none;transition:all .2s}
+.level-tab:hover{color:var(--text)}
+.level-tab.active{background:var(--accent);color:#0c0e14}
+.ctrl-group{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text-muted)}
+.ctrl-group label{white-space:nowrap}
+.ctrl-select{background:var(--card);color:var(--text);border:1px solid var(--border);border-radius:6px;
+  padding:6px 10px;font-size:12px;cursor:pointer;outline:none}
+.ctrl-select:focus{border-color:var(--accent)}
+/* STORY HEADER */
+.story-header{margin-bottom:14px}
+.story-title{font-size:20px;font-weight:700;margin-bottom:10px;letter-spacing:-.3px}
+.story-actions{display:flex;flex-wrap:wrap;gap:8px}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:10px 16px;border-radius:var(--radius-sm);
+  border:1px solid var(--border);background:var(--card);color:var(--text);font-size:13px;font-weight:600;
+  cursor:pointer;transition:all .15s;white-space:nowrap;-webkit-tap-highlight-color:transparent}
+.btn:hover{background:var(--card-active);border-color:#3a3d4a}
+.btn:active{transform:scale(.97)}
+.btn:disabled{opacity:.35;pointer-events:none}
+.btn-accent{background:var(--accent);color:#0c0e14;border-color:var(--accent)}
+.btn-accent:hover{background:#d4972f;border-color:#d4972f}
+.btn-danger{background:var(--danger-dim);color:var(--danger);border-color:rgba(239,68,68,.3)}
+.btn-danger:hover{background:rgba(239,68,68,.2)}
+.btn-ghost{background:transparent;border-color:transparent;color:var(--text-muted)}
+.btn-ghost:hover{color:var(--text);background:var(--card)}
+.btn-sm{padding:7px 12px;font-size:12px}
+/* PROGRESSO */
+.progress-section{margin-bottom:16px}
+.progress-info{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;font-size:12px;color:var(--text-muted)}
+.progress-bar{height:6px;background:var(--border);border-radius:3px;overflow:hidden}
+.progress-fill{height:100%;background:var(--accent);border-radius:3px;transition:width .4s ease}
+.progress-nav{display:flex;gap:8px;margin-top:8px}
+/* SENTENCE CARD */
+.sentence-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);
+  padding:20px;margin-bottom:12px;transition:all .25s;position:relative;overflow:hidden}
+.sentence-card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:4px;
+  background:var(--border);border-radius:4px 0 0 4px;transition:background .3s}
+.sentence-card.active{border-color:rgba(232,168,56,.25);background:var(--card-active)}
+.sentence-card.active::before{background:var(--accent)}
+.sentence-card.recording{border-color:rgba(239,68,68,.35);box-shadow:0 0 20px rgba(239,68,68,.08)}
+.sentence-card.recording::before{background:var(--danger);animation:pulse-bar 1s infinite}
+.sentence-card.done::before{background:var(--success)}
+.sentence-num{font-size:11px;font-weight:700;color:var(--text-muted);margin-bottom:8px;text-transform:uppercase;letter-spacing:.5px}
+.sentence-text{font-size:17px;line-height:1.8;margin-bottom:12px;color:var(--text)}
+/* PHRASAL / IDIOM / STRESS */
+.phrasal{color:var(--phrasal);background:var(--phrasal-dim);padding:2px 6px;border-radius:4px;
+  cursor:pointer;font-weight:600;transition:background .15s}
+.phrasal:hover{background:rgba(74,222,128,.2)}
+.idiom{color:var(--idiom);background:var(--idiom-dim);padding:2px 6px;border-radius:4px;
+  cursor:pointer;font-weight:600;transition:background .15s}
+.idiom:hover{background:rgba(245,158,11,.2)}
+.stress{font-weight:800;color:#fff}
+/* TRADUÇÃO */
+.translation{font-size:14px;color:var(--text-muted);padding:10px 14px;background:var(--bg2);
+  border-radius:var(--radius-sm);margin-bottom:12px;border-left:3px solid var(--accent);
+  display:none;line-height:1.6}
+.translation.show{display:block;animation:fadeSlide .25s ease}
+/* CONTROLES DO CARD */
+.card-controls{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px}
+.card-controls .btn{flex:1;min-width:0;justify-content:center;font-size:12px;padding:9px 8px}
+/* YOUR TURN */
+.your-turn{display:none;text-align:center;padding:16px;margin-bottom:10px;
+  font-size:18px;font-weight:800;color:var(--accent);letter-spacing:1px;
+  animation:fadeInUp .3s ease}
+.your-turn.show{display:block}
+/* RECORDING INDICATOR */
+.rec-indicator{display:none;align-items:center;justify-content:center;gap:8px;padding:10px;
+  margin-bottom:10px;background:var(--danger-dim);border-radius:var(--radius-sm);font-size:14px;font-weight:700;color:var(--danger)}
+.rec-indicator.show{display:flex}
+.rec-dot{width:12px;height:12px;background:var(--danger);border-radius:50%;animation:pulse-dot 1s infinite}
+/* COMPARAÇÃO */
+.comparison{display:none;margin-top:12px;gap:8px}
+.comparison.show{display:grid;grid-template-columns:1fr 1fr;animation:fadeSlide .3s ease}
+.compare-box{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-sm);
+  padding:14px;text-align:center}
+.compare-label{font-size:11px;font-weight:700;color:var(--text-muted);margin-bottom:8px;text-transform:uppercase;letter-spacing:.5px}
+.compare-box .btn{width:100%;justify-content:center}
+/* SHADOWING MODE BANNER */
+.shadow-banner{display:none;align-items:center;justify-content:center;gap:10px;padding:12px 16px;
+  margin-bottom:14px;background:linear-gradient(135deg,rgba(232,168,56,.12),rgba(74,222,128,.08));
+  border:1px solid rgba(232,168,56,.25);border-radius:var(--radius);font-size:14px;font-weight:700;color:var(--accent)}
+.shadow-banner.show{display:flex}
+.shadow-pulse{width:10px;height:10px;background:var(--accent);border-radius:50%;animation:pulse-dot 1.2s infinite}
+/* VOCABULÁRIO */
+.vocab-section{margin-top:28px}
+.vocab-title{font-size:18px;font-weight:700;margin-bottom:14px;padding-bottom:8px;border-bottom:1px solid var(--border)}
+.vocab-table{width:100%;border-collapse:collapse;font-size:13px}
+.vocab-table th{text-align:left;padding:10px 8px;color:var(--text-muted);font-weight:600;
+  border-bottom:1px solid var(--border);font-size:11px;text-transform:uppercase;letter-spacing:.5px}
+.vocab-table td{padding:10px 8px;border-bottom:1px solid var(--border);vertical-align:top}
+.vocab-table tr:last-child td{border-bottom:none}
+.vocab-expr{font-weight:700;color:var(--text)}
+.vocab-type{font-size:11px;padding:3px 8px;border-radius:10px;font-weight:600;white-space:nowrap;display:inline-block}
+.vocab-type.pv{background:var(--phrasal-dim);color:var(--phrasal)}
+.vocab-type.id{background:var(--idiom-dim);color:var(--idiom)}
+.vocab-type.ue{background:var(--accent-dim);color:var(--accent)}
+.vocab-example{color:var(--text-muted);font-style:italic}
+/* POPUP */
+.popup-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:100;
+  align-items:flex-end;justify-content:center;padding:16px}
+.popup-overlay.show{display:flex}
+.popup-box{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);
+  padding:20px;max-width:400px;width:100%;animation:slideUp .25s ease}
+.popup-close{position:absolute;top:12px;right:14px;background:none;border:none;color:var(--text-muted);
+  font-size:20px;cursor:pointer;padding:4px;line-height:1}
+.popup-close:hover{color:var(--text)}
+.popup-expr{font-size:18px;font-weight:800;margin-bottom:4px}
+.popup-expr.pv{color:var(--phrasal)}.popup-expr.id{color:var(--idiom)}
+.popup-type{font-size:11px;font-weight:700;margin-bottom:12px;text-transform:uppercase;letter-spacing:.5px}
+.popup-type.pv{color:var(--phrasal)}.popup-type.id{color:var(--idiom)}
+.popup-row{margin-bottom:10px}
+.popup-label{font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:2px}
+.popup-value{font-size:14px;color:var(--text);line-height:1.5}
+.popup-example{font-style:italic;color:var(--text-muted)}
+/* TOAST */
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(100px);
+  background:var(--card);color:var(--text);padding:12px 24px;border-radius:var(--radius);
+  border:1px solid var(--border);font-size:13px;font-weight:600;z-index:200;
+  transition:transform .3s ease;white-space:nowrap;box-shadow:0 8px 30px rgba(0,0,0,.4)}
+.toast.show{transform:translateX(-50%) translateY(0)}
+/* ERRO */
+.error-msg{background:var(--danger-dim);border:1px solid rgba(239,68,68,.3);color:var(--danger);
+  padding:14px 18px;border-radius:var(--radius-sm);margin-bottom:14px;font-size:13px;line-height:1.5}
+/* ANIMAÇÕES */
+@keyframes pulse-dot{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(.8)}}
+@keyframes pulse-bar{0%,100%{opacity:1}50%{opacity:.4}}
+@keyframes fadeSlide{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+@keyframes slideUp{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fadeInUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+/* RESPONSIVO */
+@media(max-width:500px){
+  .app{padding:0 10px 60px}
+  h1{font-size:18px}
+  .sentence-text{font-size:15px}
+  .story-title{font-size:17px}
+  .card-controls .btn{font-size:11px;padding:8px 6px}
+  .comparison.show{grid-template-columns:1fr}
+  .vocab-table{font-size:11px}
+  .vocab-table th,.vocab-table td{padding:8px 5px}
+  .controls-bar{gap:6px}
+  .level-tab{padding:7px 13px;font-size:12px}
+  .btn{padding:9px 13px;font-size:12px}
+  .legend{font-size:11px;gap:8px}
+}
+/* SCROLLBAR */
+::-webkit-scrollbar{width:6px}
+::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
+::-webkit-scrollbar-thumb:hover{background:#3a3d4a}
+/* FOCUS */
+.btn:focus-visible,.level-tab:focus-visible,.ctrl-select:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+/* REDUZIR MOVIMENTO */
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important}
+}
+</style>
+</head>
+<body>
+<div class="app" id="app">
+  <header>
+    <div class="header-row">
+      <h1>ShadowSpeak</h1>
+      <div class="legend">
+        <span class="legend-item"><span class="legend-dot g"></span>Phrasal Verb</span>
+        <span class="legend-item"><span class="legend-dot y"></span>Idiom</span>
+        <span class="legend-item"><span class="legend-dot b">B</span>Word Stress</span>
+      </div>
+    </div>
+  </header>
+  <div class="controls-bar">
+    <div class="level-tabs" id="levelTabs" role="tablist"></div>
+    <div class="ctrl-group">
+      <label for="speedSelect">Speed</label>
+      <select class="ctrl-select" id="speedSelect">
+        <option value="0.7">0.7x</option>
+        <option value="0.85">0.85x</option>
+        <option value="1" selected>1.0x</option>
+        <option value="1.15">1.15x</option>
+      </select>
+    </div>
+    <div class="ctrl-group">
+      <label for="recTimeSelect">Rec Time</label>
+      <select class="ctrl-select" id="recTimeSelect">
+        <option value="3">3s</option>
+        <option value="5" selected>5s</option>
+        <option value="7">7s</option>
+        <option value="10">10s</option>
+      </select>
+    </div>
+  </div>
+  <div class="shadow-banner" id="shadowBanner">
+    <span class="shadow-pulse"></span>
+    <span>Shadowing Mode Active</span>
+    <button class="btn btn-sm btn-danger" id="stopShadowBtn">Stop</button>
+  </div>
+  <section class="story-header">
+    <h2 class="story-title" id="storyTitle"></h2>
+    <div class="story-actions">
+      <button class="btn" id="listenFullBtn">Listen Full Story</button>
+      <button class="btn btn-accent" id="shadowModeBtn">Shadowing Mode</button>
+      <button class="btn" id="newStoryBtn">New Story</button>
+    </div>
+  </section>
+  <div class="progress-section">
+    <div class="progress-info">
+      <span id="progressText">Sentence 1 of 1</span>
+      <span id="progressPercent">0%</span>
+    </div>
+    <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+    <div class="progress-nav">
+      <button class="btn btn-sm btn-ghost" id="prevBtn">Prev</button>
+      <button class="btn btn-sm btn-ghost" id="nextBtn">Next</button>
+    </div>
+  </div>
+  <div id="errorContainer"></div>
+  <main id="sentenceContainer"></main>
+  <section class="vocab-section" id="vocabSection"></section>
+</div>
+<div class="popup-overlay" id="popupOverlay">
+  <div class="popup-box" id="popupBox" style="position:relative">
+    <button class="popup-close" id="popupClose" aria-label="Close">&times;</button>
+    <div id="popupContent"></div>
+  </div>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+/* ============================================================
+   DADOS DAS HISTÓRIAS — 10 histórias (A1, A2, B1)
+   ============================================================ */
+const STORIES = [
+  // ==================== A1 ====================
+  {
+    id:1, level:'A1', title:'My Morning',
+    sentences:[
+      {text:'I usually <span class="phrasal" data-idx="0">wake up</span> around <span class="stress">SE</span>ven in the morning.',translation:'Eu acordo por volta das sete da manhã.'},
+      {text:'Some<span class="stress">TI</span>mes I don\'t want to <span class="phrasal" data-idx="1">get up</span> right a<span class="stress">WAY</span>.',translation:'Às vezes não quero levantar logo de uma vez.'},
+      {text:'I stay in bed for a few <span class="stress">MI</span>nutes and check my phone.',translation:'Fico na cama por alguns minutos e olho o celular.'},
+      {text:'Then I <span class="phrasal" data-idx="2">put on</span> my clothes and walk to the <span class="stress">KI</span>tchen.',translation:'Então me visto e vou para a cozinha.'},
+      {text:'I <span class="phrasal" data-idx="3">turn on</span> the co<span class="stress">FFEE</span> machine and <span class="phrasal" data-idx="4">sit down</span> at the table.',translation:'Ligo a máquina de café e sento na mesa.'},
+      {text:'Making coffee is <span class="idiom" data-idx="0">a piece of cake</span> — I do it e<span class="stress">VE</span>ry day.',translation:'Fazer café é moleza — faço isso todo dia.'},
+      {text:'My roommate says it\'s <span class="idiom" data-idx="1">no big deal</span>, but I think good coffee is im<span class="stress">POR</span>tant.',translation:'Meu colega de quarto diz que não é grande coisa, mas acho que um bom café é importante.'},
+      {text:'<span class="idiom" data-idx="2">So far, so good</span> — no bad news on my phone.',translation:'Até agora, tudo bem — nenhuma má notícia no celular.'},
+      {text:'I tell myself to <span class="idiom" data-idx="3">take it easy</span> this morning.',translation:'Me digo para ficar tranquilo esta manhã.'},
+      {text:'I eat a quick break<span class="stress">FAST</span> — some bread and cheese.',translation:'Como um café da manhã rápido — pão e queijo.'},
+      {text:'After that, I brush my teeth and grab my keys.',translation:'Depois disso, escovo os dentes e pego minhas chaves.'},
+      {text:'I open the win<span class="stress">DOW</span> and feel the fresh air.',translation:'Abro a janela e sinto o ar fresco.'},
+      {text:'The wea<span class="stress">THER</span> looks nice, so maybe I\'ll walk to work to<span class="stress">DAY</span>.',translation:'O tempo parece bom, então talvez eu vá a pé para o trabalho hoje.'},
+      {text:'<span class="idiom" data-idx="4">Sounds good</span>, I think, time to start the day.',translation:'Boa, penso, hora de começar o dia.'}
+    ],
+    phrasalVerbs:[
+      {expr:'wake up',meaning:'acordar',explanation:'Parar de dormir e ficar acordado.',example:'What time do you wake up on weekends?'},
+      {expr:'get up',meaning:'levantar (da cama)',explanation:'Sair da cama depois de dormir.',example:'I get up at 6 AM for work.'},
+      {expr:'put on',meaning:'vestir, colocar',explanation:'Colocar uma roupa ou algo no corpo.',example:'Put on your jacket, it\'s cold outside.'},
+      {expr:'turn on',meaning:'ligar',explanation:'Acionar um aparelho ou dispositivo.',example:'Can you turn on the TV, please?'},
+      {expr:'sit down',meaning:'sentar',explanation:'Colocar-se na posição sentada.',example:'Please sit down and make yourself comfortable.'}
+    ],
+    idioms:[
+      {expr:'a piece of cake',meaning:'moleza, muito fácil',explanation:'Algo muito fácil de fazer.',example:'The test was a piece of cake.'},
+      {expr:'no big deal',meaning:'não é grande coisa',explanation:'Algo que não é importante ou sério.',example:'I forgot my umbrella, but it\'s no big deal.'},
+      {expr:'so far, so good',meaning:'até agora, tudo bem',explanation:'As coisas estão indo bem até este ponto.',example:'I\'ve been studying for two hours. So far, so good.'},
+      {expr:'take it easy',meaning:'ficar tranquilo',explanation:'Relaxar, não se preocupar demasiado.',example:'You look tired. Take it easy tonight.'},
+      {expr:'sounds good',meaning:'soa bem, boa ideia',explanation:'Usado para concordar com uma sugestão.',example:'Let\'s meet at 5. — Sounds good.'}
+    ]
+  },
+  {
+    id:2, level:'A1', title:'Supermarket Shopping',
+    sentences:[
+      {text:'I need to go to the su<span class="stress">PER</span>market be<span class="stress">CAUSE</span> we <span class="phrasal" data-idx="0">ran out of</span> milk and bread.',translation:'Preciso ir ao supermercado porque acabou o leite e o pão.'},
+      {text:'When I ar<span class="stress">RI</span>ved, I <span class="phrasal" data-idx="1">looked for</span> a shop<span class="stress">PING</span> cart but they were all gone.',translation:'Quando cheguei, procurei um carrinho de compras, mas não tinha nenhum.'},
+      {text:'That was <span class="idiom" data-idx="0">no big deal</span>, so I grabbed a bas<span class="stress">KET</span> in<span class="stress">STEAD</span>.',translation:'Não foi grande coisa, então peguei uma cesta no lugar.'},
+      {text:'First I went to the fruit sec<span class="stress">TI</span>on and <span class="phrasal" data-idx="2">picked up</span> some ba<span class="stress">NA</span>nas and ap<span class="stress">PLES</span>.',translation:'Primeiro fui à seção de frutas e peguei algumas bananas e maçãs.'},
+      {text:'The stra<span class="stress">WBE</span>ries were <span class="idiom" data-idx="1">on sale</span>, so I got two bo<span class="stress">XES</span>.',translation:'Os morangos estavam em promoção, então peguei duas caixas.'},
+      {text:'Then I <span class="phrasal" data-idx="3">put back</span> the ex<span class="stress">PEN</span>sive cheese and chose a chea<span class="stress">PER</span> one.',translation:'Aí devolvi o queijo caro e escolhi um mais barato.'},
+      {text:'I asked a wor<span class="stress">KER</span> if they had cot<span class="stress">TAGE</span> cheese, but it was <span class="idiom" data-idx="2">out of stock</span>.',translation:'Perguntei a um funcionário se tinham cottage cheese, mas estava fora de estoque.'},
+      {text:'I was <span class="idiom" data-idx="3">in a hurry</span>, so I didn\'t want to waste time.',translation:'Estava com pressa, então não queria perder tempo.'},
+      {text:'I <span class="phrasal" data-idx="4">paid for</span> eve<span class="stress">RY</span>thing and left <span class="idiom" data-idx="4">right away</span>.',translation:'Paguei por tudo e sai imediatamente.'},
+      {text:'When I got home, I real<span class="stress">I</span>zed I for<span class="stress">GOT</span> the eggs.',translation:'Quando cheguei em casa, percebi que esqueci os ovos.'},
+      {text:'Well, <span class="idiom" data-idx="5">you can\'t have it all</span> — at least I got most of the things.',translation:'Bom, ninguém tem tudo — pelo menos peguei a maioria das coisas.'}
+    ],
+    phrasalVerbs:[
+      {expr:'run out of',meaning:'acabar (de algo)',explanation:'Não ter mais de algo que você precisa.',example:'We ran out of toilet paper again.'},
+      {expr:'look for',meaning:'procurar',explanation:'Tentar encontrar algo ou alguém.',example:'I\'m looking for my keys. Have you seen them?'},
+      {expr:'pick up',meaning:'pegar, escolher',explanation:'Pegar algo com a mão ou escolher um item.',example:'Can you pick up that book for me?'},
+      {expr:'put back',meaning:'devolver, colocar de volta',explanation:'Retornar algo ao lugar original.',example:'I put back the shirt because it was too small.'},
+      {expr:'pay for',meaning:'pagar por',explanation:'Dar dinheiro em troca de algo.',example:'I paid for the dinner last night.'}
+    ],
+    idioms:[
+      {expr:'no big deal',meaning:'não é grande coisa',explanation:'Algo sem importância.',example:'I\'m five minutes late. No big deal.'},
+      {expr:'on sale',meaning:'em promoção',explanation:'Sendo vendido por um preço menor que o normal.',example:'These shoes are on sale this week.'},
+      {expr:'out of stock',meaning:'fora de estoque',explanation:'Indisponível na loja.',example:'The new phone is out of stock everywhere.'},
+      {expr:'in a hurry',meaning:'com pressa',explanation:'Fazendo as coisas rapidamente por falta de tempo.',example:'I can\'t talk now, I\'m in a hurry.'},
+      {expr:'right away',meaning:'imediatamente',explanation:'Sem demora, logo.',example:'I\'ll send you the email right away.'},
+      {expr:'you can\'t have it all',meaning:'ninguém pode ter tudo',explanation:'Você não pode ter tudo o que quer.',example:'I wanted both jobs, but you can\'t have it all.'}
+    ]
+  },
+  {
+    id:3, level:'A1', title:'At the Gym',
+    sentences:[
+      {text:'I de<span class="stress">CI</span>ded to <span class="phrasal" data-idx="0">sign up</span> for a gym last month.',translation:'Decidi me inscrever em uma academia mês passado.'},
+      {text:'On my first day, I didn\'t know what to do, so a trai<span class="stress">NER</span> helped me.',translation:'No meu primeiro dia, não sabia o que fazer, então um treinador me ajudou.'},
+      {text:'He told me to <span class="phrasal" data-idx="1">warm up</span> on the trea<span class="stress">DMILL</span> for ten <span class="stress">MI</span>nutes.',translation:'Ele me disse para aquecer na esteira por dez minutos.'},
+      {text:'I thought run<span class="stress">NING</span> would be <span class="idiom" data-idx="0">a piece of cake</span>, but I was wrong.',translation:'Achei que correr seria moleza, mas estava enganado.'},
+      {text:'Af<span class="stress">TER</span> that, I started to <span class="phrasal" data-idx="2">work out</span> with some weights.',translation:'Depois disso, comecei a treinar com alguns pesos.'},
+      {text:'It was real<span class="stress">LY</span> hard and I al<span class="stress">MOST</span> wanted to <span class="phrasal" data-idx="3">give up</span>.',translation:'Foi realmente difícil e quase quis desistir.'},
+      {text:'But the trainer said <span class="idiom" data-idx="1">hang in there</span> and keep going.',translation:'Mas o treinador disse para aguentar firme e continuar.'},
+      {text:'I\'ve heard peo<span class="stress">PLE</span> say <span class="idiom" data-idx="2">no pain, no gain</span>, and now I un<span class="stress">DER</span>stand it.',translation:'Já ouvi gente dizer "sem dor, sem ganho", e agora entendo.'},
+      {text:'I <span class="idiom" data-idx="3">took a break</span> for a few <span class="stress">MI</span>nutes and drank some wa<span class="stress">TER</span>.',translation:'Fiz uma pausa por alguns minutos e bebi um pouco de água.'},
+      {text:'Then I <span class="phrasal" data-idx="4">cooled down</span> with some light stret<span class="stress">CHING</span>.',translation:'Aí fiz um desaquecimento com alongamento leve.'},
+      {text:'At the end, I felt great and was ready to <span class="idiom" data-idx="4">call it a day</span>.',translation:'No final, me senti ótimo e estava pronto para encerrar por hoje.'},
+      {text:'I\'ll <span class="phrasal" data-idx="5">go back</span> to<span class="stress">MOR</span>row — <span class="idiom" data-idx="5">slowly but surely</span>.',translation:'Voltarei amanhã — devagar mas sempre.'}
+    ],
+    phrasalVerbs:[
+      {expr:'sign up',meaning:'inscrever-se',explanation:'Registrar-se para um serviço ou atividade.',example:'I signed up for an English course.'},
+      {expr:'warm up',meaning:'aquecer',explanation:'Fazer exercício leve antes do treino principal.',example:'Always warm up before running.'},
+      {expr:'work out',meaning:'fazer exercício',explanation:'Praticar exercícios físicos, especialmente na academia.',example:'I work out three times a week.'},
+      {expr:'give up',meaning:'desistir',explanation:'Parar de tentar fazer algo.',example:'Don\'t give up on your dreams.'},
+      {expr:'cool down',meaning:'desaquecer',explanation:'Fazer exercício leve depois do treino para recuperação.',example:'Cool down with some stretching after running.'},
+      {expr:'go back',meaning:'voltar',explanation:'Retornar a um lugar.',example:'Let\'s go back to the hotel.'}
+    ],
+    idioms:[
+      {expr:'a piece of cake',meaning:'moleza',explanation:'Algo muito fácil.',example:'That math problem was a piece of cake.'},
+      {expr:'hang in there',meaning:'aguentar firme',explanation:'Não desistir, continuar tentando.',example:'I know it\'s hard, but hang in there.'},
+      {expr:'no pain, no gain',meaning:'sem dor, sem ganho',explanation:'Precisa se esforçar para alcançar resultados.',example:'No pain, no gain — push yourself harder.'},
+      {expr:'took a break',meaning:'fazer uma pausa',explanation:'Parar de fazer algo por um breve tempo.',example:'Let\'s take a break and get some coffee.'},
+      {expr:'call it a day',meaning:'encerrar por hoje',explanation:'Parar de trabalhar pelo resto do dia.',example:'It\'s 6 PM. Let\'s call it a day.'},
+      {expr:'slowly but surely',meaning:'devagar mas sempre',explanation:'Fazendo progresso, mesmo que devagar.',example:'I\'m learning Spanish — slowly but surely.'}
+    ]
+  },
+  {
+    id:4, level:'A1', title:'Weekend with Friends',
+    sentences:[
+      {text:'Last sa<span class="stress">TUR</span>day, I <span class="phrasal" data-idx="0">hung out</span> with my friends at a park.',translation:'No sábado passado, passei o dia com meus amigos em um parque.'},
+      {text:'We <span class="idiom" data-idx="0">had a blast</span> playing vo<span class="stress">LLEY</span>ball and eating sn<span class="stress">ACKS</span>.',translation:'Nos divertimos muito jogando vôlei e comendo lanches.'},
+      {text:'My friend Ma<span class="stress">RIA</span> <span class="phrasal" data-idx="1">showed up</span> late be<span class="stress">CAUSE</span> she <span class="phrasal" data-idx="2">got lost</span>.',translation:'Minha amiga Maria chegou atrasada porque se perdeu.'},
+      {text:'We <span class="idiom" data-idx="1">caught up</span> on what hap<span class="stress">PENED</span> during the week.',translation:'Colocamos o papo em dia sobre o que aconteceu durante a semana.'},
+      {text:'La<span class="stress">TER</span>, we de<span class="stress">CI</span>ded to <span class="phrasal" data-idx="3">eat out</span> at a res<span class="stress">TAU</span>rant near<span class="stress">BY</span>.',translation:'Depois, decidimos comer fora em um restaurante perto dali.'},
+      {text:'The wait<span class="stress">ER</span> said the first drink was <span class="idiom" data-idx="2">on the house</span>.',translation:'O garçom disse que a primeira bebida era por conta da casa.'},
+      {text:'I said <span class="idiom" data-idx="3">it\'s my treat</span> and <span class="phrasal" data-idx="4">paid for</span> eve<span class="stress">RY</span>body\'s food.',translation:'Disse que era por minha conta e paguei a comida de todo mundo.'},
+      {text:'My friends said <span class="idiom" data-idx="4">that\'s so nice of you</span>, but I didn\'t mind.',translation:'Meus amigos disseram "que legal da sua parte", mas eu não me importei.'},
+      {text:'We <span class="phrasal" data-idx="5">stayed up</span> late talking a<span class="stress">BOUT</span> our plans for next month.',translation:'Ficamos acordados até tarde conversando sobre nossos planos para o mês que vem.'},
+      {text:'It was <span class="idiom" data-idx="5">a perfect day</span>, and I didn\'t want to <span class="phrasal" data-idx="6">go back</span> home.',translation:'Foi um dia perfeito, e eu não queria voltar para casa.'},
+      {text:'<span class="idiom" data-idx="6">What a shame</span> the wee<span class="stress">KEND</span> goes by so fast.',translation:'Que pena que o fim de semana passa tão rápido.'}
+    ],
+    phrasalVerbs:[
+      {expr:'hang out',meaning:'passar tempo, ficar',explanation:'Passar tempo com alguém de forma casual.',example:'Do you want to hang out after class?'},
+      {expr:'show up',meaning:'aparecer, chegar',explanation:'Chegar a um lugar, às vezes atrasado.',example:'He showed up two hours late.'},
+      {expr:'get lost',meaning:'se perder',explanation:'Não saber onde você está.',example:'We got lost in the city center.'},
+      {expr:'eat out',meaning:'comer fora',explanation:'Comer em um restaurante em vez de casa.',example:'We eat out on Friday nights.'},
+      {expr:'pay for',meaning:'pagar por',explanation:'Dar dinheiro por algo.',example:'Who paid for the tickets?'},
+      {expr:'stay up',meaning:'ficar acordado',explanation:'Não ir para a cama no horário normal.',example:'I stayed up until 2 AM watching a movie.'},
+      {expr:'go back',meaning:'voltar',explanation:'Retornar a um lugar.',example:'Let\'s go back to the hotel.'}
+    ],
+    idioms:[
+      {expr:'had a blast',meaning:'me diverti muito',explanation:'Ter um momento muito agradável.',example:'We had a blast at the party last night.'},
+      {expr:'caught up',meaning:'colocar o papo em dia',explanation:'Conversar e saber das novidades de alguém.',example:'Let\'s grab coffee and catch up sometime.'},
+      {expr:'on the house',meaning:'por conta da casa',explanation:'Algo oferecido de graça por um estabelecimento.',example:'The dessert was on the house.'},
+      {expr:'it\'s my treat',meaning:'por minha conta',explanation:'Eu vou pagar.',example:'Don\'t worry about the bill, it\'s my treat.'},
+      {expr:'that\'s so nice of you',meaning:'que legal da sua parte',explanation:'Agradecer um gesto gentil.',example:'You brought me coffee? That\'s so nice of you.'},
+      {expr:'a perfect day',meaning:'um dia perfeito',explanation:'Um dia em que tudo deu certo.',example:'The weather was great — a perfect day.'},
+      {expr:'what a shame',meaning:'que pena',explanation:'Expressar decepção ou tristeza.',example:'What a shame you can\'t come to the party.'}
+    ]
+  },
+  // ==================== A2 ====================
+  {
+    id:5, level:'A2', title:'Commuting to Work',
+    sentences:[
+      {text:'I usually <span class="phrasal" data-idx="0">set off</span> for work around <span class="stress">E</span>ight, but to<span class="stress">DAY</span> I left a bit la<span class="stress">TER</span>.',translation:'Geralmente saio para o trabalho por volta das oito, mas hoje saí um pouco mais tarde.'},
+      {text:'I walked to the bus stop and <span class="phrasal" data-idx="1">got on</span> the bus just in time.',translation:'Caminhei até o ponto de ônibus e entrei no ônibus em cima da hora.'},
+      {text:'It was <span class="idiom" data-idx="0">rush hour</span>, so the bus was com<span class="stress">PLETE</span>ly full.',translation:'Era horário de pico, então o ônibus estava completamente lotado.'},
+      {text:'Su<span class="stress">DDEN</span>ly, I <span class="phrasal" data-idx="2">ran into</span> my old co<span class="stress">LLEA</span>gue Da<span class="stress">VID</span>.',translation:'De repente, encontrei meu antigo colega David por acaso.'},
+      {text:'We hadn\'t seen each other in months, so it was a nice sur<span class="stress">PRISE</span>.',translation:'Não nos víamos há meses, então foi uma boa surpresa.'},
+      {text:'He told me he <span class="idiom" data-idx="1">beat the clock</span> and got a pro<span class="stress">MO</span>tion at work.',translation:'Ele me disse que conseguiu a tempo e ganhou uma promoção no trabalho.'},
+      {text:'We talked for a while, and then I <span class="phrasal" data-idx="3">got off</span> at my stop.',translation:'Conversamos por um tempo, e então desci no meu ponto.'},
+      {text:'I man<span class="stress">A</span>ged to ar<span class="stress">RI</span>ve <span class="idiom" data-idx="2">on time</span> de<span class="stress">SPI</span>te the traf<span class="stress">FIC</span>.',translation:'Consegui chegar pontualmente apesar do trânsito.'},
+      {text:'<span class="idiom" data-idx="3">So far, so good</span> — I haven\'t had any pro<span class="stress">BLEMS</span> this morning.',translation:'Até agora, tudo bem — não tive nenhum problema esta manhã.'},
+      {text:'But <span class="idiom" data-idx="4">out of the blue</span>, my bo<span class="stress">SS</span> sent a mes<span class="stress">SAGE</span> saying the <span class="stress">MEE</span>ting was can<span class="stress">CELED</span>.',translation:'Mas do nada, meu chefe mandou uma mensagem dizendo que a reunião foi cancelada.'},
+      {text:'I <span class="phrasal" data-idx="4">showed up</span> early for no<span class="stress">THING</span>, but hey, <span class="idiom" data-idx="5">it is what it is</span>.',translation:'Cheguei cedo de graça, mas bom, é o que é.'}
+    ],
+    phrasalVerbs:[
+      {expr:'set off',meaning:'partir, sair',explanation:'Iniciar uma jornada.',example:'We set off early to avoid traffic.'},
+      {expr:'get on',meaning:'entrar (em veículo)',explanation:'Embarcar em ônibus, trem ou avião.',example:'She got on the train at platform 3.'},
+      {expr:'run into',meaning:'encontrar por acaso',explanation:'Encontrar alguém inesperadamente.',example:'I ran into my teacher at the mall.'},
+      {expr:'got off',meaning:'descer (de veículo)',explanation:'Sair de ônibus, trem ou avião.',example:'Get off at the next stop.'},
+      {expr:'showed up',meaning:'apareceu, chegou',explanation:'Chegar a um lugar.',example:'Half the guests didn\'t show up.'}
+    ],
+    idioms:[
+      {expr:'rush hour',meaning:'horário de pico',explanation:'Período do dia com mais trânsito.',example:'Avoid driving during rush hour if you can.'},
+      {expr:'beat the clock',meaning:'fazer a tempo',explanation:'Fazer algo antes do prazo.',example:'I beat the clock and finished the report by 5.'},
+      {expr:'on time',meaning:'pontualmente',explanation:'No horário correto ou combinado.',example:'The train arrived on time.'},
+      {expr:'so far, so good',meaning:'até agora, tudo bem',explanation:'As coisas estão indo bem até agora.',example:'I\'ve been on this diet for a week. So far, so good.'},
+      {expr:'out of the blue',meaning:'do nada, inesperadamente',explanation:'Algo que acontece de repente, sem aviso.',example:'She called me out of the blue after years.'},
+      {expr:'it is what it is',meaning:'é o que é',explanation:'Aceitar uma situação que não pode ser mudada.',example:'I didn\'t get the job, but it is what it is.'}
+    ]
+  },
+  {
+    id:6, level:'A2', title:'Dinner with Friends',
+    sentences:[
+      {text:'Last Fri<span class="stress">DAY</span> night, I <span class="phrasal" data-idx="0">met up</span> with some friends at an Ita<span class="stress">LI</span>an res<span class="stress">TAU</span>rant.',translation:'Na sexta-feira à noite, encontrei uns amigos em um restaurante italiano.'},
+      {text:'We were all <span class="idiom" data-idx="0">on the same page</span> — we wanted good food and a re<span class="stress">LAX</span>ing e<span class="stress">VE</span>ning.',translation:'Estávamos todos na mesma sintonia — queríamos comida boa e uma noite relaxante.'},
+      {text:'First, we <span class="phrasal" data-idx="1">caught up</span> on what had been going on in our lives.',translation:'Primeiro, colocamos o papo em dia sobre o que estava acontecendo em nossas vidas.'},
+      {text:'I was real<span class="stress">LY</span> <span class="phrasal" data-idx="2">looking forward to</span> the pasta be<span class="stress">CAUSE</span> I love Ita<span class="stress">LI</span>an food.',translation:'Estava realmente ansioso pela massa porque adoro comida italiana.'},
+      {text:'The wait<span class="stress">ER</span> came over and we <span class="idiom" data-idx="1">broke the ice</span> by asking for his re<span class="stress">COM</span>mendation.',translation:'O garçom veio e quebramos o gelo pedindo a recomendação dele.'},
+      {text:'He sug<span class="stress">GES</span>ted the tra<span class="stress">DI</span>tional lasa<span class="stress">GNA</span>, and it really <span class="idiom" data-idx="2">hit the spot</span>.',translation:'Ele sugeriu a lasanha tradicional, e realmente caiu muito bem.'},
+      {text:'Af<span class="stress">TER</span> dinner, we tried to <span class="phrasal" data-idx="3">figure out</span> how to <span class="phrasal" data-idx="4">split up</span> the bill.',translation:'Depois do jantar, tentamos entender como dividir a conta.'},
+      {text:'It was <span class="idiom" data-idx="3">no big deal</span> — we just di<span class="stress">VI</span>ded it e<span class="stress">QUA</span>lly.',translation:'Não foi grande coisa — só dividimos igualmente.'},
+      {text:'My friend Jake said <span class="idiom" data-idx="4">next time it\'s on me</span>, which was nice.',translation:'Meu amigo Jake disse que da próxima vez é por conta dele, o que foi legal.'},
+      {text:'We walked out of the res<span class="stress">TAU</span>rant feeling full and hap<span class="stress">PY</span>.',translation:'Saímos do restaurante nos sentindo satisfeitos e felizes.'},
+      {text:'It was one of those nights where eve<span class="stress">RY</span>thing just <span class="idiom" data-idx="5">falls into place</span>.',translation:'Foi uma daquelas noites em que tudo simplesmente se encaixa.'}
+    ],
+    phrasalVerbs:[
+      {expr:'met up',meaning:'encontrar-se',explanation:'Combinar de se encontrar com alguém.',example:'Let\'s meet up at the coffee shop at 3.'},
+      {expr:'caught up',meaning:'colocar o papo em dia',explanation:'Ficar por dentro das novidades de alguém.',example:'It\'s been ages! Let\'s catch up.'},
+      {expr:'looking forward to',meaning:'esperar ansiosamente',explanation:'Estar animado com algo que vai acontecer.',example:'I\'m looking forward to the weekend.'},
+      {expr:'figure out',meaning:'descobrir, entender',explanation:'Encontrar a solução para um problema.',example:'I can\'t figure out how to use this app.'},
+      {expr:'split up',meaning:'dividir, separar',explanation:'Dividir em partes.',example:'Let\'s split up the work equally.'}
+    ],
+    idioms:[
+      {expr:'on the same page',meaning:'na mesma sintonia',explanation:'Pensando de forma semelhante sobre algo.',example:'Let\'s make sure we\'re on the same page.'},
+      {expr:'broke the ice',meaning:'quebrar o gelo',explanation:'Fazer ou dizer algo para as pessoas ficarem mais à vontade.',example:'She told a joke to break the ice.'},
+      {expr:'hit the spot',meaning:'cair bem, satisfazer',explanation:'Ser exatamente o que você queria ou precisava.',example:'That cold beer really hit the spot.'},
+      {expr:'no big deal',meaning:'não é grande coisa',explanation:'Algo sem importância.',example:'I forgot the salt, but it\'s no big deal.'},
+      {expr:'next time it\'s on me',meaning:'da próxima é por minha conta',explanation:'Eu pago da próxima vez.',example:'Thanks for lunch. Next time it\'s on me.'},
+      {expr:'falls into place',meaning:'se encaixa',explanation:'As coisas se resolvem naturalmente.',example:'Once I understood the basics, everything fell into place.'}
+    ]
+  },
+  {
+    id:7, level:'A2', title:'Moving to a New Apartment',
+    sentences:[
+      {text:'Last week I had to <span class="phrasal" data-idx="0">pack up</span> all my things be<span class="stress">CAUSE</span> I was <span class="phrasal" data-idx="1">moving in</span> to a new a<span class="stress">PAR</span>tment.',translation:'Semana passada tive que empacotar todas as minhas coisas porque me mudava para um apartamento novo.'},
+      {text:'It felt like <span class="idiom" data-idx="0">back to square one</span> — starting fresh in a new neigh<span class="stress">BOR</span>hood.',translation:'Parecia voltar à estaca zero — recomeçando em um bairro novo.'},
+      {text:'My friend <span class="idiom" data-idx="1">helped me out</span> with the hea<span class="stress">VY</span> bo<span class="stress">XES</span>.',translation:'Meu amigo me ajudou com as caixas pesadas.'},
+      {text:'When we ar<span class="stress">RI</span>ved, I tried to <span class="phrasal" data-idx="2">figure out</span> where eve<span class="stress">RY</span>thing should go.',translation:'Quando chegamos, tentei descobrir onde tudo deveria ficar.'},
+      {text:'I had to <span class="phrasal" data-idx="3">put together</span> some fur<span class="stress">NI</span>ture, which took for<span class="stress">E</span>ver.',translation:'Tive que montar alguns móveis, o que levou uma eternidade.'},
+      {text:'My friend joked and said <span class="idiom" data-idx="2">make yourself at home</span>, even though it was my own place.',translation:'Meu amigo brincou e disse "sinta-se em casa", mesmo sendo meu próprio lugar.'},
+      {text:'I un<span class="stress">PAC</span>ked my things <span class="idiom" data-idx="3">piece by piece</span>, one box at a time.',translation:'Desempacotei minhas coisas aos poucos, uma caixa por vez.'},
+      {text:'<span class="idiom" data-idx="4">At the end of the day</span>, I was ex<span class="stress">HAUS</span>ted but hap<span class="stress">PY</span>.',translation:'No fim das contas, estava exausto mas feliz.'},
+      {text:'The next mor<span class="stress">NING</span>, I started to <span class="phrasal" data-idx="4">settle in</span> and ex<span class="stress">PLORE</span> the a<span class="stress">REA</span>.',translation:'Na manhã seguinte, comecei a me ambientar e explorar a região.'},
+      {text:'There\'s a nice cof<span class="stress">FEE</span> shop just a<span class="stress">ROUND</span> the corner, which is <span class="idiom" data-idx="5">a plus</span>.',translation:'Tem uma cafeteria legal ali na esquina, o que é um ponto positivo.'},
+      {text:'It felt like <span class="idiom" data-idx="6">a fresh start</span>, and I was ex<span class="stress">CI</span>ted a<span class="stress">BOUT</span> it.',translation:'Parecia um recomeço, e eu estava animado com isso.'}
+    ],
+    phrasalVerbs:[
+      {expr:'pack up',meaning:'empacotar',explanation:'Colocar coisas em caixas ou malas.',example:'We packed up our things and left early.'},
+      {expr:'moving in',meaning:'mudar-se para',explanation:'Começar a morar em um lugar novo.',example:'They moved in last weekend.'},
+      {expr:'figure out',meaning:'descobrir, entender',explanation:'Resolver ou entender algo.',example:'Give me a minute to figure this out.'},
+      {expr:'put together',meaning:'montar, juntar',explanation:'Montar peças para formar algo.',example:'I need to put together this desk.'},
+      {expr:'settle in',meaning:'se ambientar',explanation:'Ficar confortável em um lugar novo.',example:'It took a few weeks to settle in.'}
+    ],
+    idioms:[
+      {expr:'back to square one',meaning:'de volta à estaca zero',explanation:'Ter que recomeçar do início.',example:'The deal fell through, so we\'re back to square one.'},
+      {expr:'helped me out',meaning:'me ajudou',explanation:'Auxiliar alguém em algo.',example:'Can you help me out with this project?'},
+      {expr:'make yourself at home',meaning:'sinta-se em casa',explanation:'Fazer um convidado se sentir confortável.',example:'Come in, make yourself at home.'},
+      {expr:'piece by piece',meaning:'aos poucos',explanation:'Gradualmente, uma parte de cada vez.',example:'She learned the language piece by piece.'},
+      {expr:'at the end of the day',meaning:'no fim das contas',explanation:'Quando tudo é considerado.',example:'At the end of the day, what matters is your health.'},
+      {expr:'a plus',meaning:'um ponto positivo',explanation:'Uma vantagem ou benefício.',example:'The salary is good, and the location is a plus.'},
+      {expr:'a fresh start',meaning:'um recomeço',explanation:'Um novo começo.',example:'Moving to a new city gave me a fresh start.'}
+    ]
+  },
+  // ==================== B1 ====================
+  {
+    id:8, level:'B1', title:'A Problem at Work',
+    sentences:[
+      {text:'On Mon<span class="stress">DAY</span> mor<span class="stress">NING</span>, I <span class="phrasal" data-idx="0">found out</span> that our pro<span class="stress">JECT</span> was be<span class="stress">HIND</span> sche<span class="stress">DULE</span>.',translation:'Na segunda-feira de manhã, descobri que nosso projeto estava atrasado.'},
+      {text:'I knew I had to <span class="phrasal" data-idx="1">bring up</span> the is<span class="stress">SUE</span> in the team <span class="stress">MEE</span>ting.',translation:'Sabia que tinha que levantar o assunto na reunião de equipe.'},
+      {text:'Be<span class="stress">FORE</span> the meeting, I checked if eve<span class="stress">RY</span>body was <span class="idiom" data-idx="0">on the same page</span>.',translation:'Antes da reunião, verifiquei se todos estavam na mesma sintonia.'},
+      {text:'I didn\'t want to <span class="phrasal" data-idx="2">put off</span> the dis<span class="stress">CUS</span>sion any lon<span class="stress">GER</span>.',translation:'Não queria adiar a discussão mais tempo.'},
+      {text:'My ma<span class="stress">NA</span>ger said <span class="idiom" data-idx="1">let\'s get to the point</span>, so I ex<span class="stress">PLA</span>ined the pro<span class="stress">BLEM</span>.',translation:'Meu gerente disse "vamos ao que importa", então expliquei o problema.'},
+      {text:'We needed to <span class="phrasal" data-idx="3">come up with</span> a plan be<span class="stress">FORE</span> Fri<span class="stress">DAY</span>.',translation:'Precisávamos criar um plano antes de sexta.'},
+      {text:'I sug<span class="stress">GES</span>ted that we <span class="idiom" data-idx="2">keep everyone in the loop</span> with dai<span class="stress">LY</span> up<span class="stress">DATES</span>.',translation:'Sugeri que mantivéssemos todos informados com atualizações diárias.'},
+      {text:'My co<span class="stress">LLEA</span>gue Sa<span class="stress">RAH</span> of<span class="stress">FERED</span> to <span class="phrasal" data-idx="4">take over</span> the cli<span class="stress">ENT</span> com<span class="stress">MU</span>nication.',translation:'Minha colega Sarah se ofereceu para assumir a comunicação com o cliente.'},
+      {text:'<span class="idiom" data-idx="3">At the end of the day</span>, we a<span class="stress">GREE</span>d on a clear plan of ac<span class="stress">TI</span>on.',translation:'No fim das contas, concordamos com um plano de ação claro.'},
+      {text:'I felt be<span class="stress">TTER</span> after the meeting and was ready to <span class="idiom" data-idx="4">call it a day</span>.',translation:'Me senti melhor depois da reunião e estava pronto para encerrar por hoje.'},
+      {text:'Some<span class="stress">TI</span>mes pro<span class="stress">BLEMS</span> at work are <span class="idiom" data-idx="5">part of the job</span>, but good com<span class="stress">MU</span>nication makes e<span class="stress">VE</span>rything ea<span class="stress">SI</span>er.',translation:'Às vezes problemas no trabalho fazem parte, mas boa comunicação torna tudo mais fácil.'}
+    ],
+    phrasalVerbs:[
+      {expr:'found out',meaning:'descobri, fiquei sabendo',explanation:'Aprender ou descobrir algo.',example:'I just found out that she\'s moving to London.'},
+      {expr:'bring up',meaning:'mencionar, levantar (assunto)',explanation:'Iniciar a discussão sobre um tema.',example:'Don\'t bring up that topic at dinner.'},
+      {expr:'put off',meaning:'adiar',explanation:'Deixar para fazer algo depois.',example:'I put off going to the dentist for months.'},
+      {expr:'come up with',meaning:'criar, pensar em',explanation:'Ter uma ideia ou plano.',example:'She came up with a great solution.'},
+      {expr:'take over',meaning:'assumir',explanation:'Começar a fazer o que outra pessoa fazia.',example:'Paul will take over the project while I\'m away.'}
+    ],
+    idioms:[
+      {expr:'on the same page',meaning:'na mesma sintonia',explanation:'Ter um entendimento compartilhado.',example:'Make sure the team is on the same page.'},
+      {expr:'let\'s get to the point',meaning:'vamos ao que importa',explanation:'Falar diretamente sobre o assunto principal.',example:'Stop going in circles. Let\'s get to the point.'},
+      {expr:'keep everyone in the loop',meaning:'manter todos informados',explanation:'Manter alguém atualizado sobre uma situação.',example:'Please keep me in the loop about any changes.'},
+      {expr:'at the end of the day',meaning:'no fim das contas',explanation:'Quando tudo é considerado.',example:'At the end of the day, it\'s your decision.'},
+      {expr:'call it a day',meaning:'encerrar por hoje',explanation:'Parar de trabalhar.',example:'We\'ve done enough. Let\'s call it a day.'},
+      {expr:'part of the job',meaning:'faz parte do trabalho',explanation:'Algo inevitável no seu trabalho.',example:'Dealing with angry customers is part of the job.'}
+    ]
+  },
+  {
+    id:9, level:'B1', title:'Planning a Trip',
+    sentences:[
+      {text:'I\'ve been <span class="phrasal" data-idx="0">looking into</span> going to Por<span class="stress">TU</span>gal for my va<span class="stress">CA</span>tion next month.',translation:'Tenho pesquisado sobre ir a Portugal para minhas férias no mês que vem.'},
+      {text:'I\'m <span class="idiom" data-idx="0">on a tight budget</span>, so I need to find good deals.',translation:'Estou com o orçamento curto, então preciso encontrar boas ofertas.'},
+      {text:'First, I tried to <span class="phrasal" data-idx="1">narrow down</span> the ci<span class="stress">TIES</span> I want to vi<span class="stress">SIT</span>.',translation:'Primeiro, tentei reduzir as cidades que quero visitar.'},
+      {text:'Li<span class="stress">SBO</span>n and Por<span class="stress">TO</span> are at the top of my list, but visiting both might be <span class="idiom" data-idx="1">out of the question</span>.',translation:'Lisboa e Porto estão no topo da minha lista, mas visitar as duas pode ser fora de questão.'},
+      {text:'The flights are getting <span class="phrasal" data-idx="2">booked up</span> fast, so I need to make a de<span class="stress">CI</span>sion soon.',translation:'Os voos estão se esgotando rápido, então preciso decidir em breve.'},
+      {text:'My friend who went last year said her ho<span class="stress">TEL</span> was <span class="idiom" data-idx="2">a stone\'s throw</span> from the bea<span class="stress">CH</span>.',translation:'Minha amiga que foi ano passado disse que o hotel dela ficava a um passo da praia.'},
+      {text:'I plan to <span class="phrasal" data-idx="3">set off</span> early on a Sa<span class="stress">TUR</span>day mor<span class="stress">NING</span> and <span class="phrasal" data-idx="4">check in</span> by af<span class="stress">TER</span>noon.',translation:'Planejo partir cedo num sábado de manhã e fazer check-in à tarde.'},
+      {text:'She warned me that some pla<span class="stress">CES</span> can feel like <span class="idiom" data-idx="3">the middle of nowhere</span> if you go too far from the ci<span class="stress">TY</span> cen<span class="stress">TER</span>.',translation:'Ela me alertou que alguns lugares podem parecer o meio do nada se você for longe do centro.'},
+      {text:'When we <span class="idiom" data-idx="4">touch down</span>, I want to <span class="idiom" data-idx="5">make the most of</span> every sin<span class="stress">GLE</span> day.',translation:'Quando pousarmos, quero aproveitar ao máximo cada dia.'},
+      {text:'I\'ll <span class="phrasal" data-idx="5">look up</span> some lo<span class="stress">CAL</span> res<span class="stress">TAU</span>rants be<span class="stress">FORE</span> I go so I don\'t waste time.',translation:'Vou pesquisar alguns restaurantes locais antes de ir para não perder tempo.'},
+      {text:'Tra<span class="stress">VEL</span>ling is some<span class="stress">THING</span> I tru<span class="stress">LY</span> en<span class="stress">JOY</span>, and I <span class="idiom" data-idx="6">can\'t wait</span> for this trip.',translation:'Viajar é algo que realmente gosto, e mal posso esperar por essa viagem.'}
+    ],
+    phrasalVerbs:[
+      {expr:'looking into',meaning:'pesquisando, investigando',explanation:'Investigar ou pesquisar algo.',example:'I\'m looking into buying a new car.'},
+      {expr:'narrow down',meaning:'reduzir, filtrar',explanation:'Reduzir o número de opções.',example:'We narrowed down the candidates to three.'},
+      {expr:'booked up',meaning:'esgotado, reservado',explanation:'Ter todos os lugares reservados.',example:'The hotels are booked up for the holiday.'},
+      {expr:'set off',meaning:'partir',explanation:'Iniciar uma jornada.',example:'We set off at dawn to avoid the heat.'},
+      {expr:'check in',meaning:'fazer check-in',explanation:'Registrar-se em hotel ou aeroporto.',example:'We need to check in by 3 PM.'},
+      {expr:'look up',meaning:'pesquisar',explanation:'Procurar informações.',example:'I looked up the word in the dictionary.'}
+    ],
+    idioms:[
+      {expr:'on a tight budget',meaning:'com orçamento curto',explanation:'Ter pouco dinheiro para gastar.',example:'We\'re on a tight budget this month.'},
+      {expr:'out of the question',meaning:'fora de questão',explanation:'Impossível, não permitido.',example:'Buying a new car is out of the question right now.'},
+      {expr:'a stone\'s throw',meaning:'a um passo, muito perto',explanation:'Distância muito curta.',example:'The beach is just a stone\'s throw away.'},
+      {expr:'the middle of nowhere',meaning:'no meio do nada',explanation:'Um lugar muito isolado.',example:'Their cabin is in the middle of nowhere.'},
+      {expr:'touch down',meaning:'pousar',explanation:'Quando uma aeronave aterrissa.',example:'The plane touched down at 8 AM.'},
+      {expr:'make the most of',meaning:'aproveitar ao máximo',explanation:'Tirar o melhor proveito possível.',example:'Make the most of your time abroad.'},
+      {expr:'can\'t wait',meaning:'mal posso esperar',explanation:'Estar muito animado com algo.',example:'I can\'t wait to see you!'}
+    ]
+  },
+  {
+    id:10, level:'B1', title:'Technology Issues',
+    sentences:[
+      {text:'La<span class="stress">ST</span> night, my lap<span class="stress">TOP</span> star<span class="stress">TED</span> acting weird and it real<span class="stress">LY</span> <span class="idiom" data-idx="0">drove me crazy</span>.',translation:'Ontem à noite, meu laptop começou a agir estranho e realmente me deixou louco.'},
+      {text:'First, I tried to <span class="phrasal" data-idx="0">turn off</span> and re<span class="stress">START</span> it, but that didn\'t <span class="phrasal" data-idx="1">do the trick</span>.',translation:'Primeiro, tentei desligar e reiniciar, mas isso não resolveu.'},
+      {text:'I re<span class="stress">ME</span>mbered I for<span class="stress">GOT</span> to <span class="phrasal" data-idx="2">back up</span> my fi<span class="stress">LES</span> last week.',translation:'Lembrei que esqueci de fazer backup dos meus arquivos semana passada.'},
+      {text:'That thought a<span class="stress">LONE</span> made me want to <span class="idiom" data-idx="1">pull my hair out</span>.',translation:'Só esse pensamento já me fez querer arrancar os cabelos.'},
+      {text:'I had to <span class="phrasal" data-idx="3">set up</span> the sys<span class="stress">TEM</span> all over a<span class="stress">GAIN</span>.',translation:'Tive que configurar o sistema tudo de novo.'},
+      {text:'I was <span class="idiom" data-idx="2">back to square one</span>, and I wasn\'t ha<span class="stress">PPY</span> a<span class="stress">BOUT</span> it.',translation:'Estava de volta à estaca zero, e não estava feliz com isso.'},
+      {text:'My friend who works in IT said <span class="idiom" data-idx="3">give me a break</span>, it\'s not that bad.',translation:'Meu amigo que trabalha em TI disse "me dá uma folga", não é tão ruim assim.'},
+      {text:'He helped me <span class="phrasal" data-idx="4">log in</span> to my ac<span class="stress">COUNT</span> and re<span class="stress">CO</span>ver what I could.',translation:'Ele me ajudou a entrar na minha conta e recuperar o que podia.'},
+      {text:'Af<span class="stress">TER</span> a cou<span class="stress">PLE</span> of hours, we got eve<span class="stress">RY</span>thing <span class="idiom" data-idx="4">up and running</span> a<span class="stress">GAIN</span>.',translation:'Depois de umas horas, conseguimos colocar tudo funcionando de novo.'},
+      {text:'I had to <span class="idiom" data-idx="5">start from scratch</span> with some pro<span class="stress">JECTS</span>, but at least my pho<span class="stress">TOS</span> were safe.',translation:'Tive que recomeçar do zero com alguns projetos, mas pelo menos minhas fotos estavam seguras.'},
+      {text:'<span class="phrasal" data-idx="5">Look up</span> "cloud ba<span class="stress">CKUP</span>" — <span class="idiom" data-idx="6">lesson learned</span>, I\'ll never for<span class="stress">GET</span> to save my da<span class="stress">TA</span>.',translation:'Pesquise "backup na nuvem" — lição aprendida, nunca mais vou esquecer de salvar meus dados.'}
+    ],
+    phrasalVerbs:[
+      {expr:'turn off',meaning:'desligar',explanation:'Parar um aparelho ou dispositivo.',example:'Please turn off your phone during the meeting.'},
+      {expr:'do the trick',meaning:'resolver, funcionar',explanation:'Resolver um problema.',example:'A cup of coffee usually does the trick.'},
+      {expr:'back up',meaning:'fazer backup',explanation:'Fazer uma cópia de segurança dos dados.',example:'You should back up your files regularly.'},
+      {expr:'set up',meaning:'configurar',explanation:'Preparar um sistema ou dispositivo para uso.',example:'I need to set up my new phone.'},
+      {expr:'log in',meaning:'fazer login',explanation:'Acessar um sistema com senha.',example:'Log in to your account to continue.'},
+      {expr:'look up',meaning:'pesquisar',explanation:'Procurar informações.',example:'Look up the address online.'}
+    ],
+    idioms:[
+      {expr:'drove me crazy',meaning:'me deixou louco',explanation:'Causar muita frustração ou irritação.',example:'That noise is driving me crazy.'},
+      {expr:'pull my hair out',meaning:'arrancar os cabelos (de frustração)',explanation:'Estar extremamente frustrado.',example:'This homework makes me want to pull my hair out.'},
+      {expr:'back to square one',meaning:'de volta à estaca zero',explanation:'Ter que recomeçar.',example:'The deal fell through, so we\'re back to square one.'},
+      {expr:'give me a break',meaning:'me dá uma folga',explanation:'Expressar descrença ou frustração.',example:'Oh, give me a break, that\'s not true.'},
+      {expr:'up and running',meaning:'funcionando',explanation:'Operando normalmente após configuração ou reparo.',example:'The new server is up and running now.'},
+      {expr:'start from scratch',meaning:'começar do zero',explanation:'Começar do absoluto início.',example:'We lost everything and had to start from scratch.'},
+      {expr:'lesson learned',meaning:'lição aprendida',explanation:'Algo aprendido com um erro ou experiência.',example:'I\'ll never forget my password again — lesson learned.'}
+    ]
+  }
+];
+
+/* ============================================================
+   ESTADO DA APLICAÇÃO
+   ============================================================ */
+const state = {
+  level: 'A1',
+  storyId: 1,
+  speed: 1,
+  recTime: 5,
+  currentSentence: 0,
+  shadowingMode: false,
+  shadowingState: 'idle', // idle, playing, waiting, recording, playingBack, comparing
+  recordings: {}, // { sentenceIndex: audioURL }
+  mediaRecorder: null,
+  mediaStream: null,
+  recTimer: null,
+  recSeconds: 0,
+  fullStoryPlaying: false,
+  shadowTimeouts: []
+};
+
+/* ============================================================
+   UTILITÁRIOS
+   ============================================================ */
+function stripHTML(html) {
+  const d = document.createElement('div');
+  d.innerHTML = html;
+  return d.textContent || d.innerText || '';
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(t._timer);
+  t._timer = setTimeout(() => t.classList.remove('show'), 2500);
+}
+
+function getStory() {
+  return STORIES.find(s => s.id === state.storyId) || STORIES[0];
+}
+
+function getStoriesByLevel(level) {
+  return STORIES.filter(s => s.level === level);
+}
+
+/* ============================================================
+   PERSISTÊNCIA (localStorage)
+   ============================================================ */
+function saveState() {
+  try {
+    localStorage.setItem('shadowSpeak', JSON.stringify({
+      level: state.level,
+      storyId: state.storyId,
+      speed: state.speed,
+      recTime: state.recTime,
+      currentSentence: state.currentSentence
+    }));
+  } catch(e) {}
+}
+
+function loadState() {
+  try {
+    const d = JSON.parse(localStorage.getItem('shadowSpeak'));
+    if (d) {
+      if (d.level) state.level = d.level;
+      if (d.storyId) state.storyId = d.storyId;
+      if (d.speed) state.speed = d.speed;
+      if (d.recTime) state.recTime = d.recTime;
+      if (typeof d.currentSentence === 'number') state.currentSentence = d.currentSentence;
+    }
+  } catch(e) {}
+}
+
+/* ============================================================
+   SISTEMA DE VOZ (speechSynthesis)
+   ============================================================ */
+let enUSVoice = null;
+let voicesReady = false;
+
+function loadVoices() {
+  const voices = speechSynthesis.getVoices();
+  if (voices.length > 0) {
+    voicesReady = true;
+    enUSVoice = voices.find(v => v.lang === 'en-US') ||
+                voices.find(v => v.lang.startsWith('en')) || null;
+  }
+}
+speechSynthesis.onvoiceschanged = loadVoices;
+loadVoices();
+
+function speak(text, rate, onEnd) {
+  speechSynthesis.cancel();
+  if (!text || !text.trim()) { if (onEnd) onEnd(); return; }
+  const u = new SpeechSynthesisUtterance(text);
+  u.lang = 'en-US';
+  u.rate = rate || state.speed;
+  if (enUSVoice) u.voice = enUSVoice;
+  if (onEnd) u.onend = onEnd;
+  u.onerror = function() { if (onEnd) onEnd(); };
+  speechSynthesis.speak(u);
+}
+
+function speakSentence(index, rate, onEnd) {
+  const story = getStory();
+  if (index < 0 || index >= story.sentences.length) { if (onEnd) onEnd(); return; }
+  const plain = stripHTML(story.sentences[index].text);
+  speak(plain, rate, onEnd);
+}
+
+/* ============================================================
+   SISTEMA DE GRAVAÇÃO (MediaRecorder)
+   ============================================================ */
+function checkMediaRecorderSupport() {
+  if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) return false;
+  if (typeof MediaRecorder === 'undefined') return false;
+  return true;
+}
+
+async function startRecording(cardIndex) {
+  // Limpar gravação anterior
+  if (state.recordings[cardIndex]) {
+    URL.revokeObjectURL(state.recordings[cardIndex]);
+    delete state.recordings[cardIndex];
+  }
+  try {
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    state.mediaStream = stream;
+    const chunks = [];
+    state.mediaRecorder = new MediaRecorder(stream);
+    state.mediaRecorder.ondataavailable = (e) => { if (e.data.size > 0) chunks.push(e.data); };
+    state.mediaRecorder.onstop = () => {
+      const blob = new Blob(chunks, { type: 'audio/webm' });
+      state.recordings[cardIndex] = URL.createObjectURL(blob);
+      stream.getTracks().forEach(t => t.stop());
+      state.mediaStream = null;
+      updateCardUI(cardIndex);
+    };
+    state.mediaRecorder.start();
+    return true;
+  } catch(err) {
+    state.mediaStream = null;
+    if (err.name === 'NotAllowedError' || err.name === 'PermissionDeniedError') {
+      showToast('Microphone permission is needed for recording.');
+    } else {
+      showToast('Could not access microphone. Please check your settings.');
+    }
+    return false;
+  }
+}
+
+function stopRecording() {
+  if (state.mediaRecorder && state.mediaRecorder.state !== 'inactive') {
+    state.mediaRecorder.stop();
+  }
+  clearRecTimer();
+}
+
+function startRecTimer(seconds, onTick, onEnd) {
+  clearRecTimer();
+  state.recSeconds = seconds;
+  onTick(state.recSeconds);
+  state.recTimer = setInterval(() => {
+    state.recSeconds--;
+    onTick(state.recSeconds);
+    if (state.recSeconds <= 0) {
+      clearRecTimer();
+      onEnd();
+    }
+  }, 1000);
+}
+
+function clearRecTimer() {
+  if (state.recTimer) { clearInterval(state.recTimer); state.recTimer = null; }
+}
+
+function playRecording(cardIndex) {
+  const url = state.recordings[cardIndex];
+  if (!url) return;
+  const audio = new Audio(url);
+  audio.play().catch(() => {});
+}
+
+/* ============================================================
+   RENDERIZAÇÃO
+   ============================================================ */
+function renderLevelTabs() {
+  const container = document.getElementById('levelTabs');
+  container.innerHTML = '';
+  ['A1','A2','B1'].forEach(lvl => {
+    const btn = document.createElement('button');
+    btn.className = 'level-tab' + (state.level === lvl ? ' active' : '');
+    btn.textContent = lvl;
+    btn.setAttribute('role', 'tab');
+    btn.setAttribute('aria-selected', state.level === lvl);
+    btn.onclick = () => {
+      if (state.level === lvl) return;
+      state.level = lvl;
+      // Selecionar primeira história desse nível
+      const stories = getStoriesByLevel(lvl);
+      if (stories.length > 0) state.storyId = stories[0].id;
+      state.currentSentence = 0;
+      state.recordings = {};
+      stopShadowingMode();
+      speechSynthesis.cancel();
+      saveState();
+      renderAll();
+    };
+    container.appendChild(btn);
+  });
+}
+
+function renderStoryHeader() {
+  const story = getStory();
+  document.getElementById('storyTitle').textContent = story.title + ' (' + story.level + ')';
+}
+
+function renderProgress() {
+  const story = getStory();
+  const total = story.sentences.length;
+  const curr = state.currentSentence + 1;
+  const pct = Math.round((curr / total) * 100);
+  document.getElementById('progressText').textContent = 'Sentence ' + curr + ' of ' + total;
+  document.getElementById('progressPercent').textContent = pct + '%';
+  document.getElementById('progressFill').style.width = pct + '%';
+}
+
+function renderSentenceCards() {
+  const container = document.getElementById('sentenceContainer');
+  container.innerHTML = '';
+  const story = getStory();
+
+  story.sentences.forEach((s, i) => {
+    const card = document.createElement('div');
+    card.className = 'sentence-card' + (i === state.currentSentence ? ' active' : '') +
+                     (state.recordings[i] ? ' done' : '');
+    card.id = 'card-' + i;
+    card.setAttribute('data-index', i);
+
+    // Número da frase
+    let html = '<div class="sentence-num">Sentence ' + (i + 1) + '</div>';
+
+    // Texto
+    html += '<div class="sentence-text">' + s.text + '</div>';
+
+    // Tradução
+    html += '<div class="translation" id="trans-' + i + '">' + s.translation + '</div>';
+
+    // Indicador "YOUR TURN"
+    html += '<div class="your-turn" id="yourturn-' + i + '">YOUR TURN — REPEAT</div>';
+
+    // Indicador de gravação
+    html += '<div class="rec-indicator" id="recind-' + i + '"><span class="rec-dot"></span><span id="rectime-' + i + '">Recording: ' + state.recTime + 's</span></div>';
+
+    // Controles
+    html += '<div class="card-controls">';
+    html += '<button class="btn btn-sm" onclick="handleListen(' + i + ')" title="Listen at selected speed">&#9654; Listen</button>';
+    html += '<button class="btn btn-sm" onclick="handleSlow(' + i + ')" title="Listen slowly">&#128034; Slow</button>';
+    html += '<button class="btn btn-sm" id="recbtn-' + i + '" onclick="handleRecord(' + i + ')">&#127908; Record</button>';
+    html += '<button class="btn btn-sm" id="playbtn-' + i + '" onclick="handlePlayMy(' + i + ')" ' + (state.recordings[i] ? '' : 'disabled') + '>&#9654; My Voice</button>';
+    html += '<button class="btn btn-sm" id="trybtn-' + i + '" onclick="handleTryAgain(' + i + ')" ' + (state.recordings[i] ? '' : 'disabled') + '>&#128260; Try Again</button>';
+    html += '<button class="btn btn-sm" id="transbtn-' + i + '" onclick="handleToggleTrans(' + i + ')">&#127475;&#127487; Translation</button>';
+    html += '</div>';
+
+    // Comparação lado a lado
+    html += '<div class="comparison" id="compare-' + i + '">';
+    html += '<div class="compare-box"><div class="compare-label">Native Voice</div><button class="btn btn-sm" onclick="handleListen(' + i + ')">&#9654; Listen</button></div>';
+    html += '<div class="compare-box"><div class="compare-label">My Voice</div><button class="btn btn-sm" onclick="handlePlayMy(' + i + ')">&#9654; Play My Voice</button></div>';
+    html += '</div>';
+
+    card.innerHTML = html;
+    container.appendChild(card);
+  });
+
+  // Clique nos phrasal verbs e idioms
+  container.querySelectorAll('.phrasal').forEach(el => {
+    el.addEventListener('click', (e) => { e.stopPropagation(); showPhrasalPopup(el); });
+  });
+  container.querySelectorAll('.idiom').forEach(el => {
+    el.addEventListener('click', (e) => { e.stopPropagation(); showIdiomPopup(el); });
+  });
+}
+
+function updateCardUI(index) {
+  const card = document.getElementById('card-' + index);
+  if (!card) return;
+  const hasRec = !!state.recordings[index];
+  card.classList.toggle('done', hasRec);
+  const playBtn = document.getElementById('playbtn-' + index);
+  const tryBtn = document.getElementById('trybtn-' + index);
+  const compare = document.getElementById('compare-' + index);
+  if (playBtn) playBtn.disabled = !hasRec;
+  if (tryBtn) tryBtn.disabled = !hasRec;
+  if (compare && hasRec) compare.classList.add('show');
+}
+
+function renderVocabulary() {
+  const story = getStory();
+  const section = document.getElementById('vocabSection');
+  let html = '<h3 class="vocab-title">Vocabulary & Expressions</h3>';
+  html += '<div style="overflow-x:auto"><table class="vocab-table"><thead><tr>';
+  html += '<th>Expression</th><th>Type</th><th>Meaning</th><th>Example</th>';
+  html += '</tr></thead><tbody>';
+
+  // Phrasal Verbs
+  story.phrasalVerbs.forEach(pv => {
+    html += '<tr>';
+    html += '<td class="vocab-expr">' + pv.expr + '</td>';
+    html += '<td><span class="vocab-type pv">Phrasal Verb</span></td>';
+    html += '<td>' + pv.meaning + '</td>';
+    html += '<td class="vocab-example">' + pv.example + '</td>';
+    html += '</tr>';
+  });
+
+  // Idioms
+  story.idioms.forEach(id => {
+    html += '<tr>';
+    html += '<td class="vocab-expr">' + id.expr + '</td>';
+    html += '<td><span class="vocab-type id">Idiom</span></td>';
+    html += '<td>' + id.meaning + '</td>';
+    html += '<td class="vocab-example">' + id.example + '</td>';
+    html += '</tr>';
+  });
+
+  html += '</tbody></table></div>';
+  section.innerHTML = html;
+}
+
+function renderAll() {
+  renderLevelTabs();
+  renderStoryHeader();
+  renderProgress();
+  renderSentenceCards();
+  renderVocabulary();
+  updateControls();
+  scrollToCurrentCard();
+}
+
+function updateControls() {
+  document.getElementById('speedSelect').value = state.speed;
+  document.getElementById('recTimeSelect').value = state.recTime;
+}
+
+function scrollToCurrentCard() {
+  setTimeout(() => {
+    const card = document.getElementById('card-' + state.currentSentence);
+    if (card) card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }, 100);
+}
+
+/* ============================================================
+   HANDLERS DOS BOTÕES
+   ============================================================ */
+function handleListen(index) {
+  speechSynthesis.cancel();
+  state.currentSentence = index;
+  highlightCard(index);
+  updateProgress();
+  saveState();
+  speakSentence(index, state.speed, () => {
+    // Após ouvir, mostrar YOUR TURN brevemente
+    const yt = document.getElementById('yourturn-' + index);
+    if (yt && !state.shadowingMode) {
+      yt.classList.add('show');
+      setTimeout(() => yt.classList.remove('show'), 2000);
+    }
+  });
+}
+
+function handleSlow(index) {
+  speechSynthesis.cancel();
+  state.currentSentence = index;
+  highlightCard(index);
+  updateProgress();
+  saveState();
+  speakSentence(index, 0.7);
+}
+
+function handleRecord(index) {
+  if (state.mediaRecorder && state.mediaRecorder.state === 'recording') {
+    // Parar gravação
+    stopRecording();
+    const card = document.getElementById('card-' + index);
+    if (card) card.classList.remove('recording');
+    const ind = document.getElementById('recind-' + index);
+    if (ind) ind.classList.remove('show');
+    const yt = document.getElementById('yourturn-' + index);
+    if (yt) yt.classList.remove('show');
+    // Atualizar botão
+    const btn = document.getElementById('recbtn-' + index);
+    if (btn) { btn.innerHTML = '&#127908; Record'; btn.classList.remove('btn-danger'); }
+    return;
+  }
+  // Iniciar gravação
+  const card = document.getElementById('card-' + index);
+  const yt = document.getElementById('yourturn-' + index);
+  const ind = document.getElementById('recind-' + index);
+  const btn = document.getElementById('recbtn-' + index);
+
+  startRecording(index).then(ok => {
+    if (!ok) return;
+    if (card) card.classList.add('recording');
+    if (yt) yt.classList.add('show');
+    if (ind) ind.classList.add('show');
+    if (btn) { btn.innerHTML = '&#128308; Stop Recording'; btn.classList.add('btn-danger'); }
+
+    startRecTimer(state.recTime,
+      (sec) => {
+        const timeEl = document.getElementById('rectime-' + index);
+        if (timeEl) timeEl.textContent = 'Recording: ' + sec + 's';
+      },
+      () => {
+        stopRecording();
+        if (card) card.classList.remove('recording');
+        if (ind) ind.classList.remove('show');
+        if (yt) yt.classList.remove('show');
+        if (btn) { btn.innerHTML = '&#127908; Record'; btn.classList.remove('btn-danger'); }
+      }
+    );
+  });
+}
+
+function handlePlayMy(index) {
+  playRecording(index);
+}
+
+function handleTryAgain(index) {
+  // Limpar gravação anterior
+  if (state.recordings[index]) {
+    URL.revokeObjectURL(state.recordings[index]);
+    delete state.recordings[index];
+  }
+  const compare = document.getElementById('compare-' + index);
+  if (compare) compare.classList.remove('show');
+  updateCardUI(index);
+  // Iniciar nova gravação automaticamente
+  handleRecord(index);
+}
+
+function handleToggleTrans(index) {
+  const el = document.getElementById('trans-' + index);
+  const btn = document.getElementById('transbtn-' + index);
+  if (!el) return;
+  const showing = el.classList.toggle('show');
+  if (btn) btn.innerHTML = showing ? '&#127475;&#127487; Hide Translation' : '&#127475;&#127487; Translation';
+}
+
+function highlightCard(index) {
+  document.querySelectorAll('.sentence-card').forEach((c, i) => {
+    c.classList.toggle('active', i === index);
+  });
+}
+
+function updateProgress() {
+  renderProgress();
+}
+
+/* ============================================================
+   LISTEN FULL STORY
+   ============================================================ */
+function handleListenFull() {
+  if (state.fullStoryPlaying) {
+    speechSynthesis.cancel();
+    state.fullStoryPlaying = false;
+    document.getElementById('listenFullBtn').innerHTML = 'Listen Full Story';
+    return;
+  }
+  state.fullStoryPlaying = true;
+  document.getElementById('listenFullBtn').innerHTML = '&#9632; Stop';
+  const story = getStory();
+  let idx = 0;
+
+  function playNext() {
+    if (!state.fullStoryPlaying || idx >= story.sentences.length) {
+      state.fullStoryPlaying = false;
+      document.getElementById('listenFullBtn').innerHTML = 'Listen Full Story';
+      return;
+    }
+    state.currentSentence = idx;
+    highlightCard(idx);
+    updateProgress();
+    saveState();
+    scrollToCurrentCard();
+
+    speakSentence(idx, state.speed, () => {
+      idx++;
+      setTimeout(playNext, 400);
+    });
+  }
+  playNext();
+}
+
+/* ============================================================
+   NOVA HISTÓRIA
+   ============================================================ */
+function handleNewStory() {
+  speechSynthesis.cancel();
+  stopShadowingMode();
+  const stories = getStoriesByLevel(state.level);
+  // Filtrar para não repetir a atual
+  const others = stories.filter(s => s.id !== state.storyId);
+  if (others.length > 0) {
+    const rand = others[Math.floor(Math.random() * others.length)];
+    state.storyId = rand.id;
+  }
+  state.currentSentence = 0;
+  state.recordings = {};
+  saveState();
+  renderAll();
+  showToast('New story loaded!');
+}
+
+/* ============================================================
+   MODO SHADOWING
+   ============================================================ */
+function handleShadowMode() {
+  if (state.shadowingMode) {
+    stopShadowingMode();
+    return;
+  }
+  state.shadowingMode = true;
+  document.getElementById('shadowBanner').classList.add('show');
+  document.getElementById('shadowModeBtn').innerHTML = '&#9632; Stop Shadowing';
+  shadowingStep();
+}
+
+function stopShadowingMode() {
+  state.shadowingMode = false;
+  state.shadowingState = 'idle';
+  // Limpar timeouts
+  state.shadowTimeouts.forEach(t => clearTimeout(t));
+  state.shadowTimeouts = [];
+  // Parar gravação se ativa
+  if (state.mediaRecorder && state.mediaRecorder.state === 'recording') {
+    stopRecording();
+  }
+  clearRecTimer();
+  // Limpar UI
+  document.getElementById('shadowBanner').classList.remove('show');
+  document.getElementById('shadowModeBtn').innerHTML = 'Shadowing Mode';
+  document.querySelectorAll('.sentence-card').forEach(c => c.classList.remove('recording'));
+  document.querySelectorAll('.rec-indicator').forEach(el => el.classList.remove('show'));
+  document.querySelectorAll('.your-turn').forEach(el => el.classList.remove('show'));
+  // Resetar botões de gravação
+  document.querySelectorAll('[id^="recbtn-"]').forEach(btn => {
+    btn.innerHTML = '&#127908; Record';
+    btn.classList.remove('btn-danger');
+  });
+  speechSynthesis.cancel();
+}
+
+function shadowingStep() {
+  if (!state.shadowingMode) return;
+  const story = getStory();
+  const idx = state.currentSentence;
+  if (idx >= story.sentences.length) {
+    showToast('Story completed! Great job.');
+    stopShadowingMode();
+    return;
+  }
+
+  state.shadowingState = 'playing';
+  highlightCard(idx);
+  updateProgress();
+  saveState();
+  scrollToCurrentCard();
+
+  // ETAPA 1: Voz nativa
+  speakSentence(idx, state.speed, () => {
+    if (!state.shadowingMode) return;
+
+    // ETAPA 2: Pausa de 1 segundo
+    const t1 = setTimeout(() => {
+      if (!state.shadowingMode) return;
+
+      // ETAPA 3: YOUR TURN
+      state.shadowingState = 'waiting';
+      const yt = document.getElementById('yourturn-' + idx);
+      if (yt) yt.classList.add('show');
+
+      // ETAPA 4: Iniciar gravação após breve pausa
+      const t2 = setTimeout(() => {
+        if (!state.shadowingMode) return;
+        state.shadowingState = 'recording';
+
+        startRecording(idx).then(ok => {
+          if (!ok) { stopShadowingMode(); return; }
+          const card = document.getElementById('card-' + idx);
+          const ind = document.getElementById('recind-' + idx);
+          const btn = document.getElementById('recbtn-' + idx);
+          if (card) card.classList.add('recording');
+          if (ind) ind.classList.add('show');
+          if (btn) { btn.innerHTML = '&#128308; Stop Recording'; btn.classList.add('btn-danger'); }
+
+          // ETAPA 5 & 6: Timer e parar automaticamente
+          startRecTimer(state.recTime,
+            (sec) => {
+              const timeEl = document.getElementById('rectime-' + idx);
+              if (timeEl) timeEl.textContent = 'Recording: ' + sec + 's';
+            },
+            () => {
+              if (!state.shadowingMode) return;
+              stopRecording();
+              if (card) card.classList.remove('recording');
+              if (ind) ind.classList.remove('show');
+              if (yt) yt.classList.remove('show');
+              if (btn) { btn.innerHTML = '&#127908; Record'; btn.classList.remove('btn-danger'); }
+
+              // ETAPA 7: Reproduzir gravação do usuário
+              state.shadowingState = 'playingBack';
+              const t3 = setTimeout(() => {
+                if (!state.shadowingMode) return;
+                playRecording(idx);
+
+                // ETAPA 8: Comparação
+                const t4 = setTimeout(() => {
+                  if (!state.shadowingMode) return;
+                  state.shadowingState = 'comparing';
+                  const compare = document.getElementById('compare-' + idx);
+                  if (compare) compare.classList.add('show');
+                  updateCardUI(idx);
+
+                  // ETAPA 9: Mostrar botão Next (usamos toast + next automático ou manual)
+                  // Aqui o usuário pode clicar Next manualmente
+                }, 1000);
+                state.shadowTimeouts.push(t4);
+              }, 500);
+              state.shadowTimeouts.push(t3);
+            }
+          );
+        });
+      }, 600);
+      state.shadowTimeouts.push(t2);
+    }, 1000);
+    state.shadowTimeouts.push(t1);
+  });
+}
+
+/* ============================================================
+   NAVEGAÇÃO ENTRE FRASES
+   ============================================================ */
+function handlePrev() {
+  const story = getStory();
+  if (state.currentSentence > 0) {
+    state.currentSentence--;
+    highlightCard(state.currentSentence);
+    updateProgress();
+    saveState();
+    scrollToCurrentCard();
+  }
+}
+
+function handleNext() {
+  const story = getStory();
+  if (state.currentSentence < story.sentences.length - 1) {
+    state.currentSentence++;
+    highlightCard(state.currentSentence);
+    updateProgress();
+    saveState();
+    scrollToCurrentCard();
+    // Se estiver em shadowing mode, avançar para próximo passo
+    if (state.shadowingMode && state.shadowingState === 'comparing') {
+      state.shadowTimeouts.forEach(t => clearTimeout(t));
+      state.shadowTimeouts = [];
+      shadowingStep();
+    }
+  }
+}
+
+/* ============================================================
+   POPUP — Phrasal Verbs e Idioms
+   ============================================================ */
+function showPhrasalPopup(el) {
+  const idx = parseInt(el.getAttribute('data-idx'));
+  const story = getStory();
+  const pv = story.phrasalVerbs[idx];
+  if (!pv) return;
+
+  const content = document.getElementById('popupContent');
+  content.innerHTML =
+    '<div class="popup-expr pv">' + pv.expr + '</div>' +
+    '<div class="popup-type pv">Phrasal Verb</div>' +
+    '<div class="popup-row"><div class="popup-label">Meaning</div><div class="popup-value">' + pv.meaning + '</div></div>' +
+    '<div class="popup-row"><div class="popup-label">Explanation</div><div class="popup-value">' + pv.explanation + '</div></div>' +
+    '<div class="popup-row"><div class="popup-label">Example</div><div class="popup-value popup-example">"' + pv.example + '"</div></div>';
+  document.getElementById('popupOverlay').classList.add('show');
+}
+
+function showIdiomPopup(el) {
+  const idx = parseInt(el.getAttribute('data-idx'));
+  const story = getStory();
+  const id = story.idioms[idx];
+  if (!id) return;
+
+  const content = document.getElementById('popupContent');
+  content.innerHTML =
+    '<div class="popup-expr id">' + id.expr + '</div>' +
+    '<div class="popup-type id">Idiom / Expression</div>' +
+    '<div class="popup-row"><div class="popup-label">Translation</div><div class="popup-value">' + id.meaning + '</div></div>' +
+    '<div class="popup-row"><div class="popup-label">Meaning</div><div class="popup-value">' + id.meaning + '</div></div>' +
+    '<div class="popup-row"><div class="popup-label">Example</div><div class="popup-value popup-example">"' + id.example + '"</div></div>';
+  document.getElementById('popupOverlay').classList.add('show');
+}
+
+function hidePopup() {
+  document.getElementById('popupOverlay').classList.remove('show');
+}
+
+/* ============================================================
+   VERIFICAÇÃO DE COMPATIBILIDADE
+   ============================================================ */
+function checkCompatibility() {
+  const container = document.getElementById('errorContainer');
+  let msg = '';
+  if (!('speechSynthesis' in window)) {
+    msg = 'Your browser does not support text-to-speech. Please use a modern browser like Chrome, Edge, or Safari.';
+  } else if (!checkMediaRecorderSupport()) {
+    msg = 'Your browser does not support audio recording. Please use a modern browser like Chrome, Edge, or Safari for the full experience.';
+  }
+  if (msg) {
+    container.innerHTML = '<div class="error-msg">' + msg + '</div>';
+  }
+}
+
+/* ============================================================
+   EVENT LISTENERS
+   ============================================================ */
+function setupEventListeners() {
+  document.getElementById('speedSelect').addEventListener('change', (e) => {
+    state.speed = parseFloat(e.target.value);
+    saveState();
+  });
+
+  document.getElementById('recTimeSelect').addEventListener('change', (e) => {
+    state.recTime = parseInt(e.target.value);
+    saveState();
+  });
+
+  document.getElementById('listenFullBtn').addEventListener('click', handleListenFull);
+  document.getElementById('shadowModeBtn').addEventListener('click', handleShadowMode);
+  document.getElementById('newStoryBtn').addEventListener('click', handleNewStory);
+  document.getElementById('prevBtn').addEventListener('click', handlePrev);
+  document.getElementById('nextBtn').addEventListener('click', handleNext);
+  document.getElementById('stopShadowBtn').addEventListener('click', stopShadowingMode);
+
+  document.getElementById('popupOverlay').addEventListener('click', (e) => {
+    if (e.target === document.getElementById('popupOverlay')) hidePopup();
+  });
+  document.getElementById('popupClose').addEventListener('click', hidePopup);
+
+  // Teclado: ESC para fechar popup
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') hidePopup();
+  });
+
+  // Salvar estado ao sair
+  window.addEventListener('beforeunload', saveState);
+}
+
+/* ============================================================
+   INICIALIZAÇÃO
+   ============================================================ */
+function init() {
+  loadState();
+  // Garantir que storyId corresponde ao nível
+  const levelStories = getStoriesByLevel(state.level);
+  if (levelStories.length > 0 && !levelStories.find(s => s.id === state.storyId)) {
+    state.storyId = levelStories[0].id;
+    state.currentSentence = 0;
+  }
+  checkCompatibility();
+  setupEventListeners();
+  renderAll();
+}
+
+init();
+</script>
+</body>
+</html>
