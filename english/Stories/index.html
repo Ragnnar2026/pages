@@ -1,0 +1,1074 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shadowing English Pro</title>
+    <style>
+        :root {
+            --bg-color: #f8fafc;
+            --card-bg: #ffffff;
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+            --primary: #2563eb;
+            --primary-hover: #1d4ed8;
+            --accent-phrasal: #15803d;
+            --accent-phrasal-bg: #dcfce7;
+            --accent-idiom: #b45309;
+            --accent-idiom-bg: #fef3c7;
+            --border-color: #e2e8f0;
+            --danger: #dc2626;
+            --danger-bg: #fee2e2;
+            --success: #16a34a;
+            --success-bg: #dcfce7;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            line-height: 1.6;
+            padding: 16px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 700px;
+            margin: 0 auto;
+            padding-bottom: 60px;
+        }
+
+        header {
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 1.5rem;
+            color: var(--text-main);
+            margin-bottom: 4px;
+        }
+
+        .subtitle {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        /* Legend Bar */
+        .legend-bar {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            font-size: 0.75rem;
+            margin: 12px 0;
+            flex-wrap: wrap;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            padding: 2px 8px;
+            border-radius: 4px;
+        }
+
+        .legend-phrasal { background: var(--accent-phrasal-bg); color: var(--accent-phrasal); font-weight: 600; }
+        .legend-idiom { background: var(--accent-idiom-bg); color: var(--accent-idiom); font-weight: 600; }
+
+        /* Controls Panel */
+        .controls-panel {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 16px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+
+        .row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .row:last-child {
+            margin-bottom: 0;
+        }
+
+        .level-selector, .settings-group {
+            display: flex;
+            gap: 6px;
+        }
+
+        button {
+            background: #fff;
+            border: 1px solid var(--border-color);
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-weight: 500;
+            color: var(--text-main);
+        }
+
+        button:hover {
+            background: #f1f5f9;
+        }
+
+        button.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-hover);
+        }
+
+        select {
+            padding: 6px 10px;
+            border-radius: 6px;
+            border: 1px solid var(--border-color);
+            font-size: 0.85rem;
+            background: #fff;
+            color: var(--text-main);
+        }
+
+        /* Progress Bar */
+        .progress-container {
+            margin: 12px 0;
+        }
+
+        .progress-info {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin-bottom: 4px;
+        }
+
+        .progress-bar-bg {
+            width: 100%;
+            height: 6px;
+            background: var(--border-color);
+            border-radius: 3px;
+            overflow: hidden;
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            background: var(--primary);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        /* Story Info */
+        .story-header {
+            margin-bottom: 16px;
+            text-align: center;
+        }
+
+        .story-title {
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: var(--text-main);
+            margin-bottom: 2px;
+        }
+
+        /* Card */
+        .sentence-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 16px;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+            position: relative;
+        }
+
+        .sentence-card.recording-active {
+            border-color: var(--danger);
+            box-shadow: 0 0 0 2px var(--danger-bg);
+        }
+
+        .sentence-text {
+            font-size: 1.15rem;
+            line-height: 1.6;
+            margin-bottom: 16px;
+        }
+
+        /* Highlight classes */
+        .phrasal {
+            background-color: var(--accent-phrasal-bg);
+            color: var(--accent-phrasal);
+            padding: 1px 4px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .idiom {
+            background-color: var(--accent-idiom-bg);
+            color: var(--accent-idiom);
+            padding: 1px 4px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        /* Action Buttons Grid inside Card */
+        .actions-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
+            gap: 8px;
+            margin-bottom: 16px;
+        }
+
+        .actions-grid button {
+            padding: 8px 10px;
+            font-size: 0.8rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+        }
+
+        .btn-record {
+            background: #fff;
+            border-color: var(--danger);
+            color: var(--danger);
+        }
+
+        .btn-record.recording {
+            background: var(--danger);
+            color: white;
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.6; }
+            100% { opacity: 1; }
+        }
+
+        /* Comparison Section */
+        .comparison-area {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            background: #f8fafc;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 12px;
+            margin-top: 12px;
+            display: none;
+        }
+
+        .comparison-area.visible {
+            display: grid;
+        }
+
+        .audio-box {
+            background: white;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            padding: 8px;
+            text-align: center;
+        }
+
+        .audio-box-title {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin-bottom: 6px;
+            font-weight: 600;
+        }
+
+        .audio-box button {
+            width: 100%;
+            padding: 6px;
+            font-size: 0.75rem;
+        }
+
+        /* Translation Box */
+        .translation-box {
+            background: #f0fdf4;
+            border: 1px solid #bbf7d0;
+            border-radius: 8px;
+            padding: 10px;
+            font-size: 0.9rem;
+            color: #166534;
+            margin-top: 12px;
+            display: none;
+        }
+
+        .translation-box.visible {
+            display: block;
+        }
+
+        /* Navigation between sentences */
+        .card-nav {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 16px;
+            gap: 8px;
+        }
+
+        .card-nav button {
+            flex: 1;
+            padding: 10px;
+        }
+
+        /* Vocabulary Section */
+        .vocabulary-section {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 16px;
+            margin-top: 24px;
+        }
+
+        .vocabulary-section h3 {
+            font-size: 1rem;
+            margin-bottom: 12px;
+            color: var(--text-main);
+        }
+
+        .vocab-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.8rem;
+        }
+
+        .vocab-table th, .vocab-table td {
+            text-align: left;
+            padding: 8px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .vocab-table th {
+            color: var(--text-muted);
+            font-weight: 600;
+        }
+
+        /* Modal for Expression details */
+        .modal {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.4);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 16px;
+            display: none;
+            z-index: 100;
+        }
+
+        .modal.visible {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            width: 100%;
+            max-width: 400px;
+            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1);
+        }
+
+        .modal-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: var(--primary);
+        }
+
+        .modal-body p {
+            margin-bottom: 8px;
+            font-size: 0.9rem;
+        }
+
+        .modal-body strong {
+            color: var(--text-muted);
+        }
+
+        .modal-close {
+            margin-top: 12px;
+            width: 100%;
+            padding: 8px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .status-bar {
+            text-align: center;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin-top: 8px;
+            min-height: 20px;
+        }
+
+        @media (max-width: 480px) {
+            body { padding: 8px; }
+            .actions-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <h1>Shadowing English Pro</h1>
+        <div class="subtitle">Listen, Record, Compare & Improve Everyday English</div>
+        
+        <div class="legend-bar">
+            <span class="legend-item legend-phrasal">Phrasal Verb</span>
+            <span class="legend-item legend-idiom">Idiom / Expression</span>
+        </div>
+    </header>
+
+    <div class="controls-panel">
+        <div class="row">
+            <div class="level-selector" id="levelSelector">
+                <button data-level="A1" class="active">A1</button>
+                <button data-level="A2">A2</button>
+                <button data-level="B1">B1</button>
+                <button data-level="B2">B2</button>
+                <button data-level="C1">C1</button>
+                <button data-level="C2">C2</button>
+            </div>
+            <div class="settings-group">
+                <select id="speedSelect" title="Speech Speed">
+                    <option value="0.7">0.7x</option>
+                    <option value="0.85">0.85x</option>
+                    <option value="1.0" selected>1.0x</option>
+                    <option value="1.15">1.15x</option>
+                </select>
+                <select id="recTimeSelect" title="Recording Time for Auto Mode">
+                    <option value="3">3s Rec</option>
+                    <option value="5" selected>5s Rec</option>
+                    <option value="7">7s Rec</option>
+                    <option value="10">10s Rec</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="row" style="margin-top: 12px;">
+            <button id="btnListenFull" style="flex: 1;">▶ Listen Full Story</button>
+            <button id="btnAutoShadow" class="btn-primary" style="flex: 1;">🎧 Auto Shadowing</button>
+            <button id="btnNewStory" style="flex: 1;">✨ New Story</button>
+        </div>
+
+        <div class="progress-container">
+            <div class="progress-info">
+                <span id="progressText">Sentence 1 of 10</span>
+                <span id="progressPercent">10%</span>
+            </div>
+            <div class="progress-bar-bg">
+                <div class="progress-bar-fill" id="progressBarFill"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="story-header">
+        <div class="story-title" id="storyTitle">Loading Story...</div>
+    </div>
+
+    <div class="sentence-card" id="sentenceCard">
+        <div class="sentence-text" id="sentenceText">
+            Loading sentence content...
+        </div>
+
+        <div class="actions-grid">
+            <button id="btnListen" class="btn-primary">▶ Listen</button>
+            <button id="btnSlow">🐢 Slow</button>
+            <button id="btnRecord" class="btn-record">🎙️ Record</button>
+            <button id="btnPlayVoice" disabled>▶ Play My Voice</button>
+            <button id="btnTryAgain" disabled>🔄 Try Again</button>
+            <button id="btnToggleTrans">🇧🇷 Translation</button>
+        </div>
+
+        <div class="status-bar" id="statusBar">Ready</div>
+
+        <div class="translation-box" id="translationBox">
+            Tradução aparecerá aqui...
+        </div>
+
+        <div class="comparison-area" id="comparisonArea">
+            <div class="audio-box">
+                <div class="audio-box-title">🗣️ NATIVE VOICE</div>
+                <button id="btnCompNative">▶ Listen</button>
+            </div>
+            <div class="audio-box">
+                <div class="audio-box-title">🎙️ MY VOICE</div>
+                <button id="btnCompMyVoice">▶ Play My Voice</button>
+            </div>
+        </div>
+
+        <div class="card-nav">
+            <button id="btnPrev">← Previous</button>
+            <button id="btnNext" class="btn-primary">Next →</button>
+        </div>
+    </div>
+
+    <div class="vocabulary-section">
+        <h3>Vocabulary & Expressions</h3>
+        <div style="overflow-x: auto;">
+            <table class="vocab-table">
+                <thead>
+                    <tr>
+                        <th>Expression</th>
+                        <th>Type</th>
+                        <th>Meaning (PT)</th>
+                    </tr>
+                </thead>
+                <tbody id="vocabTableBody">
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<div class="modal" id="vocabModal">
+    <div class="modal-content">
+        <div class="modal-title" id="modalTitle">Expression</div>
+        <div class="modal-body" id="modalBody">
+        </div>
+        <button class="modal-close" id="modalClose">Close</button>
+    </div>
+</div>
+
+<script src="stories.js"></script>
+<script>
+    /* =====================================================
+       STORY DATABASE — CARREGADO AUTOMATICAMENTE
+       (via stories.js — edite o arquivo separado ou use
+       stories-manager.html para gerenciar novas histórias)
+       ===================================================== */
+    const storedStories = JSON.parse(localStorage.getItem('shadow_custom_stories') || 'null');
+    const stories = (Array.isArray(storedStories) && storedStories.length > 0)
+        ? storedStories
+        : (Array.isArray(window.shadowingStories) ? window.shadowingStories : []);
+
+    if (stories.length === 0) {
+        document.addEventListener('DOMContentLoaded', () => {
+            const st = document.getElementById('storyTitle');
+            if (st) st.textContent = "⚠️ No stories loaded — check stories.js";
+        });
+    }
+
+    /* =====================================================
+       APP ENGINE (DO NOT EDIT BELOW UNLESS NECESSARY)
+       ================================================     */
+    let currentLevel = localStorage.getItem('shadow_level') || 'A1';
+    let currentStoryIndex = parseInt(localStorage.getItem('shadow_story_idx') || '0');
+    let currentSentenceIndex = parseInt(localStorage.getItem('shadow_sent_idx') || '0');
+    let speechSpeed = parseFloat(localStorage.getItem('shadow_speed') || '1.0');
+    let recTimeLimit = parseInt(localStorage.getItem('shadow_rectime') || '5');
+
+    let activeStory = null;
+    let mediaRecorder = null;
+    let audioChunks = [];
+    let sentenceRecordings = {}; 
+    let isRecording = false;
+    let autoShadowActive = false;
+
+    // DOM ELEMENTS
+    const levelSelector = document.getElementById('levelSelector');
+    const speedSelect = document.getElementById('speedSelect');
+    const recTimeSelect = document.getElementById('recTimeSelect');
+    const storyTitle = document.getElementById('storyTitle');
+    const sentenceCard = document.getElementById('sentenceCard');
+    const sentenceText = document.getElementById('sentenceText');
+    const statusBar = document.getElementById('statusBar');
+    const translationBox = document.getElementById('translationBox');
+    const comparisonArea = document.getElementById('comparisonArea');
+    const vocabTableBody = document.getElementById('vocabTableBody');
+    const progressText = document.getElementById('progressText');
+    const progressPercent = document.getElementById('progressPercent');
+    const progressBarFill = document.getElementById('progressBarFill');
+
+    const btnListen = document.getElementById('btnListen');
+    const btnSlow = document.getElementById('btnSlow');
+    const btnRecord = document.getElementById('btnRecord');
+    const btnPlayVoice = document.getElementById('btnPlayVoice');
+    const btnTryAgain = document.getElementById('btnTryAgain');
+    const btnToggleTrans = document.getElementById('btnToggleTrans');
+    const btnPrev = document.getElementById('btnPrev');
+    const btnNext = document.getElementById('btnNext');
+    const btnListenFull = document.getElementById('btnListenFull');
+    const btnAutoShadow = document.getElementById('btnAutoShadow');
+    const btnNewStory = document.getElementById('btnNewStory');
+    const btnCompNative = document.getElementById('btnCompNative');
+    const btnCompMyVoice = document.getElementById('btnCompMyVoice');
+
+    const vocabModal = document.getElementById('vocabModal');
+    const modalTitle = document.getElementById('modalTitle');
+    const modalBody = document.getElementById('modalBody');
+    const modalClose = document.getElementById('modalClose');
+
+    // Central Processing Functions
+    function renderSentenceHTML(rawText) {
+        let formatted = rawText
+            .replace(/\[\[phrasal:(.*?)\]\]/g, '<span class="phrasal">$1</span>')
+            .replace(/\[\[idiom:(.*?)\]\]/g, '<span class="idiom">$1</span>');
+        return formatted;
+    }
+
+    function getPlainText(rawText) {
+        let plain = rawText
+            .replace(/\[\[phrasal:(.*?)\]\]/g, '$1')
+            .replace(/\[\[idiom:(.*?)\]\]/g, '$1');
+        return plain;
+    }
+
+    function initApp() {
+        speedSelect.value = speechSpeed;
+        recTimeSelect.value = recTimeLimit;
+
+        Array.from(levelSelector.children).forEach(btn => {
+            if(btn.dataset.level === currentLevel) {
+                btn.classList.add('active');
+            } else {
+                btn.classList.remove('active');
+            }
+        });
+
+        loadFilteredStory();
+        setupEventListeners();
+    }
+
+    function loadFilteredStory() {
+        const filtered = stories.filter(s => s.level === currentLevel);
+        if(currentStoryIndex >= filtered.length) currentStoryIndex = 0;
+        activeStory = filtered[currentStoryIndex];
+        
+        if(currentSentenceIndex >= activeStory.sentences.length) {
+            currentSentenceIndex = 0;
+        }
+
+        Object.values(sentenceRecordings).forEach(url => {
+            if (url) URL.revokeObjectURL(url);
+        });
+        sentenceRecordings = {};
+
+        renderStory();
+    }
+
+    function renderStory() {
+        storyTitle.textContent = `${activeStory.title} (${activeStory.level})`;
+        renderSentence();
+        renderVocabularyTable();
+        updateProgress();
+        saveState();
+    }
+
+    function renderSentence() {
+        const sent = activeStory.sentences[currentSentenceIndex];
+        sentenceText.innerHTML = renderSentenceHTML(sent.en);
+        translationBox.textContent = sent.pt;
+        translationBox.classList.remove('visible');
+        
+        const currentBlobUrl = sentenceRecordings[currentSentenceIndex];
+        if (currentBlobUrl) {
+            btnPlayVoice.disabled = false;
+            btnTryAgain.disabled = false;
+            comparisonArea.classList.add('visible');
+            statusBar.textContent = "Recording available for this sentence.";
+        } else {
+            btnPlayVoice.disabled = true;
+            btnTryAgain.disabled = true;
+            comparisonArea.classList.remove('visible');
+            statusBar.textContent = "Ready";
+        }
+
+        document.querySelectorAll('.phrasal, .idiom').forEach(el => {
+            el.removeEventListener('click', handleVocabClick);
+            el.addEventListener('click', handleVocabClick);
+        });
+    }
+
+    function handleVocabClick(e) {
+        const text = e.currentTarget.textContent.trim().toLowerCase();
+        showVocabModal(text);
+    }
+
+    function updateProgress() {
+        const total = activeStory.sentences.length;
+        const current = currentSentenceIndex + 1;
+        progressText.textContent = `Sentence ${current} of ${total}`;
+        const pct = Math.round((current / total) * 100);
+        progressPercent.textContent = `${pct}%`;
+        progressBarFill.style.width = `${pct}%`;
+    }
+
+    function renderVocabularyTable() {
+        vocabTableBody.innerHTML = '';
+        if (activeStory.expressions) {
+            Object.entries(activeStory.expressions).forEach(([expr, info]) => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td><strong>${expr}</strong></td>
+                    <td>${info.type}</td>
+                    <td>${info.meaning}</td>
+                `;
+                vocabTableBody.appendChild(tr);
+            });
+        }
+    }
+
+    function saveState() {
+        localStorage.setItem('shadow_level', currentLevel);
+        localStorage.setItem('shadow_story_idx', currentStoryIndex);
+        localStorage.setItem('shadow_sent_idx', currentSentenceIndex);
+        localStorage.setItem('shadow_speed', speechSpeed);
+        localStorage.setItem('shadow_rectime', recTimeLimit);
+    }
+
+    function speakText(rawText, rate = 1.0, onEndCallback = null) {
+        if (!('speechSynthesis' in window)) {
+            alert("Speech synthesis not supported in this browser.");
+            if(onEndCallback) onEndCallback();
+            return;
+        }
+        window.speechSynthesis.cancel();
+        
+        const cleanText = getPlainText(rawText);
+
+        const utterance = new SpeechSynthesisUtterance(cleanText);
+        utterance.lang = 'en-US';
+        utterance.rate = rate;
+        
+        if (onEndCallback) {
+            utterance.onend = () => { onEndCallback(); };
+            utterance.onerror = () => { onEndCallback(); };
+        }
+
+        window.speechSynthesis.speak(utterance);
+    }
+
+    async function initMediaRecorderStream() {
+        if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+            statusBar.textContent = "Microphone access is not supported by your browser.";
+            return null;
+        }
+        try {
+            const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+            return stream;
+        } catch (err) {
+            statusBar.textContent = "Microphone access is required to use Shadowing Recording.";
+            return null;
+        }
+    }
+
+    async function toggleRecording(specificDuration = null) {
+        if (!isRecording) {
+            const stream = await initMediaRecorderStream();
+            if (!stream) return;
+
+            audioChunks = [];
+            try {
+                mediaRecorder = new MediaRecorder(stream);
+            } catch(e) {
+                statusBar.textContent = "MediaRecorder initialization failed.";
+                return;
+            }
+
+            mediaRecorder.ondataavailable = event => {
+                audioChunks.push(event.data);
+            };
+
+            mediaRecorder.onstop = () => {
+                const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
+                
+                if (sentenceRecordings[currentSentenceIndex]) {
+                    URL.revokeObjectURL(sentenceRecordings[currentSentenceIndex]);
+                }
+
+                const audioUrl = URL.createObjectURL(audioBlob);
+                sentenceRecordings[currentSentenceIndex] = audioUrl;
+
+                btnPlayVoice.disabled = false;
+                btnTryAgain.disabled = false;
+                comparisonArea.classList.add('visible');
+                statusBar.textContent = "Recording saved! Compare below.";
+                sentenceCard.classList.remove('recording-active');
+                btnRecord.classList.remove('recording');
+                btnRecord.textContent = "🎙️ Record";
+                isRecording = false;
+
+                stream.getTracks().forEach(track => track.stop());
+            };
+
+            mediaRecorder.start();
+            isRecording = true;
+            btnRecord.classList.add('recording');
+            sentenceCard.classList.add('recording-active');
+
+            let secondsElapsed = 0;
+            statusBar.textContent = `🔴 Recording... 0s`;
+            
+            const timerInterval = setInterval(() => {
+                if (!isRecording) {
+                    clearInterval(timerInterval);
+                    return;
+                }
+                secondsElapsed++;
+                statusBar.textContent = `🔴 Recording... ${secondsElapsed}s`;
+            }, 1000);
+
+            if (specificDuration) {
+                setTimeout(() => {
+                    if (isRecording && mediaRecorder && mediaRecorder.state === "recording") {
+                        clearInterval(timerInterval);
+                        mediaRecorder.stop();
+                    }
+                }, specificDuration * 1000);
+            }
+
+        } else {
+            if (mediaRecorder && mediaRecorder.state === "recording") {
+                mediaRecorder.stop();
+            }
+        }
+    }
+
+    async function runAutoShadowing() {
+        if (autoShadowActive) return;
+        autoShadowActive = true;
+        btnAutoShadow.classList.add('active');
+        btnAutoShadow.textContent = "⏹ Stop Auto Shadow";
+
+        for (let i = currentSentenceIndex; i < activeStory.sentences.length; i++) {
+            if (!autoShadowActive) break;
+            currentSentenceIndex = i;
+            renderSentence();
+
+            statusBar.textContent = "Auto Mode: Listening to Native Voice...";
+            const sent = activeStory.sentences[currentSentenceIndex];
+
+            await new Promise((resolve) => {
+                speakText(sent.en, speechSpeed, () => { resolve(); });
+            });
+
+            if (!autoShadowActive) break;
+
+            statusBar.textContent = "Auto Mode: Pause...";
+            await new Promise(r => setTimeout(r, 1000));
+            if (!autoShadowActive) break;
+
+            statusBar.textContent = "YOUR TURN — REPEAT NOW!";
+            if (!isRecording) {
+                await toggleRecording(recTimeLimit);
+            }
+
+            await new Promise(r => setTimeout(r, recTimeLimit * 1000));
+            if (!autoShadowActive) break;
+
+            if (isRecording && mediaRecorder && mediaRecorder.state === "recording") {
+                mediaRecorder.stop();
+            }
+
+            await new Promise(r => setTimeout(r, 400));
+            if (!autoShadowActive) break;
+
+            if (sentenceRecordings[currentSentenceIndex]) {
+                statusBar.textContent = "Auto Mode: Playing your voice...";
+                await new Promise((resolveUserAudio) => {
+                    const url = sentenceRecordings[currentSentenceIndex];
+                    const audio = new Audio(url);
+                    audio.onended = () => resolveUserAudio();
+                    audio.onerror = () => resolveUserAudio();
+                    audio.play().catch(() => resolveUserAudio());
+                });
+            }
+
+            await new Promise(r => setTimeout(r, 1000));
+        }
+
+        stopAutoShadowing();
+    }
+
+    function stopAutoShadowing() {
+        autoShadowActive = false;
+        btnAutoShadow.classList.remove('active');
+        btnAutoShadow.textContent = "🎧 Auto Shadowing";
+        if (isRecording && mediaRecorder && mediaRecorder.state === "recording") {
+            mediaRecorder.stop();
+        }
+        statusBar.textContent = "Auto Shadowing finished.";
+    }
+
+    function playMyVoice() {
+        const url = sentenceRecordings[currentSentenceIndex];
+        if (!url) return;
+        const audio = new Audio(url);
+        audio.play().catch(e => console.error("Playback error:", e));
+    }
+
+    function showVocabModal(exprKey) {
+        if (!activeStory.expressions) return;
+        const foundKey = Object.keys(activeStory.expressions).find(k => k.toLowerCase() === exprKey);
+        if (!foundKey) return;
+
+        const item = activeStory.expressions[foundKey];
+        modalTitle.textContent = foundKey;
+        modalBody.innerHTML = `
+            <p><strong>Type:</strong> ${item.type}</p>
+            <p><strong>Meaning (PT):</strong> ${item.meaning}</p>
+        `;
+        vocabModal.classList.add('visible');
+    }
+
+    function setupEventListeners() {
+        levelSelector.addEventListener('click', (e) => {
+            if(e.target.tagName === 'BUTTON') {
+                Array.from(levelSelector.children).forEach(b => b.classList.remove('active'));
+                e.target.classList.add('active');
+                currentLevel = e.target.dataset.level;
+                currentStoryIndex = 0;
+                currentSentenceIndex = 0;
+                loadFilteredStory();
+            }
+        });
+
+        speedSelect.addEventListener('change', (e) => {
+            speechSpeed = parseFloat(e.target.value);
+            saveState();
+        });
+
+        recTimeSelect.addEventListener('change', (e) => {
+            recTimeLimit = parseInt(e.target.value);
+            saveState();
+        });
+
+        btnListen.addEventListener('click', () => {
+            const sent = activeStory.sentences[currentSentenceIndex];
+            speakText(sent.en, speechSpeed);
+            statusBar.textContent = "Playing native voice...";
+        });
+
+        btnSlow.addEventListener('click', () => {
+            const sent = activeStory.sentences[currentSentenceIndex];
+            speakText(sent.en, 0.7);
+            statusBar.textContent = "Playing slow native voice...";
+        });
+
+        btnRecord.addEventListener('click', () => {
+            toggleRecording(null);
+        });
+
+        btnPlayVoice.addEventListener('click', () => {
+            playMyVoice();
+            statusBar.textContent = "Playing your voice recording...";
+        });
+
+        btnTryAgain.addEventListener('click', () => {
+            if (sentenceRecordings[currentSentenceIndex]) {
+                URL.revokeObjectURL(sentenceRecordings[currentSentenceIndex]);
+            }
+            delete sentenceRecordings[currentSentenceIndex];
+            btnPlayVoice.disabled = true;
+            btnTryAgain.disabled = true;
+            comparisonArea.classList.remove('visible');
+            statusBar.textContent = "Previous recording cleared. Ready to record again.";
+            toggleRecording(null);
+        });
+
+        btnToggleTrans.addEventListener('click', () => {
+            translationBox.classList.toggle('visible');
+        });
+
+        btnPrev.addEventListener('click', () => {
+            if(currentSentenceIndex > 0) {
+                currentSentenceIndex--;
+                renderSentence();
+            }
+        });
+
+        btnNext.addEventListener('click', () => {
+            if(currentSentenceIndex < activeStory.sentences.length - 1) {
+                currentSentenceIndex++;
+                renderSentence();
+            } else {
+                statusBar.textContent = "You reached the end of the story!";
+            }
+        });
+
+        btnListenFull.addEventListener('click', () => {
+            window.speechSynthesis.cancel();
+            const fullText = activeStory.sentences.map(s => getPlainText(s.en)).join('. ');
+            speakText(fullText, speechSpeed);
+            statusBar.textContent = "Playing full story...";
+        });
+
+        btnAutoShadow.addEventListener('click', () => {
+            if (autoShadowActive) {
+                stopAutoShadowing();
+            } else {
+                runAutoShadowing();
+            }
+        });
+
+        btnNewStory.addEventListener('click', () => {
+            if (autoShadowActive) stopAutoShadowing();
+            const filtered = stories.filter(s => s.level === currentLevel);
+            if (filtered.length > 1) {
+                let newIdx;
+                do {
+                    newIdx = Math.floor(Math.random() * filtered.length);
+                } while (newIdx === currentStoryIndex);
+                currentStoryIndex = newIdx;
+            } else {
+                currentStoryIndex = 0;
+            }
+            currentSentenceIndex = 0;
+            loadFilteredStory();
+            statusBar.textContent = "New story loaded!";
+        });
+
+        btnCompNative.addEventListener('click', () => {
+            const sent = activeStory.sentences[currentSentenceIndex];
+            speakText(sent.en, speechSpeed);
+        });
+
+        btnCompMyVoice.addEventListener('click', () => {
+            playMyVoice();
+        });
+
+        modalClose.addEventListener('click', () => {
+            vocabModal.classList.remove('visible');
+        });
+
+        vocabModal.addEventListener('click', (e) => {
+            if(e.target === vocabModal) vocabModal.classList.remove('visible');
+        });
+    }
+
+    window.addEventListener('DOMContentLoaded', initApp);
+</script>
+
+</body>
+</html>

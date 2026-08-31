@@ -1,0 +1,662 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Story Manager — Shadowing English Pro</title>
+    <style>
+        :root {
+            --bg: #f1f5f9;
+            --card: #ffffff;
+            --text: #0f172a;
+            --muted: #64748b;
+            --primary: #2563eb;
+            --primary-hover: #1d4ed8;
+            --green: #15803d;
+            --green-bg: #dcfce7;
+            --amber: #b45309;
+            --amber-bg: #fef3c7;
+            --danger: #dc2626;
+            --danger-bg: #fee2e2;
+            --border: #e2e8f0;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif; }
+        body { background: var(--bg); color: var(--text); padding: 20px; line-height: 1.5; }
+        .container { max-width: 1100px; margin: 0 auto; }
+        header { text-align: center; margin-bottom: 20px; }
+        h1 { font-size: 1.6rem; margin-bottom: 4px; }
+        .subtitle { color: var(--muted); font-size: 0.9rem; }
+        .top-bar { display: flex; gap: 8px; flex-wrap: wrap; justify-content: space-between; align-items: center; background: var(--card); padding: 16px; border: 1px solid var(--border); border-radius: 12px; margin-bottom: 16px; box-shadow: 0 1px 3px rgba(0,0,0,.05); }
+        .status { font-size: 0.85rem; color: var(--muted); }
+        .status strong { color: var(--green); }
+        .buttons { display: flex; gap: 6px; flex-wrap: wrap; }
+        button { background: #fff; border: 1px solid var(--border); padding: 8px 14px; border-radius: 6px; font-size: 0.85rem; cursor: pointer; transition: all .15s; color: var(--text); font-weight: 500; }
+        button:hover { background: #f1f5f9; }
+        button.primary { background: var(--primary); color: #fff; border-color: var(--primary); }
+        button.primary:hover { background: var(--primary-hover); }
+        button.success { background: var(--green); color: #fff; border-color: var(--green); }
+        button.success:hover { filter: brightness(1.1); }
+        button.danger { background: #fff; color: var(--danger); border-color: #fecaca; }
+        button.danger:hover { background: var(--danger-bg); }
+        button.small { padding: 4px 10px; font-size: 0.75rem; }
+
+        .tabs { display: flex; gap: 4px; border-bottom: 2px solid var(--border); margin-bottom: 20px; flex-wrap: wrap; }
+        .tab { padding: 10px 18px; cursor: pointer; border: none; background: transparent; border-bottom: 3px solid transparent; border-radius: 0; color: var(--muted); font-weight: 500; margin-bottom: -2px; }
+        .tab.active { color: var(--primary); border-bottom-color: var(--primary); }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+
+        /* ===== LIST TAB ===== */
+        .list-card { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 14px 16px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; box-shadow: 0 1px 2px rgba(0,0,0,.04); }
+        .list-info { flex: 1; min-width: 0; }
+        .level-badge { display: inline-block; padding: 2px 10px; border-radius: 999px; font-size: 0.75rem; font-weight: 700; margin-right: 8px; }
+        .lv-A1 { background: #dcfce7; color: #166534; } .lv-A2 { background: #bbf7d0; color: #14532d; }
+        .lv-B1 { background: #fef3c7; color: #92400e; } .lv-B2 { background: #fde68a; color: #78350f; }
+        .lv-C1 { background: #dbeafe; color: #1e40af; } .lv-C2 { background: #bfdbfe; color: #1e3a8a; }
+        .story-title { font-weight: 700; font-size: 1rem; margin: 4px 0 2px; }
+        .story-meta { color: var(--muted); font-size: 0.8rem; }
+        .list-actions { display: flex; gap: 6px; flex-shrink: 0; }
+
+        /* ===== EDITOR TAB ===== */
+        .editor-card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 20px; box-shadow: 0 1px 3px rgba(0,0,0,.05); }
+        .form-row { margin-bottom: 16px; }
+        label { display: block; font-size: 0.85rem; font-weight: 600; color: var(--muted); margin-bottom: 4px; }
+        input, select, textarea { width: 100%; padding: 8px 10px; border: 1px solid var(--border); border-radius: 6px; font-size: 0.9rem; background: #fff; color: var(--text); font-family: inherit; }
+        textarea { resize: vertical; min-height: 70px; }
+        input:focus, select:focus, textarea:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px #dbeafe; }
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        .section-title { display: flex; justify-content: space-between; align-items: center; margin: 24px 0 12px; padding-bottom: 6px; border-bottom: 1px dashed var(--border); }
+        .section-title h3 { font-size: 1.05rem; }
+
+        .sentence-item, .expr-item { border: 1px solid var(--border); border-radius: 8px; padding: 12px; margin-bottom: 10px; background: #fafafa; position: relative; }
+        .sentence-header, .expr-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; color: var(--muted); font-size: 0.8rem; font-weight: 600; }
+        .hint { color: var(--muted); font-size: 0.75rem; margin-top: 4px; }
+        .hint code { background: #f1f5f9; padding: 1px 6px; border-radius: 3px; font-size: 0.7rem; color: var(--primary); }
+        .expr-grid { display: grid; grid-template-columns: 2fr 1fr 2fr; gap: 8px; }
+
+        /* ===== VALIDATION ===== */
+        .validate-card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 20px; }
+        .validation-list { margin-top: 14px; max-height: 60vh; overflow-y: auto; }
+        .val-item { padding: 10px 12px; border-left: 4px solid var(--border); margin-bottom: 8px; background: #fafafa; border-radius: 4px; font-size: 0.85rem; }
+        .val-item.ok { border-color: var(--green); }
+        .val-item.warn { border-color: var(--amber); background: var(--amber-bg); }
+        .val-item.err { border-color: var(--danger); background: var(--danger-bg); }
+        .counts { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 8px; margin-top: 12px; }
+        .count-box { padding: 12px; border-radius: 8px; text-align: center; border: 1px solid var(--border); background: #fafafa; }
+        .count-box .n { font-size: 1.5rem; font-weight: 800; color: var(--primary); }
+        .count-box .l { font-size: 0.75rem; color: var(--muted); }
+
+        /* ===== JSON TAB ===== */
+        .json-toolbar { display: flex; gap: 6px; margin-bottom: 10px; flex-wrap: wrap; }
+        .json-area { width: 100%; min-height: 500px; padding: 14px; border: 1px solid var(--border); border-radius: 8px; font-family: 'Consolas', 'Courier New', monospace; font-size: 0.8rem; line-height: 1.6; background: #0f172a; color: #e2e8f0; }
+
+        .toast { position: fixed; bottom: 20px; right: 20px; padding: 12px 20px; border-radius: 8px; color: #fff; font-size: 0.9rem; font-weight: 500; opacity: 0; transform: translateY(20px); transition: all .3s; z-index: 9999; }
+        .toast.show { opacity: 1; transform: translateY(0); }
+        .toast.ok { background: var(--green); }
+        .toast.err { background: var(--danger); }
+
+        .empty { text-align: center; padding: 40px 20px; color: var(--muted); background: var(--card); border: 1px dashed var(--border); border-radius: 12px; }
+
+        @media (max-width: 720px) {
+            .grid-2, .expr-grid { grid-template-columns: 1fr; }
+            .list-card { flex-direction: column; }
+            .list-actions { width: 100%; }
+            .list-actions button { flex: 1; }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <header>
+        <h1>📚 Story Manager</h1>
+        <div class="subtitle">Gerenciador de histórias para Shadowing English Pro</div>
+    </header>
+
+    <div class="top-bar">
+        <div class="status">
+            <span id="statusInfo">— histórias carregadas</span> ·
+            <span id="storageInfo">💾 localStorage: <strong>não ativo</strong></span>
+        </div>
+        <div class="buttons">
+            <button onclick="openApp()" title="Abrir o shadowing">▶ Open App</button>
+            <button onclick="saveToLocalStorage()" class="success" title="Salva as histórias em cache para o index.html">💾 Save to App</button>
+            <button onclick="clearLocalStorage()" class="danger" title="Volta a usar stories.js">↩️ Reset Custom</button>
+        </div>
+    </div>
+
+    <div class="tabs">
+        <button class="tab active" data-tab="list">📋 Lista</button>
+        <button class="tab" data-tab="editor">✍️ Editor</button>
+        <button class="tab" data-tab="validate">✅ Validar</button>
+        <button class="tab" data-tab="json">📄 JSON / Import-Export</button>
+    </div>
+
+    <!-- ============ LIST TAB ============ -->
+    <div class="tab-content active" id="tab-list">
+        <div id="listContainer" class="empty">Carregando...</div>
+    </div>
+
+    <!-- ============ EDITOR TAB ============ -->
+    <div class="tab-content" id="tab-editor">
+        <div class="editor-card">
+            <div class="form-row grid-2">
+                <div>
+                    <label>Nível CEFR</label>
+                    <select id="f_level">
+                        <option>A1</option><option>A2</option><option>B1</option>
+                        <option>B2</option><option>C1</option><option>C2</option>
+                    </select>
+                </div>
+                <div>
+                    <label>Título</label>
+                    <input id="f_title" type="text" placeholder="Ex.: A Busy Morning at the Cafe">
+                </div>
+            </div>
+
+            <div class="section-title">
+                <h3>💬 Sentences</h3>
+                <div>
+                    <button class="small" onclick="addSentence()">+ Add Sentence</button>
+                    <button class="small danger" onclick="clearEditor()">🗑️ Clear Editor</button>
+                </div>
+            </div>
+            <div id="sentencesContainer"></div>
+
+            <div class="section-title">
+                <h3>📖 Expressions</h3>
+                <button class="small" onclick="addExpression()">+ Add Expression</button>
+            </div>
+            <div id="expressionsContainer"></div>
+            <div class="hint">Dica: clique em "Auto-fill from sentences" para extrair automaticamente as expressões marcadas com <code>[[phrasal:...]]</code> e <code>[[idiom:...]]</code>.</div>
+
+            <div style="display:flex; gap:8px; margin-top: 24px; flex-wrap: wrap;">
+                <button class="primary" onclick="autoFillExpressions()">🔮 Auto-fill from sentences</button>
+                <button class="success" onclick="saveStoryFromEditor()">💾 Save Story</button>
+                <button onclick="newStory()">➕ New Blank Story</button>
+                <button class="danger" onclick="deleteCurrentStory()" id="btnDeleteCur" style="display:none;">❌ Delete This Story</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============ VALIDATE TAB ============ -->
+    <div class="tab-content" id="tab-validate">
+        <div class="validate-card">
+            <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
+                <h3>🧪 Checklist de validação</h3>
+                <select id="validateStorySelect" onchange="validateSelected()" style="width:220px;">
+                    <option value="__all">— Todas as histórias —</option>
+                </select>
+            </div>
+            <div class="counts" id="countsBox"></div>
+            <div class="validation-list" id="validationList"></div>
+        </div>
+    </div>
+
+    <!-- ============ JSON TAB ============ -->
+    <div class="tab-content" id="tab-json">
+        <div class="json-toolbar">
+            <button class="primary" onclick="loadStoriesToJson()">📥 Reload from Memory</button>
+            <button onclick="beautifyJson()">🎨 Beautify</button>
+            <button class="success" onclick="applyJson()">✅ Aplicar JSON</button>
+            <button onclick="exportJson()">⬇️ Export .json</button>
+            <button onclick="document.getElementById('importFile').click()">⬆️ Import .json</button>
+            <button onclick="exportStoriesJs()">⬇️ Export stories.js</button>
+            <input type="file" id="importFile" accept=".json,.js" style="display:none;" onchange="importJsonFile(event)">
+        </div>
+        <textarea class="json-area" id="jsonArea" spellcheck="false" placeholder="Cole ou edite o array de stories aqui em JSON..."></textarea>
+    </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="stories.js"></script>
+<script>
+/* ================== GLOBAL STATE ================== */
+let stories = [];
+let editingIndex = -1; // -1 = novo, >=0 = editando existente
+
+const STORAGE_KEY = 'shadow_custom_stories';
+
+function loadStories() {
+    const custom = JSON.parse(localStorage.getItem(STORAGE_KEY) || 'null');
+    stories = JSON.parse(JSON.stringify(
+        Array.isArray(custom) && custom.length > 0 ? custom : (window.shadowingStories || [])
+    ));
+    updateStatusBar();
+    refreshList();
+    refreshValidateSelect();
+    if (stories.length > 0 && editingIndex === -1) {
+        // carrega primeira no editor por conveniência
+        editStory(0);
+    }
+}
+
+function updateStatusBar() {
+    document.getElementById('statusInfo').innerHTML =
+        `<strong>${stories.length}</strong> histórias carregadas`;
+    const custom = localStorage.getItem(STORAGE_KEY);
+    document.getElementById('storageInfo').innerHTML =
+        custom ? '💾 localStorage: <strong style="color:var(--green)">ATIVO (custom)</strong>'
+               : '💾 localStorage: <strong>não ativo (usando stories.js)</strong>';
+}
+
+/* ================== TABS ================== */
+document.querySelectorAll('.tab').forEach(t => {
+    t.addEventListener('click', () => {
+        document.querySelectorAll('.tab').forEach(x => x.classList.remove('active'));
+        document.querySelectorAll('.tab-content').forEach(x => x.classList.remove('active'));
+        t.classList.add('active');
+        document.getElementById('tab-' + t.dataset.tab).classList.add('active');
+        if (t.dataset.tab === 'validate') validateSelected();
+        if (t.dataset.tab === 'json') loadStoriesToJson();
+    });
+});
+
+/* ================== TOAST ================== */
+function toast(msg, type='ok') {
+    const t = document.getElementById('toast');
+    t.className = 'toast show ' + type;
+    t.textContent = msg;
+    setTimeout(() => t.classList.remove('show'), 2600);
+}
+
+/* ================== LIST TAB ================== */
+function refreshList() {
+    const c = document.getElementById('listContainer');
+    if (!stories.length) { c.className = 'empty'; c.innerHTML = 'Nenhuma história. Use a aba Editor para criar a primeira!'; return; }
+    c.className = '';
+    c.innerHTML = stories.map((s, i) => `
+        <div class="list-card">
+            <div class="list-info">
+                <span class="level-badge lv-${s.level}">${s.level}</span>
+                <span class="story-meta">#${i+1}</span>
+                <div class="story-title">${escapeHtml(s.title)}</div>
+                <div class="story-meta">
+                    ${s.sentences ? s.sentences.length : 0} frases ·
+                    ${s.expressions ? Object.keys(s.expressions).length : 0} expressões ·
+                    ${countWords(s)} palavras (en)
+                </div>
+            </div>
+            <div class="list-actions">
+                <button class="small primary" onclick="editStory(${i})">✏️ Editar</button>
+                <button class="small danger" onclick="deleteStory(${i})">🗑️</button>
+                <button class="small" onclick="duplicateStory(${i})">📋 Copy</button>
+            </div>
+        </div>
+    `).join('');
+}
+
+function escapeHtml(s) { return (s||'').replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])); }
+
+function editStory(i) {
+    editingIndex = i;
+    const s = stories[i];
+    document.getElementById('f_level').value = s.level || 'A1';
+    document.getElementById('f_title').value = s.title || '';
+    document.getElementById('sentencesContainer').innerHTML = '';
+    (s.sentences || []).forEach(sen => addSentence(sen.en, sen.pt));
+    document.getElementById('expressionsContainer').innerHTML = '';
+    Object.entries(s.expressions || {}).forEach(([k,v]) => addExpression(k, v.type, v.meaning));
+    document.getElementById('btnDeleteCur').style.display = '';
+    document.querySelector('[data-tab="editor"]').click();
+}
+
+function duplicateStory(i) {
+    const copy = JSON.parse(JSON.stringify(stories[i]));
+    copy.title = (copy.title || 'Untitled') + ' (copy)';
+    stories.splice(i+1, 0, copy);
+    persist();
+    refreshList();
+    refreshValidateSelect();
+    toast('História duplicada');
+}
+
+function deleteStory(i) {
+    if (!confirm('Apagar esta história?')) return;
+    stories.splice(i, 1);
+    persist();
+    refreshList();
+    refreshValidateSelect();
+    toast('História apagada', 'err');
+}
+
+function deleteCurrentStory() {
+    if (editingIndex >= 0) deleteStory(editingIndex);
+}
+
+/* ================== EDITOR TAB ================== */
+function newStory() {
+    editingIndex = -1;
+    document.getElementById('f_level').value = 'A1';
+    document.getElementById('f_title').value = '';
+    document.getElementById('sentencesContainer').innerHTML = '';
+    document.getElementById('expressionsContainer').innerHTML = '';
+    document.getElementById('btnDeleteCur').style.display = 'none';
+    // seed inicial
+    addSentence('', '');
+    addExpression('', 'Phrasal Verb', '');
+    document.querySelector('[data-tab="editor"]').click();
+}
+
+function clearEditor() {
+    if (!confirm('Limpar editor? A história atual (não salva) será perdida.')) return;
+    newStory();
+}
+
+function addSentence(en='', pt='') {
+    const container = document.getElementById('sentencesContainer');
+    const idx = container.children.length;
+    const div = document.createElement('div');
+    div.className = 'sentence-item';
+    div.innerHTML = `
+        <div class="sentence-header">
+            <span>Frase #${idx+1}</span>
+            <button class="small danger" onclick="this.closest('.sentence-item').remove(); renumber('sentence');">Remover</button>
+        </div>
+        <div class="form-row"><label>🇺🇸 English (use <code>[[phrasal:...]]</code> e <code>[[idiom:...]]</code>)</label>
+            <textarea class="s_en" placeholder="I [[phrasal:woke up]] early.">${escapeHtml(en)}</textarea>
+        </div>
+        <div class="form-row"><label>🇧🇷 Português</label>
+            <textarea class="s_pt" placeholder="Eu acordei cedo.">${escapeHtml(pt)}</textarea>
+        </div>
+    `;
+    container.appendChild(div);
+}
+
+function addExpression(key='', type='Phrasal Verb', meaning='') {
+    const container = document.getElementById('expressionsContainer');
+    const div = document.createElement('div');
+    div.className = 'expr-item';
+    div.innerHTML = `
+        <div class="expr-header">
+            <span>Expression</span>
+            <button class="small danger" onclick="this.closest('.expr-item').remove()">Remover</button>
+        </div>
+        <div class="expr-grid">
+            <div><label>Chave (ex.: woke up)</label><input class="e_key" value="${escapeHtml(key)}"></div>
+            <div><label>Tipo</label>
+                <select class="e_type">
+                    <option ${type==='Phrasal Verb'?'selected':''}>Phrasal Verb</option>
+                    <option ${type==='Idiom'?'selected':''}>Idiom</option>
+                </select>
+            </div>
+            <div><label>Significado (PT)</label><input class="e_mean" value="${escapeHtml(meaning)}"></div>
+        </div>
+    `;
+    container.appendChild(div);
+}
+
+function renumber() {
+    document.querySelectorAll('.sentence-item').forEach((el, i) => {
+        const h = el.querySelector('.sentence-header span');
+        if (h) h.textContent = `Frase #${i+1}`;
+    });
+}
+
+function collectEditorStory() {
+    const sentences = [...document.querySelectorAll('.sentence-item')].map(el => ({
+        en: el.querySelector('.s_en').value.trim(),
+        pt: el.querySelector('.s_pt').value.trim()
+    })).filter(s => s.en || s.pt);
+
+    const expressions = {};
+    document.querySelectorAll('.expr-item').forEach(el => {
+        const k = el.querySelector('.e_key').value.trim();
+        if (!k) return;
+        expressions[k] = {
+            type: el.querySelector('.e_type').value,
+            meaning: el.querySelector('.e_mean').value.trim()
+        };
+    });
+
+    return {
+        level: document.getElementById('f_level').value,
+        title: document.getElementById('f_title').value.trim(),
+        sentences, expressions
+    };
+}
+
+function saveStoryFromEditor() {
+    const s = collectEditorStory();
+    if (!s.title) { alert('Título obrigatório.'); return; }
+    if (!s.sentences.length) { alert('Adicione pelo menos uma frase.'); return; }
+
+    // validação rápida
+    const words = countWords({ sentences: s.sentences });
+    if (words < 150) {
+        if (!confirm(`A história tem apenas ${words} palavras (mínimo 150). Salvar mesmo assim?`)) return;
+    }
+
+    if (editingIndex >= 0) {
+        stories[editingIndex] = s;
+        toast('História atualizada');
+    } else {
+        stories.push(s);
+        editingIndex = stories.length - 1;
+        document.getElementById('btnDeleteCur').style.display = '';
+        toast('História salva');
+    }
+    persist();
+    refreshList();
+    refreshValidateSelect();
+}
+
+/* Auto-fill expressions */
+function autoFillExpressions() {
+    const s = collectEditorStory();
+    const found = {};
+    (s.sentences||[]).forEach(sen => {
+        const re1 = /\[\[phrasal:(.*?)\]\]/g;
+        const re2 = /\[\[idiom:(.*?)\]\]/g;
+        let m;
+        while ((m = re1.exec(sen.en)) !== null) found[m[1]] = 'Phrasal Verb';
+        while ((m = re2.exec(sen.en)) !== null) found[m[1]] = 'Idiom';
+    });
+
+    // Preserva meanings já existentes
+    const currentExpr = {};
+    document.querySelectorAll('.expr-item').forEach(el => {
+        const k = el.querySelector('.e_key').value.trim();
+        if (k) currentExpr[k] = { type: el.querySelector('.e_type').value, meaning: el.querySelector('.e_mean').value.trim() };
+    });
+
+    document.getElementById('expressionsContainer').innerHTML = '';
+    Object.entries(found).forEach(([k, t]) => {
+        const existing = currentExpr[k];
+        addExpression(k, existing ? existing.type : t, existing ? existing.meaning : '');
+    });
+    toast(`${Object.keys(found).length} expressões extraídas`);
+}
+
+/* ================== VALIDATE TAB ================== */
+function refreshValidateSelect() {
+    const sel = document.getElementById('validateStorySelect');
+    const cur = sel.value;
+    sel.innerHTML = '<option value="__all">— Todas as histórias —</option>' +
+        stories.map((s,i) => `<option value="${i}">${s.level} · ${escapeHtml(s.title)}</option>`).join('');
+    if (cur === '__all' || stories[parseInt(cur)]) sel.value = cur;
+}
+
+function countWords(s) {
+    return (s.sentences || []).reduce((acc, sen) => {
+        const clean = (sen.en || '').replace(/\[\[.*?:(.*?)\]\]/g, '$1');
+        const words = clean.match(/[A-Za-z'’-]+/g) || [];
+        return acc + words.length;
+    }, 0);
+}
+
+function countTagged(s, type) {
+    const pattern = type === 'phrasal' ? /\[\[phrasal:/g : /\[\[idiom:/g;
+    return (s.sentences || []).reduce((a, sen) => a + ((sen.en || '').match(pattern) || []).length, 0);
+}
+
+function validateStory(s, i) {
+    const items = [];
+    const w = countWords(s);
+    const pc = countTagged(s, 'phrasal');
+    const ic = countTagged(s, 'idiom');
+    const prefix = `#${i+1} [${s.level}] "${s.title}"`;
+
+    if (!s.level) items.push({ type: 'err', text: `${prefix}: level ausente` });
+    if (!s.title) items.push({ type: 'err', text: `${prefix}: title ausente` });
+    if (!Array.isArray(s.sentences) || s.sentences.length === 0) {
+        items.push({ type: 'err', text: `${prefix}: sem frases` });
+    } else {
+        if (s.sentences.length < 15) items.push({ type: 'warn', text: `${prefix}: ${s.sentences.length} frases (mínimo recomendado: 15)` });
+        if (s.sentences.length > 30) items.push({ type: 'warn', text: `${prefix}: ${s.sentences.length} frases (máximo recomendado: 25)` });
+        (s.sentences||[]).forEach((sen, j) => {
+            if (typeof sen.en !== 'string' || !sen.en.trim())
+                items.push({ type: 'err', text: `${prefix} · frase ${j+1}: en vazio` });
+            if (typeof sen.pt !== 'string' || !sen.pt.trim())
+                items.push({ type: 'err', text: `${prefix} · frase ${j+1}: pt vazio` });
+        });
+    }
+
+    if (w < 150) items.push({ type: 'err', text: `${prefix}: ${w} palavras (mínimo obrigatório: 150)` });
+    else if (w > 220) items.push({ type: 'warn', text: `${prefix}: ${w} palavras (acima da faixa 150-220)` });
+    else items.push({ type: 'ok', text: `${prefix}: ${w} palavras ✓` });
+
+    if (pc < 5) items.push({ type: 'warn', text: `${prefix}: ${pc} phrasal verbs (mínimo desejado: 5)` });
+    else items.push({ type: 'ok', text: `${prefix}: ${pc} phrasal verbs ✓` });
+
+    if (ic < 5) items.push({ type: 'warn', text: `${prefix}: ${ic} idioms/expressions (mínimo desejado: 5)` });
+    else items.push({ type: 'ok', text: `${prefix}: ${ic} idioms/expressions ✓` });
+
+    // Consistência expressions
+    const expected = {};
+    (s.sentences||[]).forEach(sen => {
+        let m;
+        const re1 = /\[\[phrasal:(.*?)\]\]/g, re2 = /\[\[idiom:(.*?)\]\]/g;
+        while ((m = re1.exec(sen.en)) !== null) expected[m[1]] = 'Phrasal Verb';
+        while ((m = re2.exec(sen.en)) !== null) expected[m[1]] = 'Idiom';
+    });
+    const exprs = s.expressions || {};
+    Object.keys(expected).forEach(k => {
+        if (!exprs[k]) items.push({ type: 'err', text: `${prefix}: "${k}" marcado no texto mas ausente em expressions` });
+    });
+    Object.keys(exprs).forEach(k => {
+        if (!expected[k]) items.push({ type: 'warn', text: `${prefix}: "${k}" em expressions mas não aparece marcado nas frases` });
+    });
+
+    return { items, w, pc, ic };
+}
+
+function validateSelected() {
+    const which = document.getElementById('validateStorySelect').value;
+    const list = document.getElementById('validationList');
+    const counts = document.getElementById('countsBox');
+    const results = [];
+    let tw = 0, tp = 0, ti = 0;
+
+    const targets = which === '__all' ? stories.map((s,i) => [s,i]) : [[stories[parseInt(which)], parseInt(which)]];
+    targets.forEach(([s, i]) => {
+        if (!s) return;
+        const r = validateStory(s, i);
+        results.push(...r.items);
+        tw += r.w; tp += r.pc; ti += r.ic;
+    });
+
+    const total = results.length;
+    const errs = results.filter(x => x.type === 'err').length;
+    const warns = results.filter(x => x.type === 'warn').length;
+    const oks = results.filter(x => x.type === 'ok').length;
+
+    counts.innerHTML = `
+        <div class="count-box"><div class="n">${stories.length}</div><div class="l">Histórias</div></div>
+        <div class="count-box"><div class="n">${tw}</div><div class="l">Total de palavras (en)</div></div>
+        <div class="count-box"><div class="n">${tp}</div><div class="l">Phrasal Verbs marcados</div></div>
+        <div class="count-box"><div class="n">${ti}</div><div class="l">Idioms marcados</div></div>
+        <div class="count-box"><div class="n" style="color:var(--green)">${oks}</div><div class="l">Checks OK</div></div>
+        <div class="count-box"><div class="n" style="color:var(--amber)">${warns}</div><div class="l">Warns</div></div>
+        <div class="count-box"><div class="n" style="color:var(--danger)">${errs}</div><div class="l">Erros</div></div>
+    `;
+
+    if (!total) { list.innerHTML = '<div class="empty">Nenhuma história para validar.</div>'; return; }
+    list.innerHTML = results.sort((a,b) => {
+        const order = { err: 0, warn: 1, ok: 2 };
+        return order[a.type] - order[b.type];
+    }).map(x => `<div class="val-item ${x.type}">${x.text}</div>`).join('');
+}
+
+/* ================== JSON TAB ================== */
+function loadStoriesToJson() {
+    document.getElementById('jsonArea').value = JSON.stringify(stories, null, 2);
+}
+function beautifyJson() {
+    try {
+        const ta = document.getElementById('jsonArea');
+        ta.value = JSON.stringify(JSON.parse(ta.value), null, 2);
+        toast('JSON formatado');
+    } catch (e) { toast('JSON inválido: ' + e.message, 'err'); }
+}
+function applyJson() {
+    try {
+        const parsed = JSON.parse(document.getElementById('jsonArea').value);
+        if (!Array.isArray(parsed)) throw new Error('Raiz deve ser um array');
+        stories = parsed;
+        persist();
+        refreshList();
+        refreshValidateSelect();
+        updateStatusBar();
+        toast(`${parsed.length} histórias aplicadas`);
+    } catch (e) { toast('Erro: ' + e.message, 'err'); }
+}
+function exportJson() {
+    const blob = new Blob([JSON.stringify(stories, null, 2)], { type: 'application/json' });
+    downloadBlob(blob, `shadowing-stories-${Date.now()}.json`);
+}
+function exportStoriesJs() {
+    const content = `/* Auto-exportado pelo Story Manager em ${new Date().toISOString()} */\nwindow.shadowingStories = ${JSON.stringify(stories, null, 2)};\n\nif (typeof module !== 'undefined' && module.exports) { module.exports = window.shadowingStories; }\n`;
+    const blob = new Blob([content], { type: 'application/javascript' });
+    downloadBlob(blob, 'stories.js');
+}
+function downloadBlob(blob, filename) {
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = filename;
+    a.click();
+    setTimeout(() => URL.revokeObjectURL(a.href), 2000);
+}
+function importJsonFile(ev) {
+    const f = ev.target.files[0]; if (!f) return;
+    const reader = new FileReader();
+    reader.onload = e => {
+        try {
+            let text = e.target.result;
+            // permite importar .js no formato window.shadowingStories = [...]
+            const m = text.match(/window\.shadowingStories\s*=\s*(\[[\s\S]*?\]);?\s*$/);
+            if (m) text = m[1];
+            const parsed = JSON.parse(text);
+            if (!Array.isArray(parsed)) throw new Error('Raiz deve ser um array');
+            document.getElementById('jsonArea').value = JSON.stringify(parsed, null, 2);
+            toast(`${parsed.length} histórias importadas. Clique em "Aplicar JSON" para usar.`);
+        } catch (err) { toast('Import falhou: ' + err.message, 'err'); }
+    };
+    reader.readAsText(f);
+    ev.target.value = '';
+}
+
+/* ================== PERSISTENCE / NAV ================== */
+function persist() {
+    // opcional: não grava automaticamente em localStorage; o usuário decide com os botões
+}
+
+function saveToLocalStorage() {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(stories));
+    updateStatusBar();
+    toast(`Salvo em localStorage (${stories.length} histórias). App index.html vai usar estas.`);
+}
+function clearLocalStorage() {
+    if (!confirm('Isto removerá as histórias customizadas do cache e o app voltará a usar o arquivo stories.js. Continuar?')) return;
+    localStorage.removeItem(STORAGE_KEY);
+    loadStories();
+    toast('LocalStorage limpo. Usando stories.js.');
+}
+function openApp() { window.open('index.html', '_blank'); }
+
+/* ================== INIT ================== */
+loadStories();
+newStory(); // seed inicial no editor
+</script>
+</body>
+</html>
