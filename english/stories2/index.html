@@ -24,7 +24,6 @@ body{
                     radial-gradient(ellipse at 85% 15%,rgba(74,222,128,.015) 0%,transparent 50%);
 }
 .app{max-width:720px;margin:0 auto;padding:0 16px 80px}
-/* HEADER */
 header{padding:20px 0 12px;border-bottom:1px solid var(--border);margin-bottom:16px}
 .header-row{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px}
 h1{font-size:22px;font-weight:800;letter-spacing:-.5px;color:var(--accent)}
@@ -33,7 +32,6 @@ h1{font-size:22px;font-weight:800;letter-spacing:-.5px;color:var(--accent)}
 .legend-dot{width:10px;height:10px;border-radius:3px;flex-shrink:0}
 .legend-dot.g{background:var(--phrasal)}.legend-dot.y{background:var(--idiom)}
 .legend-dot.b{background:var(--text);font-weight:700;font-size:9px;display:flex;align-items:center;justify-content:center;color:var(--bg)}
-/* CONTROLES SUPERIORES */
 .controls-bar{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:14px;align-items:center}
 .level-tabs{display:flex;border-radius:var(--radius-sm);overflow:hidden;border:1px solid var(--border)}
 .level-tab{padding:8px 18px;font-size:13px;font-weight:700;cursor:pointer;background:var(--card);
@@ -45,7 +43,6 @@ h1{font-size:22px;font-weight:800;letter-spacing:-.5px;color:var(--accent)}
 .ctrl-select{background:var(--card);color:var(--text);border:1px solid var(--border);border-radius:6px;
   padding:6px 10px;font-size:12px;cursor:pointer;outline:none}
 .ctrl-select:focus{border-color:var(--accent)}
-/* STORY HEADER */
 .story-header{margin-bottom:14px}
 .story-title{font-size:20px;font-weight:700;margin-bottom:10px;letter-spacing:-.3px}
 .story-actions{display:flex;flex-wrap:wrap;gap:8px}
@@ -62,13 +59,11 @@ h1{font-size:22px;font-weight:800;letter-spacing:-.5px;color:var(--accent)}
 .btn-ghost{background:transparent;border-color:transparent;color:var(--text-muted)}
 .btn-ghost:hover{color:var(--text);background:var(--card)}
 .btn-sm{padding:7px 12px;font-size:12px}
-/* PROGRESSO */
 .progress-section{margin-bottom:16px}
 .progress-info{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;font-size:12px;color:var(--text-muted)}
 .progress-bar{height:6px;background:var(--border);border-radius:3px;overflow:hidden}
 .progress-fill{height:100%;background:var(--accent);border-radius:3px;transition:width .4s ease}
 .progress-nav{display:flex;gap:8px;margin-top:8px}
-/* SENTENCE CARD */
 .sentence-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);
   padding:20px;margin-bottom:12px;transition:all .25s;position:relative;overflow:hidden}
 .sentence-card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:4px;
@@ -80,7 +75,6 @@ h1{font-size:22px;font-weight:800;letter-spacing:-.5px;color:var(--accent)}
 .sentence-card.done::before{background:var(--success)}
 .sentence-num{font-size:11px;font-weight:700;color:var(--text-muted);margin-bottom:8px;text-transform:uppercase;letter-spacing:.5px}
 .sentence-text{font-size:17px;line-height:1.8;margin-bottom:12px;color:var(--text)}
-/* PHRASAL / IDIOM / STRESS */
 .phrasal{color:var(--phrasal);background:var(--phrasal-dim);padding:2px 6px;border-radius:4px;
   cursor:pointer;font-weight:600;transition:background .15s}
 .phrasal:hover{background:rgba(74,222,128,.2)}
@@ -88,38 +82,31 @@ h1{font-size:22px;font-weight:800;letter-spacing:-.5px;color:var(--accent)}
   cursor:pointer;font-weight:600;transition:background .15s}
 .idiom:hover{background:rgba(245,158,11,.2)}
 .stress{font-weight:800;color:#fff}
-/* TRADUÇÃO */
 .translation{font-size:14px;color:var(--text-muted);padding:10px 14px;background:var(--bg2);
   border-radius:var(--radius-sm);margin-bottom:12px;border-left:3px solid var(--accent);
   display:none;line-height:1.6}
 .translation.show{display:block;animation:fadeSlide .25s ease}
-/* CONTROLES DO CARD */
 .card-controls{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px}
 .card-controls .btn{flex:1;min-width:0;justify-content:center;font-size:12px;padding:9px 8px}
-/* YOUR TURN */
 .your-turn{display:none;text-align:center;padding:16px;margin-bottom:10px;
   font-size:18px;font-weight:800;color:var(--accent);letter-spacing:1px;
   animation:fadeInUp .3s ease}
 .your-turn.show{display:block}
-/* RECORDING INDICATOR */
 .rec-indicator{display:none;align-items:center;justify-content:center;gap:8px;padding:10px;
   margin-bottom:10px;background:var(--danger-dim);border-radius:var(--radius-sm);font-size:14px;font-weight:700;color:var(--danger)}
 .rec-indicator.show{display:flex}
 .rec-dot{width:12px;height:12px;background:var(--danger);border-radius:50%;animation:pulse-dot 1s infinite}
-/* COMPARAÇÃO */
 .comparison{display:none;margin-top:12px;gap:8px}
 .comparison.show{display:grid;grid-template-columns:1fr 1fr;animation:fadeSlide .3s ease}
 .compare-box{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-sm);
   padding:14px;text-align:center}
 .compare-label{font-size:11px;font-weight:700;color:var(--text-muted);margin-bottom:8px;text-transform:uppercase;letter-spacing:.5px}
 .compare-box .btn{width:100%;justify-content:center}
-/* SHADOWING MODE BANNER */
 .shadow-banner{display:none;align-items:center;justify-content:center;gap:10px;padding:12px 16px;
   margin-bottom:14px;background:linear-gradient(135deg,rgba(232,168,56,.12),rgba(74,222,128,.08));
   border:1px solid rgba(232,168,56,.25);border-radius:var(--radius);font-size:14px;font-weight:700;color:var(--accent)}
 .shadow-banner.show{display:flex}
 .shadow-pulse{width:10px;height:10px;background:var(--accent);border-radius:50%;animation:pulse-dot 1.2s infinite}
-/* VOCABULÁRIO */
 .vocab-section{margin-top:28px}
 .vocab-title{font-size:18px;font-weight:700;margin-bottom:14px;padding-bottom:8px;border-bottom:1px solid var(--border)}
 .vocab-table{width:100%;border-collapse:collapse;font-size:13px}
@@ -133,12 +120,11 @@ h1{font-size:22px;font-weight:800;letter-spacing:-.5px;color:var(--accent)}
 .vocab-type.id{background:var(--idiom-dim);color:var(--idiom)}
 .vocab-type.ue{background:var(--accent-dim);color:var(--accent)}
 .vocab-example{color:var(--text-muted);font-style:italic}
-/* POPUP */
 .popup-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:100;
   align-items:flex-end;justify-content:center;padding:16px}
 .popup-overlay.show{display:flex}
 .popup-box{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);
-  padding:20px;max-width:400px;width:100%;animation:slideUp .25s ease}
+  padding:20px;max-width:400px;width:100%;animation:slideUp .25s ease;position:relative}
 .popup-close{position:absolute;top:12px;right:14px;background:none;border:none;color:var(--text-muted);
   font-size:20px;cursor:pointer;padding:4px;line-height:1}
 .popup-close:hover{color:var(--text)}
@@ -150,22 +136,18 @@ h1{font-size:22px;font-weight:800;letter-spacing:-.5px;color:var(--accent)}
 .popup-label{font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:2px}
 .popup-value{font-size:14px;color:var(--text);line-height:1.5}
 .popup-example{font-style:italic;color:var(--text-muted)}
-/* TOAST */
 .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(100px);
   background:var(--card);color:var(--text);padding:12px 24px;border-radius:var(--radius);
   border:1px solid var(--border);font-size:13px;font-weight:600;z-index:200;
   transition:transform .3s ease;white-space:nowrap;box-shadow:0 8px 30px rgba(0,0,0,.4)}
 .toast.show{transform:translateX(-50%) translateY(0)}
-/* ERRO */
 .error-msg{background:var(--danger-dim);border:1px solid rgba(239,68,68,.3);color:var(--danger);
   padding:14px 18px;border-radius:var(--radius-sm);margin-bottom:14px;font-size:13px;line-height:1.5}
-/* ANIMAÇÕES */
 @keyframes pulse-dot{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(.8)}}
 @keyframes pulse-bar{0%,100%{opacity:1}50%{opacity:.4}}
 @keyframes fadeSlide{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
 @keyframes slideUp{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
 @keyframes fadeInUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
-/* RESPONSIVO */
 @media(max-width:500px){
   .app{padding:0 10px 60px}
   h1{font-size:18px}
@@ -180,14 +162,11 @@ h1{font-size:22px;font-weight:800;letter-spacing:-.5px;color:var(--accent)}
   .btn{padding:9px 13px;font-size:12px}
   .legend{font-size:11px;gap:8px}
 }
-/* SCROLLBAR */
 ::-webkit-scrollbar{width:6px}
 ::-webkit-scrollbar-track{background:var(--bg)}
 ::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
 ::-webkit-scrollbar-thumb:hover{background:#3a3d4a}
-/* FOCUS */
 .btn:focus-visible,.level-tab:focus-visible,.ctrl-select:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
-/* REDUZIR MOVIMENTO */
 @media(prefers-reduced-motion:reduce){
   *,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important}
 }
@@ -255,7 +234,7 @@ h1{font-size:22px;font-weight:800;letter-spacing:-.5px;color:var(--accent)}
   <section class="vocab-section" id="vocabSection"></section>
 </div>
 <div class="popup-overlay" id="popupOverlay">
-  <div class="popup-box" id="popupBox" style="position:relative">
+  <div class="popup-box" id="popupBox">
     <button class="popup-close" id="popupClose" aria-label="Close">&times;</button>
     <div id="popupContent"></div>
   </div>
@@ -267,7 +246,6 @@ h1{font-size:22px;font-weight:800;letter-spacing:-.5px;color:var(--accent)}
    DADOS DAS HISTÓRIAS — 10 histórias (A1, A2, B1)
    ============================================================ */
 const STORIES = [
-  // ==================== A1 ====================
   {
     id:1, level:'A1', title:'My Morning',
     sentences:[
@@ -317,11 +295,11 @@ const STORIES = [
       {text:'Well, <span class="idiom" data-idx="5">you can\'t have it all</span> — at least I got most of the things.',translation:'Bom, ninguém tem tudo — pelo menos peguei a maioria das coisas.'}
     ],
     phrasalVerbs:[
-      {expr:'run out of',meaning:'acabar (de algo)',explanation:'Não ter mais de algo que você precisa.',example:'We ran out of toilet paper again.'},
-      {expr:'look for',meaning:'procurar',explanation:'Tentar encontrar algo ou alguém.',example:'I\'m looking for my keys. Have you seen them?'},
-      {expr:'pick up',meaning:'pegar, escolher',explanation:'Pegar algo com a mão ou escolher um item.',example:'Can you pick up that book for me?'},
+      {expr:'ran out of',meaning:'acabar (de algo)',explanation:'Não ter mais de algo que você precisa.',example:'We ran out of toilet paper again.'},
+      {expr:'looked for',meaning:'procurar',explanation:'Tentar encontrar algo ou alguém.',example:'I\'m looking for my keys. Have you seen them?'},
+      {expr:'picked up',meaning:'pegar, escolher',explanation:'Pegar algo com a mão ou escolher um item.',example:'Can you pick up that book for me?'},
       {expr:'put back',meaning:'devolver, colocar de volta',explanation:'Retornar algo ao lugar original.',example:'I put back the shirt because it was too small.'},
-      {expr:'pay for',meaning:'pagar por',explanation:'Dar dinheiro em troca de algo.',example:'I paid for the dinner last night.'}
+      {expr:'paid for',meaning:'pagar por',explanation:'Dar dinheiro em troca de algo.',example:'I paid for the dinner last night.'}
     ],
     idioms:[
       {expr:'no big deal',meaning:'não é grande coisa',explanation:'Algo sem importância.',example:'I\'m five minutes late. No big deal.'},
@@ -353,7 +331,7 @@ const STORIES = [
       {expr:'warm up',meaning:'aquecer',explanation:'Fazer exercício leve antes do treino principal.',example:'Always warm up before running.'},
       {expr:'work out',meaning:'fazer exercício',explanation:'Praticar exercícios físicos, especialmente na academia.',example:'I work out three times a week.'},
       {expr:'give up',meaning:'desistir',explanation:'Parar de tentar fazer algo.',example:'Don\'t give up on your dreams.'},
-      {expr:'cool down',meaning:'desaquecer',explanation:'Fazer exercício leve depois do treino para recuperação.',example:'Cool down with some stretching after running.'},
+      {expr:'cooled down',meaning:'desaquecer',explanation:'Fazer exercício leve depois do treino para recuperação.',example:'Cool down with some stretching after running.'},
       {expr:'go back',meaning:'voltar',explanation:'Retornar a um lugar.',example:'Let\'s go back to the hotel.'}
     ],
     idioms:[
@@ -381,12 +359,12 @@ const STORIES = [
       {text:'<span class="idiom" data-idx="6">What a shame</span> the wee<span class="stress">KEND</span> goes by so fast.',translation:'Que pena que o fim de semana passa tão rápido.'}
     ],
     phrasalVerbs:[
-      {expr:'hang out',meaning:'passar tempo, ficar',explanation:'Passar tempo com alguém de forma casual.',example:'Do you want to hang out after class?'},
-      {expr:'show up',meaning:'aparecer, chegar',explanation:'Chegar a um lugar, às vezes atrasado.',example:'He showed up two hours late.'},
-      {expr:'get lost',meaning:'se perder',explanation:'Não saber onde você está.',example:'We got lost in the city center.'},
+      {expr:'hung out',meaning:'passar tempo, ficar',explanation:'Passar tempo com alguém de forma casual.',example:'Do you want to hang out after class?'},
+      {expr:'showed up',meaning:'aparecer, chegar',explanation:'Chegar a um lugar, às vezes atrasado.',example:'He showed up two hours late.'},
+      {expr:'got lost',meaning:'se perder',explanation:'Não saber onde você está.',example:'We got lost in the city center.'},
       {expr:'eat out',meaning:'comer fora',explanation:'Comer em um restaurante em vez de casa.',example:'We eat out on Friday nights.'},
-      {expr:'pay for',meaning:'pagar por',explanation:'Dar dinheiro por algo.',example:'Who paid for the tickets?'},
-      {expr:'stay up',meaning:'ficar acordado',explanation:'Não ir para a cama no horário normal.',example:'I stayed up until 2 AM watching a movie.'},
+      {expr:'paid for',meaning:'pagar por',explanation:'Dar dinheiro por algo.',example:'Who paid for the tickets?'},
+      {expr:'stayed up',meaning:'ficar acordado',explanation:'Não ir para a cama no horário normal.',example:'I stayed up until 2 AM watching a movie.'},
       {expr:'go back',meaning:'voltar',explanation:'Retornar a um lugar.',example:'Let\'s go back to the hotel.'}
     ],
     idioms:[
@@ -399,7 +377,6 @@ const STORIES = [
       {expr:'what a shame',meaning:'que pena',explanation:'Expressar decepção ou tristeza.',example:'What a shame you can\'t come to the party.'}
     ]
   },
-  // ==================== A2 ====================
   {
     id:5, level:'A2', title:'Commuting to Work',
     sentences:[
@@ -417,8 +394,8 @@ const STORIES = [
     ],
     phrasalVerbs:[
       {expr:'set off',meaning:'partir, sair',explanation:'Iniciar uma jornada.',example:'We set off early to avoid traffic.'},
-      {expr:'get on',meaning:'entrar (em veículo)',explanation:'Embarcar em ônibus, trem ou avião.',example:'She got on the train at platform 3.'},
-      {expr:'run into',meaning:'encontrar por acaso',explanation:'Encontrar alguém inesperadamente.',example:'I ran into my teacher at the mall.'},
+      {expr:'got on',meaning:'entrar (em veículo)',explanation:'Embarcar em ônibus, trem ou avião.',example:'She got on the train at platform 3.'},
+      {expr:'ran into',meaning:'encontrar por acaso',explanation:'Encontrar alguém inesperadamente.',example:'I ran into my teacher at the mall.'},
       {expr:'got off',meaning:'descer (de veículo)',explanation:'Sair de ônibus, trem ou avião.',example:'Get off at the next stop.'},
       {expr:'showed up',meaning:'apareceu, chegou',explanation:'Chegar a um lugar.',example:'Half the guests didn\'t show up.'}
     ],
@@ -494,7 +471,6 @@ const STORIES = [
       {expr:'a fresh start',meaning:'um recomeço',explanation:'Um novo começo.',example:'Moving to a new city gave me a fresh start.'}
     ]
   },
-  // ==================== B1 ====================
   {
     id:8, level:'B1', title:'A Problem at Work',
     sentences:[
@@ -604,8 +580,8 @@ const state = {
   recTime: 5,
   currentSentence: 0,
   shadowingMode: false,
-  shadowingState: 'idle', // idle, playing, waiting, recording, playingBack, comparing
-  recordings: {}, // { sentenceIndex: audioURL }
+  shadowingState: 'idle',
+  recordings: {},
   mediaRecorder: null,
   mediaStream: null,
   recTimer: null,
@@ -617,10 +593,50 @@ const state = {
 /* ============================================================
    UTILITÁRIOS
    ============================================================ */
-function stripHTML(html) {
+
+/**
+ * Remove HTML e normaliza maiúsculas de tonicidade para o TTS.
+ *
+ * O problema: o HTML contem marcadores como <span class="stress">TI</span>
+ * que após strip viram "SomeTImes". O TTS lê "TI" como letras isoladas.
+ *
+ * Solução: detectar sequências de maiúsculas no MEIO de palavras
+ * (após pelo menos uma minúscula) e convertê-las para minúsculas.
+ * Também trata 2+ maiúsculas no INÍCIO de palavra (após espaço),
+ * que são marcadores de tonicidade como "SEven", "KItchen".
+ * Maiúsculas normais (uma única no início da palavra, ex: "Some")
+ * são preservadas.
+ */
+function getTextForTTS(html) {
   const d = document.createElement('div');
   d.innerHTML = html;
-  return d.textContent || d.innerText || '';
+  let text = d.textContent || d.innerText || '';
+
+  // 1) Meio da palavra: qualquer maiúscula(s) após uma minúscula → minúsculas
+  //    Ex: SomeTImes → Sometimes, realIze → realize, coFFEE → coffee
+  text = text.replace(/([a-z])([A-Z]+)/g, function(match, before, upper) {
+    return before + upper.toLowerCase();
+  });
+
+  // 2) Início de palavra (após espaço): 2+ maiúsculas seguidas de minúscula → minúsculas
+  //    Ex: " SEven" → " seven", " KItchen" → " kitchen"
+  text = text.replace(/(\s)([A-Z]{2,})([a-z])/g, function(match, space, upper, rest) {
+    return space + upper.toLowerCase() + rest;
+  });
+
+  // 3) Início da string: 2+ maiúsculas seguidas de minúscula → minúsculas
+  //    Ex: "SEven" → "seven"
+  text = text.replace(/^([A-Z]{2,})([a-z])/, function(match, upper, rest) {
+    return upper.toLowerCase() + rest;
+  });
+
+  // 4) Início de palavra (após espaço): 2+ maiúsculas no FIM da palavra
+  //    Ex: " coFFEE" → " coffee" (sem minúscula depois)
+  text = text.replace(/(\s)([A-Z]{2,})(?=[\s,.\-!?;:'"]|$)/g, function(match, space, upper) {
+    return space + upper.toLowerCase();
+  });
+
+  return text;
 }
 
 function showToast(msg) {
@@ -628,15 +644,15 @@ function showToast(msg) {
   t.textContent = msg;
   t.classList.add('show');
   clearTimeout(t._timer);
-  t._timer = setTimeout(() => t.classList.remove('show'), 2500);
+  t._timer = setTimeout(function() { t.classList.remove('show'); }, 2500);
 }
 
 function getStory() {
-  return STORIES.find(s => s.id === state.storyId) || STORIES[0];
+  return STORIES.find(function(s) { return s.id === state.storyId; }) || STORIES[0];
 }
 
 function getStoriesByLevel(level) {
-  return STORIES.filter(s => s.level === level);
+  return STORIES.filter(function(s) { return s.level === level; });
 }
 
 /* ============================================================
@@ -656,7 +672,7 @@ function saveState() {
 
 function loadState() {
   try {
-    const d = JSON.parse(localStorage.getItem('shadowSpeak'));
+    var d = JSON.parse(localStorage.getItem('shadowSpeak'));
     if (d) {
       if (d.level) state.level = d.level;
       if (d.storyId) state.storyId = d.storyId;
@@ -668,62 +684,40 @@ function loadState() {
 }
 
 /* ============================================================
-   SISTEMA DE VOZ (speechSynthesis) - CORRIGIDO
+   SISTEMA DE VOZ (speechSynthesis)
    ============================================================ */
-let enUSVoice = null;
-
-function getBestEnglishVoice() {
-  const voices = speechSynthesis.getVoices();
-  if (!voices || voices.length === 0) return null;
-
-  // 1. Tenta voz estritamente en-US (priorizando vozes conhecidas de qualidade nativa)
-  let voice = voices.find(v => v.lang === 'en-US' && (v.name.includes('Google') || v.name.includes('Natural') || v.name.includes('Samantha') || v.name.includes('Zira')));
-  
-  // 2. Se não achar uma nativa específica, pega qualquer uma que seja en-US pura
-  if (!voice) voice = voices.find(v => v.lang === 'en-US');
-
-  // 3. Se não achar en-US, busca qualquer variante de inglês (en-GB, en-AU, etc.), ignorando dialetos com chinês
-  if (!voice) voice = voices.find(v => v.lang.startsWith('en') && !v.lang.includes('ZH') && !v.name.toLowerCase().includes('chinese'));
-
-  return voice;
-}
+var enUSVoice = null;
 
 function loadVoices() {
-  enUSVoice = getBestEnglishVoice();
+  var voices = speechSynthesis.getVoices();
+  if (voices.length > 0) {
+    enUSVoice = voices.find(function(v) { return v.lang === 'en-US'; }) ||
+                voices.find(function(v) { return v.lang.indexOf('en') === 0; }) || null;
+  }
 }
-
-// Registra o evento para quando o navegador carregar a lista de vozes
-if ('speechSynthesis' in window) {
-  speechSynthesis.onvoiceschanged = loadVoices;
-  loadVoices();
-}
+speechSynthesis.onvoiceschanged = loadVoices;
+loadVoices();
 
 function speak(text, rate, onEnd) {
   speechSynthesis.cancel();
   if (!text || !text.trim()) { if (onEnd) onEnd(); return; }
-
-  const u = new SpeechSynthesisUtterance(text);
-  u.lang = 'en-US'; // Garante a indicação do idioma para a API
-  u.rate = rate || (typeof state !== 'undefined' ? state.speed : 1);
-
-  // Busca a voz novamente caso enUSVoice ainda esteja nulo na hora do clique
-  const voiceToUse = enUSVoice || getBestEnglishVoice();
-  if (voiceToUse) {
-    u.voice = voiceToUse;
-  }
-
+  var u = new SpeechSynthesisUtterance(text);
+  u.lang = 'en-US';
+  u.rate = rate || state.speed;
+  if (enUSVoice) u.voice = enUSVoice;
   if (onEnd) u.onend = onEnd;
   u.onerror = function() { if (onEnd) onEnd(); };
-
   speechSynthesis.speak(u);
 }
 
 function speakSentence(index, rate, onEnd) {
-  const story = getStory();
+  var story = getStory();
   if (index < 0 || index >= story.sentences.length) { if (onEnd) onEnd(); return; }
-  const plain = stripHTML(story.sentences[index].text);
+  // Usa getTextForTTS para remover marcadores de tonicidade
+  var plain = getTextForTTS(story.sentences[index].text);
   speak(plain, rate, onEnd);
 }
+
 /* ============================================================
    SISTEMA DE GRAVAÇÃO (MediaRecorder)
    ============================================================ */
@@ -734,21 +728,20 @@ function checkMediaRecorderSupport() {
 }
 
 async function startRecording(cardIndex) {
-  // Limpar gravação anterior
   if (state.recordings[cardIndex]) {
     URL.revokeObjectURL(state.recordings[cardIndex]);
     delete state.recordings[cardIndex];
   }
   try {
-    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    var stream = await navigator.mediaDevices.getUserMedia({ audio: true });
     state.mediaStream = stream;
-    const chunks = [];
+    var chunks = [];
     state.mediaRecorder = new MediaRecorder(stream);
-    state.mediaRecorder.ondataavailable = (e) => { if (e.data.size > 0) chunks.push(e.data); };
-    state.mediaRecorder.onstop = () => {
-      const blob = new Blob(chunks, { type: 'audio/webm' });
+    state.mediaRecorder.ondataavailable = function(e) { if (e.data.size > 0) chunks.push(e.data); };
+    state.mediaRecorder.onstop = function() {
+      var blob = new Blob(chunks, { type: 'audio/webm' });
       state.recordings[cardIndex] = URL.createObjectURL(blob);
-      stream.getTracks().forEach(t => t.stop());
+      stream.getTracks().forEach(function(t) { t.stop(); });
       state.mediaStream = null;
       updateCardUI(cardIndex);
     };
@@ -776,7 +769,7 @@ function startRecTimer(seconds, onTick, onEnd) {
   clearRecTimer();
   state.recSeconds = seconds;
   onTick(state.recSeconds);
-  state.recTimer = setInterval(() => {
+  state.recTimer = setInterval(function() {
     state.recSeconds--;
     onTick(state.recSeconds);
     if (state.recSeconds <= 0) {
@@ -791,29 +784,28 @@ function clearRecTimer() {
 }
 
 function playRecording(cardIndex) {
-  const url = state.recordings[cardIndex];
+  var url = state.recordings[cardIndex];
   if (!url) return;
-  const audio = new Audio(url);
-  audio.play().catch(() => {});
+  var audio = new Audio(url);
+  audio.play().catch(function() {});
 }
 
 /* ============================================================
    RENDERIZAÇÃO
    ============================================================ */
 function renderLevelTabs() {
-  const container = document.getElementById('levelTabs');
+  var container = document.getElementById('levelTabs');
   container.innerHTML = '';
-  ['A1','A2','B1'].forEach(lvl => {
-    const btn = document.createElement('button');
+  ['A1','A2','B1'].forEach(function(lvl) {
+    var btn = document.createElement('button');
     btn.className = 'level-tab' + (state.level === lvl ? ' active' : '');
     btn.textContent = lvl;
     btn.setAttribute('role', 'tab');
     btn.setAttribute('aria-selected', state.level === lvl);
-    btn.onclick = () => {
+    btn.onclick = function() {
       if (state.level === lvl) return;
       state.level = lvl;
-      // Selecionar primeira história desse nível
-      const stories = getStoriesByLevel(lvl);
+      var stories = getStoriesByLevel(lvl);
       if (stories.length > 0) state.storyId = stories[0].id;
       state.currentSentence = 0;
       state.recordings = {};
@@ -827,58 +819,47 @@ function renderLevelTabs() {
 }
 
 function renderStoryHeader() {
-  const story = getStory();
+  var story = getStory();
   document.getElementById('storyTitle').textContent = story.title + ' (' + story.level + ')';
 }
 
 function renderProgress() {
-  const story = getStory();
-  const total = story.sentences.length;
-  const curr = state.currentSentence + 1;
-  const pct = Math.round((curr / total) * 100);
+  var story = getStory();
+  var total = story.sentences.length;
+  var curr = state.currentSentence + 1;
+  var pct = Math.round((curr / total) * 100);
   document.getElementById('progressText').textContent = 'Sentence ' + curr + ' of ' + total;
   document.getElementById('progressPercent').textContent = pct + '%';
   document.getElementById('progressFill').style.width = pct + '%';
 }
 
 function renderSentenceCards() {
-  const container = document.getElementById('sentenceContainer');
+  var container = document.getElementById('sentenceContainer');
   container.innerHTML = '';
-  const story = getStory();
+  var story = getStory();
 
-  story.sentences.forEach((s, i) => {
-    const card = document.createElement('div');
+  story.sentences.forEach(function(s, i) {
+    var card = document.createElement('div');
     card.className = 'sentence-card' + (i === state.currentSentence ? ' active' : '') +
                      (state.recordings[i] ? ' done' : '');
     card.id = 'card-' + i;
     card.setAttribute('data-index', i);
 
-    // Número da frase
-    let html = '<div class="sentence-num">Sentence ' + (i + 1) + '</div>';
-
-    // Texto
+    var html = '<div class="sentence-num">Sentence ' + (i + 1) + '</div>';
     html += '<div class="sentence-text">' + s.text + '</div>';
-
-    // Tradução
     html += '<div class="translation" id="trans-' + i + '">' + s.translation + '</div>';
-
-    // Indicador "YOUR TURN"
     html += '<div class="your-turn" id="yourturn-' + i + '">YOUR TURN — REPEAT</div>';
-
-    // Indicador de gravação
     html += '<div class="rec-indicator" id="recind-' + i + '"><span class="rec-dot"></span><span id="rectime-' + i + '">Recording: ' + state.recTime + 's</span></div>';
 
-    // Controles
     html += '<div class="card-controls">';
-    html += '<button class="btn btn-sm" onclick="handleListen(' + i + ')" title="Listen at selected speed">&#9654; Listen</button>';
-    html += '<button class="btn btn-sm" onclick="handleSlow(' + i + ')" title="Listen slowly">&#128034; Slow</button>';
+    html += '<button class="btn btn-sm" onclick="handleListen(' + i + ')">&#9654; Listen</button>';
+    html += '<button class="btn btn-sm" onclick="handleSlow(' + i + ')">&#128034; Slow</button>';
     html += '<button class="btn btn-sm" id="recbtn-' + i + '" onclick="handleRecord(' + i + ')">&#127908; Record</button>';
     html += '<button class="btn btn-sm" id="playbtn-' + i + '" onclick="handlePlayMy(' + i + ')" ' + (state.recordings[i] ? '' : 'disabled') + '>&#9654; My Voice</button>';
     html += '<button class="btn btn-sm" id="trybtn-' + i + '" onclick="handleTryAgain(' + i + ')" ' + (state.recordings[i] ? '' : 'disabled') + '>&#128260; Try Again</button>';
     html += '<button class="btn btn-sm" id="transbtn-' + i + '" onclick="handleToggleTrans(' + i + ')">&#127475;&#127487; Translation</button>';
     html += '</div>';
 
-    // Comparação lado a lado
     html += '<div class="comparison" id="compare-' + i + '">';
     html += '<div class="compare-box"><div class="compare-label">Native Voice</div><button class="btn btn-sm" onclick="handleListen(' + i + ')">&#9654; Listen</button></div>';
     html += '<div class="compare-box"><div class="compare-label">My Voice</div><button class="btn btn-sm" onclick="handlePlayMy(' + i + ')">&#9654; Play My Voice</button></div>';
@@ -889,37 +870,36 @@ function renderSentenceCards() {
   });
 
   // Clique nos phrasal verbs e idioms
-  container.querySelectorAll('.phrasal').forEach(el => {
-    el.addEventListener('click', (e) => { e.stopPropagation(); showPhrasalPopup(el); });
+  container.querySelectorAll('.phrasal').forEach(function(el) {
+    el.addEventListener('click', function(e) { e.stopPropagation(); showPhrasalPopup(el); });
   });
-  container.querySelectorAll('.idiom').forEach(el => {
-    el.addEventListener('click', (e) => { e.stopPropagation(); showIdiomPopup(el); });
+  container.querySelectorAll('.idiom').forEach(function(el) {
+    el.addEventListener('click', function(e) { e.stopPropagation(); showIdiomPopup(el); });
   });
 }
 
 function updateCardUI(index) {
-  const card = document.getElementById('card-' + index);
+  var card = document.getElementById('card-' + index);
   if (!card) return;
-  const hasRec = !!state.recordings[index];
+  var hasRec = !!state.recordings[index];
   card.classList.toggle('done', hasRec);
-  const playBtn = document.getElementById('playbtn-' + index);
-  const tryBtn = document.getElementById('trybtn-' + index);
-  const compare = document.getElementById('compare-' + index);
+  var playBtn = document.getElementById('playbtn-' + index);
+  var tryBtn = document.getElementById('trybtn-' + index);
+  var compare = document.getElementById('compare-' + index);
   if (playBtn) playBtn.disabled = !hasRec;
   if (tryBtn) tryBtn.disabled = !hasRec;
   if (compare && hasRec) compare.classList.add('show');
 }
 
 function renderVocabulary() {
-  const story = getStory();
-  const section = document.getElementById('vocabSection');
-  let html = '<h3 class="vocab-title">Vocabulary & Expressions</h3>';
+  var story = getStory();
+  var section = document.getElementById('vocabSection');
+  var html = '<h3 class="vocab-title">Vocabulary & Expressions</h3>';
   html += '<div style="overflow-x:auto"><table class="vocab-table"><thead><tr>';
   html += '<th>Expression</th><th>Type</th><th>Meaning</th><th>Example</th>';
   html += '</tr></thead><tbody>';
 
-  // Phrasal Verbs
-  story.phrasalVerbs.forEach(pv => {
+  story.phrasalVerbs.forEach(function(pv) {
     html += '<tr>';
     html += '<td class="vocab-expr">' + pv.expr + '</td>';
     html += '<td><span class="vocab-type pv">Phrasal Verb</span></td>';
@@ -928,8 +908,7 @@ function renderVocabulary() {
     html += '</tr>';
   });
 
-  // Idioms
-  story.idioms.forEach(id => {
+  story.idioms.forEach(function(id) {
     html += '<tr>';
     html += '<td class="vocab-expr">' + id.expr + '</td>';
     html += '<td><span class="vocab-type id">Idiom</span></td>';
@@ -958,8 +937,8 @@ function updateControls() {
 }
 
 function scrollToCurrentCard() {
-  setTimeout(() => {
-    const card = document.getElementById('card-' + state.currentSentence);
+  setTimeout(function() {
+    var card = document.getElementById('card-' + state.currentSentence);
     if (card) card.scrollIntoView({ behavior: 'smooth', block: 'center' });
   }, 100);
 }
@@ -973,12 +952,13 @@ function handleListen(index) {
   highlightCard(index);
   updateProgress();
   saveState();
-  speakSentence(index, state.speed, () => {
-    // Após ouvir, mostrar YOUR TURN brevemente
-    const yt = document.getElementById('yourturn-' + index);
-    if (yt && !state.shadowingMode) {
-      yt.classList.add('show');
-      setTimeout(() => yt.classList.remove('show'), 2000);
+  speakSentence(index, state.speed, function() {
+    if (!state.shadowingMode) {
+      var yt = document.getElementById('yourturn-' + index);
+      if (yt) {
+        yt.classList.add('show');
+        setTimeout(function() { yt.classList.remove('show'); }, 2000);
+      }
     }
   });
 }
@@ -994,26 +974,24 @@ function handleSlow(index) {
 
 function handleRecord(index) {
   if (state.mediaRecorder && state.mediaRecorder.state === 'recording') {
-    // Parar gravação
     stopRecording();
-    const card = document.getElementById('card-' + index);
+    var card = document.getElementById('card-' + index);
     if (card) card.classList.remove('recording');
-    const ind = document.getElementById('recind-' + index);
+    var ind = document.getElementById('recind-' + index);
     if (ind) ind.classList.remove('show');
-    const yt = document.getElementById('yourturn-' + index);
+    var yt = document.getElementById('yourturn-' + index);
     if (yt) yt.classList.remove('show');
-    // Atualizar botão
-    const btn = document.getElementById('recbtn-' + index);
+    var btn = document.getElementById('recbtn-' + index);
     if (btn) { btn.innerHTML = '&#127908; Record'; btn.classList.remove('btn-danger'); }
     return;
   }
-  // Iniciar gravação
-  const card = document.getElementById('card-' + index);
-  const yt = document.getElementById('yourturn-' + index);
-  const ind = document.getElementById('recind-' + index);
-  const btn = document.getElementById('recbtn-' + index);
 
-  startRecording(index).then(ok => {
+  var card = document.getElementById('card-' + index);
+  var yt = document.getElementById('yourturn-' + index);
+  var ind = document.getElementById('recind-' + index);
+  var btn = document.getElementById('recbtn-' + index);
+
+  startRecording(index).then(function(ok) {
     if (!ok) return;
     if (card) card.classList.add('recording');
     if (yt) yt.classList.add('show');
@@ -1021,11 +999,11 @@ function handleRecord(index) {
     if (btn) { btn.innerHTML = '&#128308; Stop Recording'; btn.classList.add('btn-danger'); }
 
     startRecTimer(state.recTime,
-      (sec) => {
-        const timeEl = document.getElementById('rectime-' + index);
+      function(sec) {
+        var timeEl = document.getElementById('rectime-' + index);
         if (timeEl) timeEl.textContent = 'Recording: ' + sec + 's';
       },
-      () => {
+      function() {
         stopRecording();
         if (card) card.classList.remove('recording');
         if (ind) ind.classList.remove('show');
@@ -1041,28 +1019,26 @@ function handlePlayMy(index) {
 }
 
 function handleTryAgain(index) {
-  // Limpar gravação anterior
   if (state.recordings[index]) {
     URL.revokeObjectURL(state.recordings[index]);
     delete state.recordings[index];
   }
-  const compare = document.getElementById('compare-' + index);
+  var compare = document.getElementById('compare-' + index);
   if (compare) compare.classList.remove('show');
   updateCardUI(index);
-  // Iniciar nova gravação automaticamente
   handleRecord(index);
 }
 
 function handleToggleTrans(index) {
-  const el = document.getElementById('trans-' + index);
-  const btn = document.getElementById('transbtn-' + index);
+  var el = document.getElementById('trans-' + index);
+  var btn = document.getElementById('transbtn-' + index);
   if (!el) return;
-  const showing = el.classList.toggle('show');
+  var showing = el.classList.toggle('show');
   if (btn) btn.innerHTML = showing ? '&#127475;&#127487; Hide Translation' : '&#127475;&#127487; Translation';
 }
 
 function highlightCard(index) {
-  document.querySelectorAll('.sentence-card').forEach((c, i) => {
+  document.querySelectorAll('.sentence-card').forEach(function(c, i) {
     c.classList.toggle('active', i === index);
   });
 }
@@ -1083,8 +1059,8 @@ function handleListenFull() {
   }
   state.fullStoryPlaying = true;
   document.getElementById('listenFullBtn').innerHTML = '&#9632; Stop';
-  const story = getStory();
-  let idx = 0;
+  var story = getStory();
+  var idx = 0;
 
   function playNext() {
     if (!state.fullStoryPlaying || idx >= story.sentences.length) {
@@ -1098,7 +1074,7 @@ function handleListenFull() {
     saveState();
     scrollToCurrentCard();
 
-    speakSentence(idx, state.speed, () => {
+    speakSentence(idx, state.speed, function() {
       idx++;
       setTimeout(playNext, 400);
     });
@@ -1112,11 +1088,10 @@ function handleListenFull() {
 function handleNewStory() {
   speechSynthesis.cancel();
   stopShadowingMode();
-  const stories = getStoriesByLevel(state.level);
-  // Filtrar para não repetir a atual
-  const others = stories.filter(s => s.id !== state.storyId);
+  var stories = getStoriesByLevel(state.level);
+  var others = stories.filter(function(s) { return s.id !== state.storyId; });
   if (others.length > 0) {
-    const rand = others[Math.floor(Math.random() * others.length)];
+    var rand = others[Math.floor(Math.random() * others.length)];
     state.storyId = rand.id;
   }
   state.currentSentence = 0;
@@ -1143,22 +1118,18 @@ function handleShadowMode() {
 function stopShadowingMode() {
   state.shadowingMode = false;
   state.shadowingState = 'idle';
-  // Limpar timeouts
-  state.shadowTimeouts.forEach(t => clearTimeout(t));
+  state.shadowTimeouts.forEach(function(t) { clearTimeout(t); });
   state.shadowTimeouts = [];
-  // Parar gravação se ativa
   if (state.mediaRecorder && state.mediaRecorder.state === 'recording') {
     stopRecording();
   }
   clearRecTimer();
-  // Limpar UI
   document.getElementById('shadowBanner').classList.remove('show');
   document.getElementById('shadowModeBtn').innerHTML = 'Shadowing Mode';
-  document.querySelectorAll('.sentence-card').forEach(c => c.classList.remove('recording'));
-  document.querySelectorAll('.rec-indicator').forEach(el => el.classList.remove('show'));
-  document.querySelectorAll('.your-turn').forEach(el => el.classList.remove('show'));
-  // Resetar botões de gravação
-  document.querySelectorAll('[id^="recbtn-"]').forEach(btn => {
+  document.querySelectorAll('.sentence-card').forEach(function(c) { c.classList.remove('recording'); });
+  document.querySelectorAll('.rec-indicator').forEach(function(el) { el.classList.remove('show'); });
+  document.querySelectorAll('.your-turn').forEach(function(el) { el.classList.remove('show'); });
+  document.querySelectorAll('[id^="recbtn-"]').forEach(function(btn) {
     btn.innerHTML = '&#127908; Record';
     btn.classList.remove('btn-danger');
   });
@@ -1167,8 +1138,8 @@ function stopShadowingMode() {
 
 function shadowingStep() {
   if (!state.shadowingMode) return;
-  const story = getStory();
-  const idx = state.currentSentence;
+  var story = getStory();
+  var idx = state.currentSentence;
   if (idx >= story.sentences.length) {
     showToast('Story completed! Great job.');
     stopShadowingMode();
@@ -1182,39 +1153,39 @@ function shadowingStep() {
   scrollToCurrentCard();
 
   // ETAPA 1: Voz nativa
-  speakSentence(idx, state.speed, () => {
+  speakSentence(idx, state.speed, function() {
     if (!state.shadowingMode) return;
 
     // ETAPA 2: Pausa de 1 segundo
-    const t1 = setTimeout(() => {
+    var t1 = setTimeout(function() {
       if (!state.shadowingMode) return;
 
       // ETAPA 3: YOUR TURN
       state.shadowingState = 'waiting';
-      const yt = document.getElementById('yourturn-' + idx);
+      var yt = document.getElementById('yourturn-' + idx);
       if (yt) yt.classList.add('show');
 
       // ETAPA 4: Iniciar gravação após breve pausa
-      const t2 = setTimeout(() => {
+      var t2 = setTimeout(function() {
         if (!state.shadowingMode) return;
         state.shadowingState = 'recording';
 
-        startRecording(idx).then(ok => {
+        startRecording(idx).then(function(ok) {
           if (!ok) { stopShadowingMode(); return; }
-          const card = document.getElementById('card-' + idx);
-          const ind = document.getElementById('recind-' + idx);
-          const btn = document.getElementById('recbtn-' + idx);
+          var card = document.getElementById('card-' + idx);
+          var ind = document.getElementById('recind-' + idx);
+          var btn = document.getElementById('recbtn-' + idx);
           if (card) card.classList.add('recording');
           if (ind) ind.classList.add('show');
           if (btn) { btn.innerHTML = '&#128308; Stop Recording'; btn.classList.add('btn-danger'); }
 
           // ETAPA 5 & 6: Timer e parar automaticamente
           startRecTimer(state.recTime,
-            (sec) => {
-              const timeEl = document.getElementById('rectime-' + idx);
+            function(sec) {
+              var timeEl = document.getElementById('rectime-' + idx);
               if (timeEl) timeEl.textContent = 'Recording: ' + sec + 's';
             },
-            () => {
+            function() {
               if (!state.shadowingMode) return;
               stopRecording();
               if (card) card.classList.remove('recording');
@@ -1224,20 +1195,17 @@ function shadowingStep() {
 
               // ETAPA 7: Reproduzir gravação do usuário
               state.shadowingState = 'playingBack';
-              const t3 = setTimeout(() => {
+              var t3 = setTimeout(function() {
                 if (!state.shadowingMode) return;
                 playRecording(idx);
 
                 // ETAPA 8: Comparação
-                const t4 = setTimeout(() => {
+                var t4 = setTimeout(function() {
                   if (!state.shadowingMode) return;
                   state.shadowingState = 'comparing';
-                  const compare = document.getElementById('compare-' + idx);
+                  var compare = document.getElementById('compare-' + idx);
                   if (compare) compare.classList.add('show');
                   updateCardUI(idx);
-
-                  // ETAPA 9: Mostrar botão Next (usamos toast + next automático ou manual)
-                  // Aqui o usuário pode clicar Next manualmente
                 }, 1000);
                 state.shadowTimeouts.push(t4);
               }, 500);
@@ -1256,7 +1224,6 @@ function shadowingStep() {
    NAVEGAÇÃO ENTRE FRASES
    ============================================================ */
 function handlePrev() {
-  const story = getStory();
   if (state.currentSentence > 0) {
     state.currentSentence--;
     highlightCard(state.currentSentence);
@@ -1267,16 +1234,15 @@ function handlePrev() {
 }
 
 function handleNext() {
-  const story = getStory();
+  var story = getStory();
   if (state.currentSentence < story.sentences.length - 1) {
     state.currentSentence++;
     highlightCard(state.currentSentence);
     updateProgress();
     saveState();
     scrollToCurrentCard();
-    // Se estiver em shadowing mode, avançar para próximo passo
     if (state.shadowingMode && state.shadowingState === 'comparing') {
-      state.shadowTimeouts.forEach(t => clearTimeout(t));
+      state.shadowTimeouts.forEach(function(t) { clearTimeout(t); });
       state.shadowTimeouts = [];
       shadowingStep();
     }
@@ -1287,12 +1253,12 @@ function handleNext() {
    POPUP — Phrasal Verbs e Idioms
    ============================================================ */
 function showPhrasalPopup(el) {
-  const idx = parseInt(el.getAttribute('data-idx'));
-  const story = getStory();
-  const pv = story.phrasalVerbs[idx];
+  var idx = parseInt(el.getAttribute('data-idx'));
+  var story = getStory();
+  var pv = story.phrasalVerbs[idx];
   if (!pv) return;
 
-  const content = document.getElementById('popupContent');
+  var content = document.getElementById('popupContent');
   content.innerHTML =
     '<div class="popup-expr pv">' + pv.expr + '</div>' +
     '<div class="popup-type pv">Phrasal Verb</div>' +
@@ -1303,12 +1269,12 @@ function showPhrasalPopup(el) {
 }
 
 function showIdiomPopup(el) {
-  const idx = parseInt(el.getAttribute('data-idx'));
-  const story = getStory();
-  const id = story.idioms[idx];
+  var idx = parseInt(el.getAttribute('data-idx'));
+  var story = getStory();
+  var id = story.idioms[idx];
   if (!id) return;
 
-  const content = document.getElementById('popupContent');
+  var content = document.getElementById('popupContent');
   content.innerHTML =
     '<div class="popup-expr id">' + id.expr + '</div>' +
     '<div class="popup-type id">Idiom / Expression</div>' +
@@ -1326,8 +1292,8 @@ function hidePopup() {
    VERIFICAÇÃO DE COMPATIBILIDADE
    ============================================================ */
 function checkCompatibility() {
-  const container = document.getElementById('errorContainer');
-  let msg = '';
+  var container = document.getElementById('errorContainer');
+  var msg = '';
   if (!('speechSynthesis' in window)) {
     msg = 'Your browser does not support text-to-speech. Please use a modern browser like Chrome, Edge, or Safari.';
   } else if (!checkMediaRecorderSupport()) {
@@ -1342,12 +1308,12 @@ function checkCompatibility() {
    EVENT LISTENERS
    ============================================================ */
 function setupEventListeners() {
-  document.getElementById('speedSelect').addEventListener('change', (e) => {
+  document.getElementById('speedSelect').addEventListener('change', function(e) {
     state.speed = parseFloat(e.target.value);
     saveState();
   });
 
-  document.getElementById('recTimeSelect').addEventListener('change', (e) => {
+  document.getElementById('recTimeSelect').addEventListener('change', function(e) {
     state.recTime = parseInt(e.target.value);
     saveState();
   });
@@ -1359,17 +1325,15 @@ function setupEventListeners() {
   document.getElementById('nextBtn').addEventListener('click', handleNext);
   document.getElementById('stopShadowBtn').addEventListener('click', stopShadowingMode);
 
-  document.getElementById('popupOverlay').addEventListener('click', (e) => {
+  document.getElementById('popupOverlay').addEventListener('click', function(e) {
     if (e.target === document.getElementById('popupOverlay')) hidePopup();
   });
   document.getElementById('popupClose').addEventListener('click', hidePopup);
 
-  // Teclado: ESC para fechar popup
-  document.addEventListener('keydown', (e) => {
+  document.addEventListener('keydown', function(e) {
     if (e.key === 'Escape') hidePopup();
   });
 
-  // Salvar estado ao sair
   window.addEventListener('beforeunload', saveState);
 }
 
@@ -1378,9 +1342,8 @@ function setupEventListeners() {
    ============================================================ */
 function init() {
   loadState();
-  // Garantir que storyId corresponde ao nível
-  const levelStories = getStoriesByLevel(state.level);
-  if (levelStories.length > 0 && !levelStories.find(s => s.id === state.storyId)) {
+  var levelStories = getStoriesByLevel(state.level);
+  if (levelStories.length > 0 && !levelStories.find(function(s) { return s.id === state.storyId; })) {
     state.storyId = levelStories[0].id;
     state.currentSentence = 0;
   }
