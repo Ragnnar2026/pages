@@ -668,31 +668,53 @@ function loadState() {
 }
 
 /* ============================================================
-   SISTEMA DE VOZ (speechSynthesis)
+   SISTEMA DE VOZ (speechSynthesis) - CORRIGIDO
    ============================================================ */
 let enUSVoice = null;
-let voicesReady = false;
+
+function getBestEnglishVoice() {
+  const voices = speechSynthesis.getVoices();
+  if (!voices || voices.length === 0) return null;
+
+  // 1. Tenta voz estritamente en-US (priorizando vozes conhecidas de qualidade nativa)
+  let voice = voices.find(v => v.lang === 'en-US' && (v.name.includes('Google') || v.name.includes('Natural') || v.name.includes('Samantha') || v.name.includes('Zira')));
+  
+  // 2. Se não achar uma nativa específica, pega qualquer uma que seja en-US pura
+  if (!voice) voice = voices.find(v => v.lang === 'en-US');
+
+  // 3. Se não achar en-US, busca qualquer variante de inglês (en-GB, en-AU, etc.), ignorando dialetos com chinês
+  if (!voice) voice = voices.find(v => v.lang.startsWith('en') && !v.lang.includes('ZH') && !v.name.toLowerCase().includes('chinese'));
+
+  return voice;
+}
 
 function loadVoices() {
-  const voices = speechSynthesis.getVoices();
-  if (voices.length > 0) {
-    voicesReady = true;
-    enUSVoice = voices.find(v => v.lang === 'en-US') ||
-                voices.find(v => v.lang.startsWith('en')) || null;
-  }
+  enUSVoice = getBestEnglishVoice();
 }
-speechSynthesis.onvoiceschanged = loadVoices;
-loadVoices();
+
+// Registra o evento para quando o navegador carregar a lista de vozes
+if ('speechSynthesis' in window) {
+  speechSynthesis.onvoiceschanged = loadVoices;
+  loadVoices();
+}
 
 function speak(text, rate, onEnd) {
   speechSynthesis.cancel();
   if (!text || !text.trim()) { if (onEnd) onEnd(); return; }
+
   const u = new SpeechSynthesisUtterance(text);
-  u.lang = 'en-US';
-  u.rate = rate || state.speed;
-  if (enUSVoice) u.voice = enUSVoice;
+  u.lang = 'en-US'; // Garante a indicação do idioma para a API
+  u.rate = rate || (typeof state !== 'undefined' ? state.speed : 1);
+
+  // Busca a voz novamente caso enUSVoice ainda esteja nulo na hora do clique
+  const voiceToUse = enUSVoice || getBestEnglishVoice();
+  if (voiceToUse) {
+    u.voice = voiceToUse;
+  }
+
   if (onEnd) u.onend = onEnd;
   u.onerror = function() { if (onEnd) onEnd(); };
+
   speechSynthesis.speak(u);
 }
 
@@ -702,7 +724,6 @@ function speakSentence(index, rate, onEnd) {
   const plain = stripHTML(story.sentences[index].text);
   speak(plain, rate, onEnd);
 }
-
 /* ============================================================
    SISTEMA DE GRAVAÇÃO (MediaRecorder)
    ============================================================ */
